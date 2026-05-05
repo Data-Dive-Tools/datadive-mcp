@@ -18,7 +18,7 @@ except as the `x-api-key` header on requests to `api.datadive.tools`.
 
 ## 1. Get a DataDive API key
 
-1. Sign in at https://app.datadive.tools.
+1. Sign in at [https://2.datadive.tools](https://2.datadive.tools/sign-in).
 2. Go to **Settings → API Key** (`/api-key`).
 3. Click **Generate API Key**. Copy the value — you'll paste it into your MCP
    client config below.
