@@ -1,0 +1,11 @@
+src
+test
+.github
+.changeset
+tsconfig.json
+tsup.config.ts
+eslint.config.js
+.prettierrc
+.gitignore
+*.log
+coverage

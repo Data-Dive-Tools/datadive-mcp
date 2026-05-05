@@ -1,0 +1,27 @@
+/**
+ * Tool registry. The order here is the order tools appear in `tools/list`
+ * over the MCP transport, which biases LLM discovery — keep "discovery" tools
+ * (the ones that return IDs needed by other tools) at the top.
+ */
+
+import { listNichesTool } from "./list-niches.js";
+import { getNicheKeywordsTool } from "./get-niche-keywords.js";
+import { getNicheCompetitorsTool } from "./get-niche-competitors.js";
+import { getRankingJuiceTool } from "./get-ranking-juice.js";
+import { listRankRadarsTool } from "./list-rank-radars.js";
+import { getRankRadarDataTool } from "./get-rank-radar-data.js";
+import type { AnyTool } from "./types.js";
+
+// Note on the cast: each ToolDefinition<S> has a handler typed to its specific
+// schema; the registry needs a uniform shape. The MCP SDK validates incoming
+// args against `inputSchema` before calling the handler, so the cast is safe.
+export const allTools: ReadonlyArray<AnyTool> = [
+  listNichesTool,
+  getNicheKeywordsTool,
+  getNicheCompetitorsTool,
+  getRankingJuiceTool,
+  listRankRadarsTool,
+  getRankRadarDataTool,
+] as unknown as ReadonlyArray<AnyTool>;
+
+export type { ToolDefinition, AnyTool } from "./types.js";

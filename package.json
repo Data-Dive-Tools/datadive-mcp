@@ -1,0 +1,60 @@
+{
+  "name": "@datadive/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for DataDive — query your niches, keywords, competitors, and Rank Radar data from Claude Desktop, Claude Code, or Cursor.",
+  "type": "module",
+  "bin": {
+    "datadive-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:smoke": "DATADIVE_SMOKE=1 vitest run test/smoke.test.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "datadive",
+    "amazon",
+    "claude"
+  ],
+  "author": "DataDive",
+  "license": "MIT",
+  "homepage": "https://github.com/Data-Dive-Tools/datadive-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Data-Dive-Tools/datadive-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Data-Dive-Tools/datadive-mcp/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "~5.9.0",
+    "vitest": "^2.0.0"
+  }
+}
