@@ -1,5 +1,5 @@
 {
-  "name": "@datadive/mcp",
+  "name": "@datadive-tools/mcp",
   "version": "0.1.0",
   "description": "MCP server for DataDive — query your niches, keywords, competitors, and Rank Radar data from Claude Desktop, Claude Code, or Cursor.",
   "type": "module",

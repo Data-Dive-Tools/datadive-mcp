@@ -1,4 +1,4 @@
-# @datadive/mcp
+# @datadive-tools/mcp
 
 ## 0.1.0
 

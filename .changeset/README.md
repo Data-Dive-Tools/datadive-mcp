@@ -1,6 +1,6 @@
 # Changesets
 
-This directory tracks user-facing changes to `@datadive/mcp` between releases.
+This directory tracks user-facing changes to `@datadive-tools/mcp` between releases.
 
 When you make a change that should appear in the changelog (any change to tool
 behavior, error messages, install instructions, dependencies, or backwards

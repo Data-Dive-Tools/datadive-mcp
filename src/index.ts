@@ -1,7 +1,7 @@
 /**
  * Entry point for the datadive-mcp stdio binary.
  *
- * Wired via package.json#bin -> dist/index.js so `npx -y @datadive/mcp` runs it.
+ * Wired via package.json#bin -> dist/index.js so `npx -y @datadive-tools/mcp` runs it.
  * The shebang is added at build time by tsup.config.ts (banner.js).
  */
 

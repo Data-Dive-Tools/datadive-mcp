@@ -1,4 +1,4 @@
-# @datadive/mcp
+# @datadive-tools/mcp
 
 An [MCP](https://modelcontextprotocol.io) server that lets Claude (or any
 MCP-compatible client) query your DataDive niches, keywords, competitors, and
@@ -42,7 +42,7 @@ Add the `datadive` entry under `mcpServers`:
   "mcpServers": {
     "datadive": {
       "command": "npx",
-      "args": ["-y", "@datadive/mcp"],
+      "args": ["-y", "@datadive-tools/mcp"],
       "env": {
         "DATADIVE_API_KEY": "ddk_live_..."
       }
@@ -56,9 +56,9 @@ Restart Claude Desktop. You should see `datadive` in the tools menu.
 ### Claude Code
 
 ```sh
-claude mcp add datadive -- npx -y @datadive/mcp
+claude mcp add datadive -- npx -y @datadive-tools/mcp
 # Then add the env var via:
-#   claude mcp add datadive --env DATADIVE_API_KEY=ddk_live_... -- npx -y @datadive/mcp
+#   claude mcp add datadive --env DATADIVE_API_KEY=ddk_live_... -- npx -y @datadive-tools/mcp
 ```
 
 Or edit `.mcp.json` in your project / `~/.claude/mcp.json` globally with the
@@ -72,7 +72,7 @@ same JSON shape as above.
 {
   "datadive": {
     "command": "npx",
-    "args": ["-y", "@datadive/mcp"],
+    "args": ["-y", "@datadive-tools/mcp"],
     "env": { "DATADIVE_API_KEY": "ddk_live_..." }
   }
 }
