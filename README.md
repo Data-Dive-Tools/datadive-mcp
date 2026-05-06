@@ -106,7 +106,7 @@ Read-only. All data is scoped to the organization that owns the API key.
 
 | Env var | Required | Default | Notes |
 |---|---|---|---|
-| `DATADIVE_API_KEY` | yes | — | Generate at https://app.datadive.tools/api-key |
+| `DATADIVE_API_KEY` | yes | — | Generate at https://2.datadive.tools/api-key |
 | `DATADIVE_API_BASE_URL` | no | `https://api.datadive.tools` | Override for staging |
 
 ## Troubleshooting
@@ -116,8 +116,8 @@ specific HTTP status from the DataDive API.
 
 | Message starts with… | What to do |
 |---|---|
-| **Authentication failed: your DATADIVE_API_KEY is invalid or expired** | The key is wrong, deleted, or expired. Generate a new one at https://app.datadive.tools/api-key. |
-| **Subscription is inactive or paused** | Resume billing at https://app.datadive.tools — the API key is valid but the subscription isn't active. |
+| **Authentication failed: your DATADIVE_API_KEY is invalid or expired** | The key is wrong, deleted, or expired. Generate a new one at https://2.datadive.tools/api-key. |
+| **Subscription is inactive or paused** | Resume billing at https://2.datadive.tools — the API key is valid but the subscription isn't active. |
 | **Forbidden** | The key is valid but doesn't have access to that resource. Usually a niche/rank-radar that belongs to a different org. |
 | **Rate limit exceeded** | Wait a few seconds and retry. |
 | **Bad request** | Check the parameters — the message echoes the server's validation error (e.g., `pageSize must not exceed 100`). |
