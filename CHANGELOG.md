@@ -1,5 +1,11 @@
 # @datadive-tools/mcp
 
+## 0.1.1
+
+### Patch Changes
+
+- ff86f98: Fix incorrect API key portal URL in error messages and config docs (was `app.datadive.tools`, should be `2.datadive.tools`).
+
 ## 0.1.0
 
 Initial release. MVP MCP server that wraps the existing DataDive `/v1/*` external
