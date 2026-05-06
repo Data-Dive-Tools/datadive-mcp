@@ -16,5 +16,5 @@ API as 6 read-only tools usable from Claude Desktop, Claude Code, and Cursor.
 
 ### Auth
 
-Requires a DataDive API key. Generate one at https://app.datadive.tools/api-key
+Requires a DataDive API key. Generate one at https://2.datadive.tools/api-key
 (billing-manager role required, Standard plan or higher).
