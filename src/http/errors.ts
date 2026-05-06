@@ -11,7 +11,7 @@
  *   datadive-backend/src/external-api/external-api-v1.controller.ts (per-route docs)
  */
 
-const KEY_HELP_URL = "https://app.datadive.tools/api-key";
+const KEY_HELP_URL = "https://2.datadive.tools/api-key";
 
 export type ApiErrorKind =
   | "auth"
@@ -60,7 +60,7 @@ export class ApiError extends Error {
       return new ApiError(
         "payment",
         402,
-        "Subscription is inactive or paused. Resume billing at https://app.datadive.tools to use the API.",
+        "Subscription is inactive or paused. Resume billing at https://2.datadive.tools to use the API.",
         body,
       );
     }

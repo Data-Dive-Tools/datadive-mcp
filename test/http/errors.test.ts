@@ -12,7 +12,7 @@ describe("ApiError.fromHttp", () => {
     const e = ApiError.fromHttp(401, { message: "Api key is invalid" });
     expect(e.kind).toBe("auth");
     expect(e.message).toContain("DATADIVE_API_KEY");
-    expect(e.message).toContain("app.datadive.tools/api-key");
+    expect(e.message).toContain("2.datadive.tools/api-key");
   });
 
   it("402 -> payment", () => {

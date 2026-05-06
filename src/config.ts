@@ -2,7 +2,7 @@
  * Loads and validates the server's runtime configuration from environment.
  *
  * Required:
- *   DATADIVE_API_KEY        - your DataDive API key (generate at app.datadive.tools/api-key)
+ *   DATADIVE_API_KEY        - your DataDive API key (generate at 2.datadive.tools/api-key)
  *
  * Optional:
  *   DATADIVE_API_BASE_URL   - override the API base URL (defaults to https://api.datadive.tools)
@@ -14,7 +14,7 @@ export interface Config {
 }
 
 const DEFAULT_BASE_URL = "https://api.datadive.tools";
-const KEY_HELP_URL = "https://app.datadive.tools/api-key";
+const KEY_HELP_URL = "https://2.datadive.tools/api-key";
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const apiKey = (env.DATADIVE_API_KEY ?? "").trim();

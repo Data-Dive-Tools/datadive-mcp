@@ -23,7 +23,7 @@ describe("loadConfig", () => {
 
   it("throws a helpful error when the api key is missing", () => {
     expect(() => loadConfig({})).toThrow(/DATADIVE_API_KEY environment variable is required/);
-    expect(() => loadConfig({})).toThrow(/app\.datadive\.tools\/api-key/);
+    expect(() => loadConfig({})).toThrow(/2\.datadive\.tools\/api-key/);
   });
 
   it("throws when the api key is empty/whitespace", () => {
