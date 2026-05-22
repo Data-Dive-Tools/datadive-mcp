@@ -95,6 +95,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
+| `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from your Connections page. |
 
 Read-only. All data is scoped to the organization that owns the API key.
 

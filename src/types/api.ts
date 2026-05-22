@@ -161,3 +161,28 @@ export interface KrtKeyword {
 }
 
 export type RankRadarKeywordList = KrtKeyword[];
+
+// ─── /v1/sellers/:sellerId/marketplaces/:marketplace/asins/:asin/inventory ────
+//      (InventoryByFcResponseDto, wrapped)
+
+export interface InventoryByFcItem {
+  /** Fulfillment center code. */
+  fc: string;
+  /** State or region code where the FC is located, when known. */
+  state: string;
+  /** Units of sellable inventory currently at this FC. May be 0 when stock is out. */
+  availableStock: number;
+  /** Share of the ASIN's total sellable inventory at this FC, as a 0..1 fraction. */
+  availableStockPercentage: number;
+}
+
+export interface InventoryByFcResponse {
+  asin: string;
+  sellerId: string;
+  /** Marketplace enum: "com", "ca", "co.uk", "com.mx", "in", "fr", "de", "es", "it", "co.jp". */
+  marketplace: string;
+  /** ISO timestamp of last successful ingestion. Null if none in the last 30 days. */
+  lastUpdatedAt: string | null;
+  totalSellableUnits: number;
+  distribution: InventoryByFcItem[];
+}
