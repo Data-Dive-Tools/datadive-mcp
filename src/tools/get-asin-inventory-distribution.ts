@@ -15,8 +15,10 @@ const inputSchema = {
     .describe('Amazon marketplace code, e.g. "com" for amazon.com or "co.uk" for amazon.co.uk.'),
   asin: z
     .string()
-    .min(1)
-    .describe("Amazon Standard Identification Number (10 characters, e.g. B08XYZ1234)."),
+    .regex(/^[A-Z0-9]{10}$/, "ASIN must be 10 uppercase alphanumeric characters (e.g. B08XYZ1234).")
+    .describe(
+      "Amazon Standard Identification Number (10 uppercase alphanumeric characters, e.g. B08XYZ1234).",
+    ),
 };
 
 export const getAsinInventoryDistributionTool: ToolDefinition<typeof inputSchema> = {

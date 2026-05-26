@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { z } from "zod";
 import { getAsinInventoryDistributionTool } from "../../src/tools/get-asin-inventory-distribution.js";
 import { CTX, mockFetch, getCallUrl } from "./_helpers.js";
 
@@ -11,7 +12,7 @@ describe("get_asin_inventory_distribution tool", () => {
     globalThis.fetch = originalFetch;
   });
 
-  it("URL-encodes all three path params", async () => {
+  it("URL-encodes the sellerId path param", async () => {
     const fetchMock = mockFetch({
       data: {
         asin: "B08XYZ1234",
@@ -71,5 +72,15 @@ describe("get_asin_inventory_distribution tool", () => {
     );
     expect(result).toEqual(inner);
     expect((result as { lastUpdatedAt: unknown }).lastUpdatedAt).toBeNull();
+  });
+
+  it("rejects an ASIN that is not 10 uppercase alphanumeric characters", () => {
+    const schema = z.object(getAsinInventoryDistributionTool.inputSchema);
+    const base = { sellerId: "A1B2C3", marketplace: "com" } as const;
+    expect(() => schema.parse({ ...base, asin: "short" })).toThrow();
+    expect(() => schema.parse({ ...base, asin: "b08xyz1234" })).toThrow();
+    expect(() => schema.parse({ ...base, asin: "B08XYZ12345" })).toThrow();
+    expect(() => schema.parse({ ...base, asin: "B08 XYZ123" })).toThrow();
+    expect(() => schema.parse({ ...base, asin: "B08XYZ1234" })).not.toThrow();
   });
 });
