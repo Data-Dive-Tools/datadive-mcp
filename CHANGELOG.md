@@ -1,13 +1,5 @@
 # @datadive-tools/mcp
 
-## Unreleased
-
-### Added
-
-- `get_asin_inventory_distribution` — per-fulfillment-center sellable inventory
-  for a given ASIN. Wraps `GET /v1/sellers/{sellerId}/marketplaces/{marketplace}/asins/{asin}/inventory`.
-  Returns `totalSellableUnits` and a per-FC `distribution` array.
-
 ## 0.1.0
 
 Initial release. MVP MCP server that wraps the existing DataDive `/v1/*` external
