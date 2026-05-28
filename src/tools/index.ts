@@ -10,6 +10,7 @@ import { getNicheCompetitorsTool } from "./get-niche-competitors.js";
 import { getRankingJuiceTool } from "./get-ranking-juice.js";
 import { listRankRadarsTool } from "./list-rank-radars.js";
 import { getRankRadarDataTool } from "./get-rank-radar-data.js";
+import { getAsinInventoryDistributionTool } from "./get-asin-inventory-distribution.js";
 import type { AnyTool } from "./types.js";
 
 // Note on the cast: each ToolDefinition<S> has a handler typed to its specific
@@ -22,6 +23,7 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankingJuiceTool,
   listRankRadarsTool,
   getRankRadarDataTool,
+  getAsinInventoryDistributionTool,
 ] as unknown as ReadonlyArray<AnyTool>;
 
 export type { ToolDefinition, AnyTool } from "./types.js";
