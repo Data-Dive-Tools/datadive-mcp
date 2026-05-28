@@ -40,7 +40,7 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/gha-mcp-version-publisher
+          role-to-assume: arn:aws:iam::237658314992:role/gha-mcp-version-publisher
           aws-region: us-east-1
       - name: Publish latest version to SSM
         if: steps.changesets.outputs.published == 'true'
