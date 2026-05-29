@@ -26,9 +26,69 @@
 
 import type { Config } from "../config.js";
 import { ApiError } from "./errors.js";
+import { version } from "../../package.json";
 
-/** Bumped at release time; written into the User-Agent header. */
-export const PKG_VERSION = "0.1.0";
+/**
+ * The running package version, inlined from package.json at build time by
+ * tsup/esbuild (and by vite under vitest). Single source of truth — no manual
+ * bump here, so it can never drift from what's published to npm.
+ *
+ * Written into the User-Agent header, and compared against the backend's
+ * advertised latest version (see noteLatestVersion) to nudge stale installs.
+ */
+export const PKG_VERSION: string = version;
+
+/** Response header the DataDive backend uses to advertise the latest published MCP version. */
+const LATEST_VERSION_HEADER = "x-datadive-mcp-latest";
+
+/**
+ * One-time upgrade notice. Armed when the backend advertises a version newer than
+ * the one we're running; consumed (and then suppressed for the rest of the session)
+ * by takeUpgradeNotice(). We surface it once per process so we don't nag on every call.
+ */
+let pendingUpgradeNotice: string | null = null;
+let hasWarned = false;
+
+/**
+ * Compares dotted version strings (major.minor.patch). Pre-release / build suffixes
+ * are stripped — a stable release is the signal we act on. Returns true iff `latest`
+ * is strictly newer than `current`. Exported for unit testing.
+ */
+export function isNewerVersion(latest: string, current: string): boolean {
+  const parse = (v: string) => v.split(/[-+]/)[0]!.split(".").map((n) => parseInt(n, 10) || 0);
+  const a = parse(latest);
+  const b = parse(current);
+  for (let i = 0; i < 3; i++) {
+    const da = a[i] ?? 0;
+    const db = b[i] ?? 0;
+    if (da !== db) return da > db;
+  }
+  return false;
+}
+
+/** Records the advertised latest version; arms a one-time notice if we're behind. Never throws. */
+function noteLatestVersion(latest: string | null): void {
+  if (!latest || hasWarned) return;
+  if (isNewerVersion(latest, PKG_VERSION)) {
+    pendingUpgradeNotice =
+      `A newer version of datadive-mcp is available (${latest}; you are running ${PKG_VERSION}). ` +
+      `Update by reinstalling the latest from npm — e.g. \`npm install -g @datadive-tools/mcp@latest\` — ` +
+      `or bump the @datadive-tools/mcp version in your MCP client config, then restart the client.`;
+  }
+}
+
+/**
+ * Returns a pending upgrade notice once, then suppresses further notices for the rest
+ * of the session. Called when assembling a tool result so the LLM can relay it to the
+ * user. Returns null when there's nothing to surface.
+ */
+export function takeUpgradeNotice(): string | null {
+  if (!pendingUpgradeNotice) return null;
+  const notice = pendingUpgradeNotice;
+  pendingUpgradeNotice = null;
+  hasWarned = true;
+  return notice;
+}
 
 const PAGINATION_KEYS = ["currentPage", "lastPage", "hasNext", "hasPrev", "pageSize", "total"] as const;
 
@@ -55,6 +115,10 @@ export async function httpGet<T>(ctx: RequestContext, path: string, query?: Reco
     const msg = e instanceof Error ? e.message : String(e);
     throw new ApiError("network", 0, `Network error reaching ${url}: ${msg}`);
   }
+
+  // The backend advertises the latest published MCP version on every response
+  // (including errors); arm a one-time upgrade notice if we're behind.
+  noteLatestVersion(res.headers.get(LATEST_VERSION_HEADER));
 
   const text = await res.text();
   let body: unknown;

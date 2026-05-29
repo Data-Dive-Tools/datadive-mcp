@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { httpGet, unwrap, PKG_VERSION } from "../../src/http/client.js";
+import { httpGet, unwrap, PKG_VERSION, isNewerVersion, takeUpgradeNotice } from "../../src/http/client.js";
 import { ApiError } from "../../src/http/errors.js";
 
 const ctx = {
@@ -7,13 +7,13 @@ const ctx = {
   toolName: "list_niches",
 };
 
-function mockFetch(response: { status?: number; body?: unknown; bodyText?: string }) {
+function mockFetch(response: { status?: number; body?: unknown; bodyText?: string; headers?: Record<string, string> }) {
   const status = response.status ?? 200;
   const text = response.bodyText ?? (response.body !== undefined ? JSON.stringify(response.body) : "");
   return vi.fn(async () =>
     new Response(text, {
       status,
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...response.headers },
     }),
   );
 }
@@ -118,5 +118,53 @@ describe("httpGet", () => {
 
     const result = await httpGet<typeof body>(ctx, "/v1/niches");
     expect(result).toEqual(body);
+  });
+});
+
+describe("isNewerVersion", () => {
+  it("detects newer major/minor/patch", () => {
+    expect(isNewerVersion("1.0.0", "0.9.9")).toBe(true);
+    expect(isNewerVersion("0.2.0", "0.1.9")).toBe(true);
+    expect(isNewerVersion("0.1.1", "0.1.0")).toBe(true);
+  });
+
+  it("returns false for equal or older versions", () => {
+    expect(isNewerVersion("0.1.0", "0.1.0")).toBe(false);
+    expect(isNewerVersion("0.1.0", "0.2.0")).toBe(false);
+    expect(isNewerVersion("1.0.0", "1.0.1")).toBe(false);
+  });
+
+  it("ignores pre-release and build suffixes", () => {
+    expect(isNewerVersion("0.2.0-beta.1", "0.1.0")).toBe(true);
+    expect(isNewerVersion("0.1.0-rc.1", "0.1.0")).toBe(false); // same release line
+    expect(isNewerVersion("0.1.0+build.5", "0.1.0")).toBe(false);
+  });
+});
+
+describe("upgrade notice", () => {
+  let originalFetch: typeof fetch;
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("arms a one-time notice when the backend advertises a newer version, then suppresses it", async () => {
+    expect(takeUpgradeNotice()).toBeNull(); // nothing armed yet
+
+    globalThis.fetch = mockFetch({
+      body: { data: { ok: true } },
+      headers: { "x-datadive-mcp-latest": "999.0.0" },
+    }) as unknown as typeof fetch;
+    await httpGet(ctx, "/v1/niches");
+
+    const notice = takeUpgradeNotice();
+    expect(notice).toContain("999.0.0");
+    expect(notice).toContain(PKG_VERSION);
+
+    // Consumed once; a second request must not re-arm it this session.
+    await httpGet(ctx, "/v1/niches");
+    expect(takeUpgradeNotice()).toBeNull();
   });
 });

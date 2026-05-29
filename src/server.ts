@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { Config } from "./config.js";
 import { allTools } from "./tools/index.js";
 import { ApiError } from "./http/errors.js";
-import { PKG_VERSION } from "./http/client.js";
+import { PKG_VERSION, takeUpgradeNotice } from "./http/client.js";
 
 export function buildServer(config: Config): McpServer {
   const server = new McpServer({
@@ -30,14 +30,23 @@ export function buildServer(config: Config): McpServer {
       async (args: Record<string, unknown>) => {
         try {
           const data = await tool.handler(args, { config });
-          return {
-            content: [
-              {
-                type: "text" as const,
-                text: JSON.stringify(data, null, 2),
-              },
-            ],
-          };
+          const content = [
+            {
+              type: "text" as const,
+              text: JSON.stringify(data, null, 2),
+            },
+          ];
+          // If the backend signaled a newer release, append a one-time upgrade
+          // nudge so the model relays it to the user. takeUpgradeNotice() returns
+          // null after the first time, so this fires at most once per session.
+          const notice = takeUpgradeNotice();
+          if (notice) {
+            content.push({
+              type: "text" as const,
+              text: `⚠️ datadive-mcp update available — ${notice}`,
+            });
+          }
+          return { content };
         } catch (err) {
           return {
             isError: true,
