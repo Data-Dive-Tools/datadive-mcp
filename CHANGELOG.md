@@ -1,5 +1,16 @@
 # @datadive-tools/mcp
 
+## 0.2.0
+
+### Minor Changes
+
+- Add `get_asin_inventory_distribution` tool — returns per-fulfillment-center sellable inventory for a given ASIN. Wraps `GET /v1/sellers/{sellerId}/marketplaces/{marketplace}/asins/{asin}/inventory` and returns `totalSellableUnits` plus a per-FC `distribution` array.
+- Drop support for Node.js <22. `engines.node` is now `>=22`, aligning with the actively supported LTS line. CI also bumped to Node 24.
+
+### Patch Changes
+
+- Fix incorrect API key portal URL in error messages and config docs (was `app.datadive.tools`, should be `2.datadive.tools`).
+
 ## 0.1.0
 
 Initial release. MVP MCP server that wraps the existing DataDive `/v1/*` external
