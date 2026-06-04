@@ -41,13 +41,9 @@ jobs:
                 fs.appendFileSync(process.env.GITHUB_OUTPUT, k + '=' + fmt(c[k]) + '\n'));
             "
           else
-            echo "No coverage summary found; emitting empty metrics"
-            {
-              echo "statements="
-              echo "branches="
-              echo "functions="
-              echo "lines="
-            } >> "$GITHUB_OUTPUT"
+            # Unset outputs evaluate to empty strings downstream, and the
+            # notify action omits the coverage line when all four are empty.
+            echo "No coverage summary found; skipping metrics"
           fi
 
       - name: Create release PR or publish
