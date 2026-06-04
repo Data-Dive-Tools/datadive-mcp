@@ -80,8 +80,9 @@ jobs:
       # "Version Packages" PR — only an actual npm publish notifies.
       # continue-on-error: a Slack hiccup must not mark a release run failed
       # after npm publish + SSM already succeeded (re-running would re-release).
+      # Skipped cleanly when SLACK_WEBHOOK_URL isn't configured.
       - name: Notify Slack on publish
-        if: steps.changesets.outputs.published == 'true'
+        if: steps.changesets.outputs.published == 'true' && secrets.SLACK_WEBHOOK_URL != ''
         continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
@@ -94,7 +95,7 @@ jobs:
           coverage-functions: ${{ steps.coverage.outputs.functions }}
           coverage-lines: ${{ steps.coverage.outputs.lines }}
       - name: Notify Slack on failure
-        if: failure()
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
         continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
