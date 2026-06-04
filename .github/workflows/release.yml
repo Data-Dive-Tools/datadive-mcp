@@ -82,8 +82,11 @@ jobs:
 
       # Slack stays silent when changesets only opens/updates the
       # "Version Packages" PR — only an actual npm publish notifies.
+      # continue-on-error: a Slack hiccup must not mark a release run failed
+      # after npm publish + SSM already succeeded (re-running would re-release).
       - name: Notify Slack on publish
         if: steps.changesets.outputs.published == 'true'
+        continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
           job-status: success
@@ -96,6 +99,7 @@ jobs:
           coverage-lines: ${{ steps.coverage.outputs.lines }}
       - name: Notify Slack on failure
         if: failure()
+        continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
           job-status: failure

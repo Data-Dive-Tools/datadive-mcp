@@ -33,7 +33,7 @@ async function run() {
 
   const text = `${prefix} ${env("WORKFLOW_NAME")}${contextPart}${triggeredPart} - <${env("RUN_URL")}|View Run>${coveragePart}${mentionPart}`;
 
-  console.error(`Sending Slack notification: ${jobStatus}`);
+  console.log(`Sending Slack notification: ${jobStatus}`);
 
   const response = await fetch(webhookUrl, {
     method: "POST",
@@ -47,7 +47,7 @@ async function run() {
     );
   }
 
-  console.error("✓ Slack notification sent successfully");
+  console.log("✓ Slack notification sent successfully");
 }
 
 run().catch((error) => {
