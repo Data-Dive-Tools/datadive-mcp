@@ -12,6 +12,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      # Mapped to env because the secrets context isn't available in step-level
+      # `if:` expressions — the notify steps check this to skip when unset.
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -82,7 +86,7 @@ jobs:
       # after npm publish + SSM already succeeded (re-running would re-release).
       # Skipped cleanly when SLACK_WEBHOOK_URL isn't configured.
       - name: Notify Slack on publish
-        if: steps.changesets.outputs.published == 'true' && secrets.SLACK_WEBHOOK_URL != ''
+        if: steps.changesets.outputs.published == 'true' && env.SLACK_WEBHOOK_URL != ''
         continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
@@ -95,7 +99,7 @@ jobs:
           coverage-functions: ${{ steps.coverage.outputs.functions }}
           coverage-lines: ${{ steps.coverage.outputs.lines }}
       - name: Notify Slack on failure
-        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
         continue-on-error: true
         uses: ./.github/actions/slack-notify
         with:
