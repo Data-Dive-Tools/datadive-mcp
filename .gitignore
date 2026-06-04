@@ -1,7 +1,5 @@
 node_modules
 dist
-!.github/actions/slack-notify/dist
-!.github/actions/slack-notify/dist/**
 coverage
 .DS_Store
 *.log

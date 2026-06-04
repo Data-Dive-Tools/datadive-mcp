@@ -20,6 +20,6 @@ export default [
     },
   },
   {
-    ignores: ["dist", "node_modules", "coverage", ".github/actions/slack-notify"],
+    ignores: ["dist", "node_modules", "coverage"],
   },
 ];

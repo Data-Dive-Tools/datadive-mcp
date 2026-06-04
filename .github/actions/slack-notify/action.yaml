@@ -20,7 +20,7 @@ inputs:
     required: false
     default: ""
   coverage-label:
-    description: "Label for the first coverage section (e.g. 'E2E Coverage')"
+    description: "Label for the coverage section (e.g. 'E2E Coverage')"
     required: false
     default: "Coverage"
   coverage-statements:
@@ -39,27 +39,25 @@ inputs:
     description: "Lines coverage percentage (e.g. 85.0%)"
     required: false
     default: ""
-  coverage2-label:
-    description: "Label for the second coverage section (e.g. 'Combined Coverage')"
-    required: false
-    default: "Coverage 2"
-  coverage2-statements:
-    description: "Second section statements coverage percentage"
-    required: false
-    default: ""
-  coverage2-branches:
-    description: "Second section branches coverage percentage"
-    required: false
-    default: ""
-  coverage2-functions:
-    description: "Second section functions coverage percentage"
-    required: false
-    default: ""
-  coverage2-lines:
-    description: "Second section lines coverage percentage"
-    required: false
-    default: ""
 
 runs:
-  using: "node24"
-  main: "dist/index.js"
+  using: composite
+  steps:
+    - name: Send Slack notification
+      shell: bash
+      # Inputs flow through env (not inline interpolation) so arbitrary
+      # commit-message content can't inject into the script.
+      env:
+        JOB_STATUS: ${{ inputs.job-status }}
+        SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
+        CONTEXT_MESSAGE: ${{ inputs.context-message }}
+        TRIGGERED_BY: ${{ inputs.triggered-by }}
+        MENTION: ${{ inputs.mention }}
+        COVERAGE_LABEL: ${{ inputs.coverage-label }}
+        COVERAGE_STATEMENTS: ${{ inputs.coverage-statements }}
+        COVERAGE_BRANCHES: ${{ inputs.coverage-branches }}
+        COVERAGE_FUNCTIONS: ${{ inputs.coverage-functions }}
+        COVERAGE_LINES: ${{ inputs.coverage-lines }}
+        WORKFLOW_NAME: ${{ github.workflow }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: node "$GITHUB_ACTION_PATH/notify.js"

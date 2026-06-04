@@ -100,7 +100,7 @@ jobs:
         with:
           job-status: failure
           slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          context-message: "Release workflow failed on ${{ github.sha }}"
+          context-message: ${{ github.event.head_commit.message }}
           triggered-by: ${{ github.actor }}
           coverage-statements: ${{ steps.coverage.outputs.statements }}
           coverage-branches: ${{ steps.coverage.outputs.branches }}
