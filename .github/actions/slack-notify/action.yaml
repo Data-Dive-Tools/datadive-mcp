@@ -1,0 +1,65 @@
+name: "Slack Notification on Workflow Execution Result"
+description: "Send Slack notification based on job result"
+inputs:
+  job-status:
+    description: "Status of the job (success/failure)"
+    required: true
+  slack-webhook-url:
+    description: "Slack webhook URL"
+    required: true
+  context-message:
+    description: "Additional context (PR title, commit message, etc.)"
+    required: false
+    default: ""
+  triggered-by:
+    description: "Who triggered the workflow"
+    required: false
+    default: ""
+  mention:
+    description: "Slack user mention to include on failure (e.g. <@U12345678>)"
+    required: false
+    default: ""
+  coverage-label:
+    description: "Label for the first coverage section (e.g. 'E2E Coverage')"
+    required: false
+    default: "Coverage"
+  coverage-statements:
+    description: "Statements coverage percentage (e.g. 85.2%)"
+    required: false
+    default: ""
+  coverage-branches:
+    description: "Branches coverage percentage (e.g. 72.1%)"
+    required: false
+    default: ""
+  coverage-functions:
+    description: "Functions coverage percentage (e.g. 60.5%)"
+    required: false
+    default: ""
+  coverage-lines:
+    description: "Lines coverage percentage (e.g. 85.0%)"
+    required: false
+    default: ""
+  coverage2-label:
+    description: "Label for the second coverage section (e.g. 'Combined Coverage')"
+    required: false
+    default: "Coverage 2"
+  coverage2-statements:
+    description: "Second section statements coverage percentage"
+    required: false
+    default: ""
+  coverage2-branches:
+    description: "Second section branches coverage percentage"
+    required: false
+    default: ""
+  coverage2-functions:
+    description: "Second section functions coverage percentage"
+    required: false
+    default: ""
+  coverage2-lines:
+    description: "Second section lines coverage percentage"
+    required: false
+    default: ""
+
+runs:
+  using: "node24"
+  main: "dist/index.js"
