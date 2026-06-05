@@ -17,6 +17,8 @@ const EXPECTED_TOOLS = [
   "list_rank_radars",
   "get_rank_radar_data",
   "get_asin_inventory_distribution",
+  "list_indexing_issue_alerts",
+  "list_blind_spend_alerts",
 ];
 
 describe("tool registry", () => {

@@ -85,7 +85,7 @@ Ask Claude: **"List my DataDive niches."**
 You should see a tool call to `list_niches` and a JSON response with your
 niches, plus pagination metadata. If you don't, see Troubleshooting below.
 
-## Available tools (v0.1)
+## Available tools
 
 | Tool | Description |
 |---|---|
@@ -96,6 +96,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
 | `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from your Connections page. |
+| `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
+| `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |
 
 Read-only. All data is scoped to the organization that owns the API key.
 
