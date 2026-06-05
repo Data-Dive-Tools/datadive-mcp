@@ -1,7 +1,7 @@
 /**
  * Opt-in smoke test: hits the real read-only list endpoints with a CI-provided key.
  *
- * Skipped unless DATADIVE_SMOKE_API_KEY is set. Wire into the nightly job in
+ * Runs only via `npm run test:smoke` with DATADIVE_SMOKE_API_KEY set. Wire into the nightly job in
  * .github/workflows/ci.yml; do not run on every PR (would hit external API
  * unnecessarily and require sharing the key).
  */
@@ -12,7 +12,10 @@ import { listIndexingIssueAlertsTool } from "../src/tools/list-indexing-issue-al
 import { listBlindSpendAlertsTool } from "../src/tools/list-blind-spend-alerts.js";
 import { loadConfig } from "../src/config.js";
 
-const KEY = process.env.DATADIVE_SMOKE_API_KEY;
+// Gate on the explicit opt-in flag (set by `npm run test:smoke`) in addition to
+// the key, so a key exported in the user's shell profile doesn't turn every
+// plain `npm test` into live API calls.
+const KEY = process.env.DATADIVE_SMOKE === "1" ? process.env.DATADIVE_SMOKE_API_KEY : undefined;
 
 function smokeConfig() {
   return loadConfig({
@@ -58,7 +61,7 @@ describe.skipIf(!KEY)("smoke: /v1/alerts against staging", () => {
   });
 });
 
-describe.skipIf(KEY)("smoke (skipped — DATADIVE_SMOKE_API_KEY not set)", () => {
+describe.skipIf(KEY)("smoke (skipped — run via `npm run test:smoke` with DATADIVE_SMOKE_API_KEY set)", () => {
   it("placeholder so the file shows up in test output", () => {
     expect(true).toBe(true);
   });

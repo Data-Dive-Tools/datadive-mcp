@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { listBlindSpendAlertsTool } from "../../src/tools/list-blind-spend-alerts.js";
+import { alertsQueryInputSchema } from "../../src/tools/alert-query.js";
 import { CTX, mockFetch, getCallUrl } from "./_helpers.js";
 
 describe("list_blind_spend_alerts tool", () => {
@@ -9,6 +10,10 @@ describe("list_blind_spend_alerts tool", () => {
   });
   afterEach(() => {
     globalThis.fetch = originalFetch;
+  });
+
+  it("uses the shared alerts query schema (validation rules covered in alert-query.test.ts)", () => {
+    expect(listBlindSpendAlertsTool.inputSchema).toBe(alertsQueryInputSchema);
   });
 
   it("sends only provided query params; skips undefined", async () => {
@@ -67,32 +72,5 @@ describe("list_blind_spend_alerts tool", () => {
 
     const result = await listBlindSpendAlertsTool.handler({}, CTX);
     expect(result).toEqual(body);
-  });
-
-  it("rejects an invalid status enum value at the schema level", () => {
-    const schema = listBlindSpendAlertsTool.inputSchema;
-    expect(() => schema.status.parse("BANANA")).toThrow();
-    expect(schema.status.parse("all")).toBe("all");
-  });
-
-  it("rejects pageSize above the API cap of 50", () => {
-    const schema = listBlindSpendAlertsTool.inputSchema;
-    expect(() => schema.pageSize.parse(51)).toThrow();
-    expect(schema.pageSize.parse(50)).toBe(50);
-  });
-
-  it("rejects an empty or unsupported marketplace at the schema level", () => {
-    const schema = listBlindSpendAlertsTool.inputSchema;
-    expect(() => schema.marketplace.parse("")).toThrow();
-    expect(() => schema.marketplace.parse("xyz")).toThrow();
-    expect(schema.marketplace.parse("com")).toBe("com");
-  });
-
-  it("rejects a non-ISO-8601 updatedSince at the schema level", () => {
-    const schema = listBlindSpendAlertsTool.inputSchema;
-    expect(() => schema.updatedSince.parse("")).toThrow();
-    expect(() => schema.updatedSince.parse("last week")).toThrow();
-    expect(schema.updatedSince.parse("2026-05-01")).toBe("2026-05-01");
-    expect(schema.updatedSince.parse("2026-05-01T00:00:00Z")).toBe("2026-05-01T00:00:00Z");
   });
 });

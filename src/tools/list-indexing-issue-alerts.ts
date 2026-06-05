@@ -1,48 +1,9 @@
-import { z } from "zod";
 import { httpGet } from "../http/client.js";
-import { ALERT_STATUSES, SUPPORTED_MARKETPLACES, type IndexingIssueAlertList } from "../types/api.js";
+import type { IndexingIssueAlertList } from "../types/api.js";
+import { alertsQueryInputSchema } from "./alert-query.js";
 import type { ToolDefinition } from "./types.js";
 
-/** ISO-8601 date or timestamp, mirroring the backend's @IsISO8601() (date-only allowed). */
-const ISO_8601 = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
-
-const inputSchema = {
-  sellerId: z
-    .string()
-    .min(1)
-    .max(50)
-    .optional()
-    .describe("Filter to a single connected Amazon seller account ID, e.g. \"A1B2C3D4E5\"."),
-  marketplace: z
-    .enum(SUPPORTED_MARKETPLACES)
-    .optional()
-    .describe('Filter to a single Amazon marketplace code, e.g. "com" for amazon.com or "co.uk" for amazon.co.uk.'),
-  status: z
-    .enum(ALERT_STATUSES)
-    .optional()
-    .describe(
-      "Lifecycle filter. `active` (default) returns unresolved alerts, `resolved` returns resolved alerts, " +
-        "`all` returns both. Dismissed alerts are never returned.",
-    ),
-  updatedSince: z
-    .string()
-    .regex(ISO_8601, "updatedSince must be an ISO-8601 date or timestamp (e.g. 2026-05-01 or 2026-05-01T00:00:00Z)")
-    .optional()
-    .describe(
-      "ISO-8601 timestamp; return only alerts surfaced at or after this time (filters on `lastAlertedAt`). " +
-        "Use it to incrementally sync since your last poll. Defaults to the last 30 days when omitted.",
-    ),
-  currentPage: z.number().int().min(1).optional().describe("Page number, 1-indexed. Defaults to 1."),
-  pageSize: z
-    .number()
-    .int()
-    .min(1)
-    .max(50)
-    .optional()
-    .describe("Items per page (max 50). Defaults to 20."),
-};
-
-export const listIndexingIssueAlertsTool: ToolDefinition<typeof inputSchema> = {
+export const listIndexingIssueAlertsTool: ToolDefinition<typeof alertsQueryInputSchema> = {
   name: "list_indexing_issue_alerts",
   title: "List Indexing-Issue Alerts",
   description:
@@ -52,7 +13,7 @@ export const listIndexingIssueAlertsTool: ToolDefinition<typeof inputSchema> = {
     "from the last 30 days; filter by `sellerId`, `marketplace`, `status`, or `updatedSince` (for incremental " +
     "polling). Each item includes id, asin, title, imageUrl, isParent, sellerId, marketplace, lastAlertedAt, " +
     "and resolvedAt. Supports pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
-  inputSchema,
+  inputSchema: alertsQueryInputSchema,
   handler: async (args, ctx) => {
     return await httpGet<IndexingIssueAlertList>(
       { config: ctx.config, toolName: "list_indexing_issue_alerts" },

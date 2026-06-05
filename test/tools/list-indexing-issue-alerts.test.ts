@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { listIndexingIssueAlertsTool } from "../../src/tools/list-indexing-issue-alerts.js";
+import { alertsQueryInputSchema } from "../../src/tools/alert-query.js";
 import { CTX, mockFetch, getCallUrl } from "./_helpers.js";
 
 describe("list_indexing_issue_alerts tool", () => {
@@ -9,6 +10,10 @@ describe("list_indexing_issue_alerts tool", () => {
   });
   afterEach(() => {
     globalThis.fetch = originalFetch;
+  });
+
+  it("uses the shared alerts query schema (validation rules covered in alert-query.test.ts)", () => {
+    expect(listIndexingIssueAlertsTool.inputSchema).toBe(alertsQueryInputSchema);
   });
 
   it("sends only provided query params; skips undefined", async () => {
@@ -59,26 +64,5 @@ describe("list_indexing_issue_alerts tool", () => {
 
     const result = await listIndexingIssueAlertsTool.handler({}, CTX);
     expect(result).toEqual(body);
-  });
-
-  it("rejects an invalid status enum value at the schema level", () => {
-    const schema = listIndexingIssueAlertsTool.inputSchema;
-    expect(() => schema.status.parse("dismissed")).toThrow();
-    expect(schema.status.parse("active")).toBe("active");
-  });
-
-  it("rejects an empty or unsupported marketplace at the schema level", () => {
-    const schema = listIndexingIssueAlertsTool.inputSchema;
-    expect(() => schema.marketplace.parse("")).toThrow();
-    expect(() => schema.marketplace.parse("xyz")).toThrow();
-    expect(schema.marketplace.parse("co.uk")).toBe("co.uk");
-  });
-
-  it("rejects a non-ISO-8601 updatedSince at the schema level", () => {
-    const schema = listIndexingIssueAlertsTool.inputSchema;
-    expect(() => schema.updatedSince.parse("")).toThrow();
-    expect(() => schema.updatedSince.parse("last week")).toThrow();
-    expect(schema.updatedSince.parse("2026-05-01")).toBe("2026-05-01");
-    expect(schema.updatedSince.parse("2026-05-01T00:00:00Z")).toBe("2026-05-01T00:00:00Z");
   });
 });

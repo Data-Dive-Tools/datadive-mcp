@@ -38,6 +38,23 @@ export interface PaginationResponse<T> {
   hasPrev: boolean;
 }
 
+/**
+ * Marketplace codes accepted by `marketplace` params across /v1 endpoints
+ * (alerts, inventory). Mirrors the backend's `SupportedMarketplaceEnum`.
+ */
+export const SUPPORTED_MARKETPLACES = [
+  "com",
+  "ca",
+  "co.uk",
+  "com.mx",
+  "in",
+  "fr",
+  "de",
+  "es",
+  "it",
+  "co.jp",
+] as const;
+
 // ─── /v1/niches  (NicheList = PaginationResponse<NicheItem>) ─────────────────
 
 export interface NicheItem {
@@ -195,23 +212,6 @@ export interface InventoryByFcResponse {
  */
 export const ALERT_STATUSES = ["active", "resolved", "all"] as const;
 export type AlertStatus = (typeof ALERT_STATUSES)[number];
-
-/**
- * Marketplace codes accepted by the `marketplace` query param.
- * Mirrors the backend's `SupportedMarketplaceEnum`.
- */
-export const SUPPORTED_MARKETPLACES = [
-  "com",
-  "ca",
-  "co.uk",
-  "com.mx",
-  "in",
-  "fr",
-  "de",
-  "es",
-  "it",
-  "co.jp",
-] as const;
 
 export interface IndexingIssueAlertItem {
   id: number;
