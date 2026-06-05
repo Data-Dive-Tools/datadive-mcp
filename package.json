@@ -19,6 +19,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage --coverage.include=\"src/**\" --coverage.reporter=json-summary --coverage.reporter=text",
     "test:watch": "vitest",
     "test:smoke": "DATADIVE_SMOKE=1 vitest run test/smoke.test.ts",
     "lint": "eslint .",
@@ -51,10 +52,11 @@
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "4.1.8",
     "eslint": "^9.0.0",
     "prettier": "^3.0.0",
     "tsup": "^8.0.0",
     "typescript": "~5.9.0",
-    "vitest": "^4.1.8"
+    "vitest": "4.1.8"
   }
 }

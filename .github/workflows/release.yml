@@ -12,6 +12,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      # Mapped to env because the secrets context isn't available in step-level
+      # `if:` expressions — the notify steps check this to skip when unset.
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -23,6 +27,29 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run build
+
+      # Coverage runs before publish so a failing test gates the release and
+      # coverage numbers are available for the Slack notification below.
+      - name: Run tests with coverage
+        run: npm run test:coverage
+      - name: Extract coverage metrics
+        id: coverage
+        if: always() # surface coverage even when a later step fails
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+              const c = require('./coverage/coverage-summary.json').total;
+              const fmt = (m) => (m && typeof m.pct === 'number') ? m.pct.toFixed(2) + '%' : '';
+              const fs = require('fs');
+              ['statements','branches','functions','lines'].forEach(k =>
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, k + '=' + fmt(c[k]) + '\n'));
+            "
+          else
+            # Unset outputs evaluate to empty strings downstream, and the
+            # notify action omits the coverage line when all four are empty.
+            echo "No coverage summary found; skipping metrics"
+          fi
+
       - name: Create release PR or publish
         id: changesets
         uses: changesets/action@v1
@@ -52,3 +79,35 @@ jobs:
             --type String \
             --overwrite \
             --value "$VERSION"
+
+      # Slack stays silent when changesets only opens/updates the
+      # "Version Packages" PR — only an actual npm publish notifies.
+      # continue-on-error: a Slack hiccup must not mark a release run failed
+      # after npm publish + SSM already succeeded (re-running would re-release).
+      # Skipped cleanly when SLACK_WEBHOOK_URL isn't configured.
+      - name: Notify Slack on publish
+        if: steps.changesets.outputs.published == 'true' && env.SLACK_WEBHOOK_URL != ''
+        continue-on-error: true
+        uses: ./.github/actions/slack-notify
+        with:
+          job-status: success
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          context-message: "Published @datadive-tools/mcp v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }} to npm"
+          triggered-by: ${{ github.actor }}
+          coverage-statements: ${{ steps.coverage.outputs.statements }}
+          coverage-branches: ${{ steps.coverage.outputs.branches }}
+          coverage-functions: ${{ steps.coverage.outputs.functions }}
+          coverage-lines: ${{ steps.coverage.outputs.lines }}
+      - name: Notify Slack on failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        continue-on-error: true
+        uses: ./.github/actions/slack-notify
+        with:
+          job-status: failure
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          context-message: ${{ github.event.head_commit.message }}
+          triggered-by: ${{ github.actor }}
+          coverage-statements: ${{ steps.coverage.outputs.statements }}
+          coverage-branches: ${{ steps.coverage.outputs.branches }}
+          coverage-functions: ${{ steps.coverage.outputs.functions }}
+          coverage-lines: ${{ steps.coverage.outputs.lines }}

@@ -1,0 +1,63 @@
+name: "Slack Notification on Workflow Execution Result"
+description: "Send Slack notification based on job result"
+inputs:
+  job-status:
+    description: "Status of the job (success/failure)"
+    required: true
+  slack-webhook-url:
+    description: "Slack webhook URL"
+    required: true
+  context-message:
+    description: "Additional context (PR title, commit message, etc.)"
+    required: false
+    default: ""
+  triggered-by:
+    description: "Who triggered the workflow"
+    required: false
+    default: ""
+  mention:
+    description: "Slack user mention to include on failure (e.g. <@U12345678>)"
+    required: false
+    default: ""
+  coverage-label:
+    description: "Label for the coverage section (e.g. 'E2E Coverage')"
+    required: false
+    default: "Coverage"
+  coverage-statements:
+    description: "Statements coverage percentage (e.g. 85.2%)"
+    required: false
+    default: ""
+  coverage-branches:
+    description: "Branches coverage percentage (e.g. 72.1%)"
+    required: false
+    default: ""
+  coverage-functions:
+    description: "Functions coverage percentage (e.g. 60.5%)"
+    required: false
+    default: ""
+  coverage-lines:
+    description: "Lines coverage percentage (e.g. 85.0%)"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Send Slack notification
+      shell: bash
+      # Inputs flow through env (not inline interpolation) so arbitrary
+      # commit-message content can't inject into the script.
+      env:
+        JOB_STATUS: ${{ inputs.job-status }}
+        SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }}
+        CONTEXT_MESSAGE: ${{ inputs.context-message }}
+        TRIGGERED_BY: ${{ inputs.triggered-by }}
+        MENTION: ${{ inputs.mention }}
+        COVERAGE_LABEL: ${{ inputs.coverage-label }}
+        COVERAGE_STATEMENTS: ${{ inputs.coverage-statements }}
+        COVERAGE_BRANCHES: ${{ inputs.coverage-branches }}
+        COVERAGE_FUNCTIONS: ${{ inputs.coverage-functions }}
+        COVERAGE_LINES: ${{ inputs.coverage-lines }}
+        WORKFLOW_NAME: ${{ github.workflow }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: node "$GITHUB_ACTION_PATH/notify.js"
