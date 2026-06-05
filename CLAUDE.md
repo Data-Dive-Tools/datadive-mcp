@@ -8,7 +8,7 @@ ESM only. See `README.md` for end-user setup and usage.
 
 - `npm run build` — bundle with tsup to `dist/`
 - `npm test` — unit tests (vitest)
-- `npm run test:smoke` — live-API smoke test; requires `DATADIVE_SMOKE=1` and a real `DATADIVE_API_KEY`
+- `npm run test:smoke` — live-API smoke test; skipped unless `DATADIVE_SMOKE_API_KEY` is set (optionally `DATADIVE_API_BASE_URL` to target a non-prod API)
 - `npm run lint` / `npm run typecheck`
 - `prepublishOnly` gates publish on lint + typecheck + test + build
 
@@ -27,4 +27,4 @@ ESM only. See `README.md` for end-user setup and usage.
 - Adding a tool: new file in `src/tools/` + register in `src/tools/index.ts` + matching test in `test/tools/`
 - Update `CHANGELOG.md` for user-visible changes
 - CI: `.github/workflows/ci.yml`; releases: `.github/workflows/release.yml`
-- Validate workflow file edits with `actionlint` — yaml-lint misses Actions expression errors (e.g. `secrets` context in step-level `if:`)
+- When editing workflow files, validate locally with `actionlint` (not enforced in CI) — yaml-lint misses Actions expression errors (e.g. `secrets` context in step-level `if:`)
