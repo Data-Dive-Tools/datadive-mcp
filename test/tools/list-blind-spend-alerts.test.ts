@@ -80,4 +80,19 @@ describe("list_blind_spend_alerts tool", () => {
     expect(() => schema.pageSize.parse(51)).toThrow();
     expect(schema.pageSize.parse(50)).toBe(50);
   });
+
+  it("rejects an empty or unsupported marketplace at the schema level", () => {
+    const schema = listBlindSpendAlertsTool.inputSchema;
+    expect(() => schema.marketplace.parse("")).toThrow();
+    expect(() => schema.marketplace.parse("xyz")).toThrow();
+    expect(schema.marketplace.parse("com")).toBe("com");
+  });
+
+  it("rejects a non-ISO-8601 updatedSince at the schema level", () => {
+    const schema = listBlindSpendAlertsTool.inputSchema;
+    expect(() => schema.updatedSince.parse("")).toThrow();
+    expect(() => schema.updatedSince.parse("last week")).toThrow();
+    expect(schema.updatedSince.parse("2026-05-01")).toBe("2026-05-01");
+    expect(schema.updatedSince.parse("2026-05-01T00:00:00Z")).toBe("2026-05-01T00:00:00Z");
+  });
 });

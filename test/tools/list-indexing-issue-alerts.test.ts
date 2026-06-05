@@ -66,4 +66,19 @@ describe("list_indexing_issue_alerts tool", () => {
     expect(() => schema.status.parse("dismissed")).toThrow();
     expect(schema.status.parse("active")).toBe("active");
   });
+
+  it("rejects an empty or unsupported marketplace at the schema level", () => {
+    const schema = listIndexingIssueAlertsTool.inputSchema;
+    expect(() => schema.marketplace.parse("")).toThrow();
+    expect(() => schema.marketplace.parse("xyz")).toThrow();
+    expect(schema.marketplace.parse("co.uk")).toBe("co.uk");
+  });
+
+  it("rejects a non-ISO-8601 updatedSince at the schema level", () => {
+    const schema = listIndexingIssueAlertsTool.inputSchema;
+    expect(() => schema.updatedSince.parse("")).toThrow();
+    expect(() => schema.updatedSince.parse("last week")).toThrow();
+    expect(schema.updatedSince.parse("2026-05-01")).toBe("2026-05-01");
+    expect(schema.updatedSince.parse("2026-05-01T00:00:00Z")).toBe("2026-05-01T00:00:00Z");
+  });
 });

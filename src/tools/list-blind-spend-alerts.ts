@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { httpGet } from "../http/client.js";
-import { ALERT_STATUSES, type BlindSpendAlertList } from "../types/api.js";
+import { ALERT_STATUSES, SUPPORTED_MARKETPLACES, type BlindSpendAlertList } from "../types/api.js";
 import type { ToolDefinition } from "./types.js";
+
+/** ISO-8601 date or timestamp, mirroring the backend's @IsISO8601() (date-only allowed). */
+const ISO_8601 = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
 
 const inputSchema = {
   sellerId: z
@@ -11,7 +14,7 @@ const inputSchema = {
     .optional()
     .describe("Filter to a single connected Amazon seller account ID, e.g. \"A1B2C3D4E5\"."),
   marketplace: z
-    .string()
+    .enum(SUPPORTED_MARKETPLACES)
     .optional()
     .describe('Filter to a single Amazon marketplace code, e.g. "com" for amazon.com or "co.uk" for amazon.co.uk.'),
   status: z
@@ -23,6 +26,7 @@ const inputSchema = {
     ),
   updatedSince: z
     .string()
+    .regex(ISO_8601, "updatedSince must be an ISO-8601 date or timestamp (e.g. 2026-05-01 or 2026-05-01T00:00:00Z)")
     .optional()
     .describe(
       "ISO-8601 timestamp; return only alerts surfaced at or after this time (filters on `lastAlertedAt`). " +
