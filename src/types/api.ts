@@ -10,7 +10,7 @@
  *                       datadive-backend/src/common/pagination/pagination.dto.ts
  *   3. Controller:      datadive-backend/src/external-api/external-api-v1.controller.ts
  *
- * Last synced: 2026-05-05.
+ * Last synced: 2026-06-05.
  *
  * The MCP server forwards JSON straight to the LLM, so deeply-nested DTOs are
  * intentionally typed loosely (with `unknown` or pass-through Records) where
@@ -37,6 +37,23 @@ export interface PaginationResponse<T> {
   hasNext: boolean;
   hasPrev: boolean;
 }
+
+/**
+ * Marketplace codes accepted by `marketplace` params across /v1 endpoints
+ * (alerts, inventory). Mirrors the backend's `SupportedMarketplaceEnum`.
+ */
+export const SUPPORTED_MARKETPLACES = [
+  "com",
+  "ca",
+  "co.uk",
+  "com.mx",
+  "in",
+  "fr",
+  "de",
+  "es",
+  "it",
+  "co.jp",
+] as const;
 
 // ─── /v1/niches  (NicheList = PaginationResponse<NicheItem>) ─────────────────
 
@@ -186,3 +203,64 @@ export interface InventoryByFcResponse {
   totalSellableUnits: number;
   distribution: InventoryByFcItem[];
 }
+
+// ─── /v1/alerts/indexing-issues  (IndexingIssueAlertListDto, bare) ───────────
+
+/**
+ * Allowed values for the `status` query param on the /v1/alerts/* endpoints.
+ * `active` is the server-side default; dismissed alerts are never returned.
+ */
+export const ALERT_STATUSES = ["active", "resolved", "all"] as const;
+export type AlertStatus = (typeof ALERT_STATUSES)[number];
+
+export interface IndexingIssueAlertItem {
+  id: number;
+  /** The ASIN that is no longer indexed for its tracked keywords. */
+  asin: string;
+  title: string | null;
+  imageUrl: string | null;
+  /** True when the ASIN is a parent of a variation family. */
+  isParent: boolean;
+  sellerId: string;
+  marketplace: string;
+  /** ISO timestamp of when the alert was most recently surfaced. Updates each time it re-fires. */
+  lastAlertedAt: string;
+  /** ISO timestamp of when the alert was resolved, or null if still active. */
+  resolvedAt: string | null;
+}
+
+export type IndexingIssueAlertList = PaginationResponse<IndexingIssueAlertItem>;
+
+// ─── /v1/alerts/blind-spend  (BlindSpendAlertListDto, bare) ──────────────────
+
+export interface BlindSpendSearchTerm {
+  /** The customer search term that wasted spend. */
+  term: string;
+  spend: number | null;
+  sales: number | null;
+  clicks: number | null;
+  /** Conversion rate as a 0..1 fraction. */
+  cvr: number | null;
+  impressions: number | null;
+}
+
+export interface BlindSpendAlertItem {
+  id: number;
+  asin: string | null;
+  title: string | null;
+  imageUrl: string | null;
+  sellerId: string;
+  marketplace: string;
+  /** ISO timestamp of when the alert was most recently surfaced. Updates each time it re-fires. */
+  lastAlertedAt: string;
+  /** ISO timestamp of when the alert was resolved, or null if still active. */
+  resolvedAt: string | null;
+  /** Total ad spend across the unresolved wasted-spend search terms. */
+  wastedSpend: number;
+  totalKeywordCount: number;
+  unresolvedKeywordCount: number;
+  /** The unresolved wasted-spend search terms. */
+  searchTerms: BlindSpendSearchTerm[];
+}
+
+export type BlindSpendAlertList = PaginationResponse<BlindSpendAlertItem>;

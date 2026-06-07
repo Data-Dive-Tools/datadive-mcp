@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { httpGet } from "../http/client.js";
-import type { InventoryByFcResponse } from "../types/api.js";
+import { SUPPORTED_MARKETPLACES, type InventoryByFcResponse } from "../types/api.js";
 import type { ToolDefinition } from "./types.js";
 
 const inputSchema = {
@@ -11,7 +11,7 @@ const inputSchema = {
       "Amazon seller account ID as connected to DataDive. Find it on the Connections page at https://2.datadive.tools — there is no MCP discovery tool for sellers yet.",
     ),
   marketplace: z
-    .enum(["com", "ca", "co.uk", "com.mx", "in", "fr", "de", "es", "it", "co.jp"])
+    .enum(SUPPORTED_MARKETPLACES)
     .describe('Amazon marketplace code, e.g. "com" for amazon.com or "co.uk" for amazon.co.uk.'),
   asin: z
     .string()
