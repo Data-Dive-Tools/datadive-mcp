@@ -82,6 +82,8 @@ describe.skipIf(!KEY)("smoke: /v1/niches/:nicheId/roots against staging", () => 
       latestResearchDate: unknown;
     };
     // Envelope unwraps to a single object carrying the roots tables.
+    // toBeTruthy() first — toBeTypeOf("object") alone passes for null.
+    expect(result).toBeTruthy();
     expect(result).toBeTypeOf("object");
     expect(Array.isArray(result.roots)).toBe(true);
     expect(Array.isArray(result.normalizedRoots)).toBe(true);
@@ -95,6 +97,8 @@ describe.skipIf(!KEY)("smoke: /v1/quota against staging", () => {
       features: Record<string, { used: unknown; capacity: unknown }>;
     };
     expect(result).toHaveProperty("nextRefreshDate");
+    // toBeTruthy() first — toBeTypeOf("object") alone passes for null.
+    expect(result.features).toBeTruthy();
     expect(result.features).toBeTypeOf("object");
     // Every billable feature key is present, each with used/capacity.
     for (const feature of BILLABLE_FEATURE_TYPES) {
