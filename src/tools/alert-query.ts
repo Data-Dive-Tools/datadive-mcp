@@ -5,10 +5,7 @@
  */
 
 import { z } from "zod";
-import { ALERT_STATUSES, SUPPORTED_MARKETPLACES } from "../types/api.js";
-
-/** ISO-8601 date or timestamp, mirroring the backend's @IsISO8601() (date-only allowed). */
-const ISO_8601 = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
+import { ALERT_STATUSES, ISO_8601, SUPPORTED_MARKETPLACES } from "../types/api.js";
 
 export const alertsQueryInputSchema = {
   sellerId: z

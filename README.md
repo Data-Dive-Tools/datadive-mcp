@@ -44,7 +44,7 @@ Add the `datadive` entry under `mcpServers`:
       "command": "npx",
       "args": ["-y", "@datadive-tools/mcp"],
       "env": {
-        "DATADIVE_API_KEY": "ddk_live_..."
+        "DATADIVE_API_KEY": "YOUR_API_KEY"
       }
     }
   }
@@ -58,7 +58,7 @@ Restart Claude Desktop. You should see `datadive` in the tools menu.
 ```sh
 claude mcp add datadive -- npx -y @datadive-tools/mcp
 # Then add the env var via:
-#   claude mcp add datadive --env DATADIVE_API_KEY=ddk_live_... -- npx -y @datadive-tools/mcp
+#   claude mcp add datadive --env DATADIVE_API_KEY=YOUR_API_KEY -- npx -y @datadive-tools/mcp
 ```
 
 Or edit `.mcp.json` in your project / `~/.claude/mcp.json` globally with the
@@ -73,7 +73,7 @@ same JSON shape as above.
   "datadive": {
     "command": "npx",
     "args": ["-y", "@datadive-tools/mcp"],
-    "env": { "DATADIVE_API_KEY": "ddk_live_..." }
+    "env": { "DATADIVE_API_KEY": "YOUR_API_KEY" }
   }
 }
 ```
@@ -89,8 +89,9 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 
 | Tool | Description |
 |---|---|
-| `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the next four tools. |
+| `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the niche-scoped tools below. |
 | `get_niche_keywords` | Master keyword list for a niche: search volume, relevancy, competitor ASIN ranks. |
+| `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
 | `get_niche_competitors` | Competitor ASINs and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
@@ -98,6 +99,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
 | `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |
+| `get_quota` | Current quota usage and capacity per billable feature, plus the next refresh date. No arguments. |
+| `list_usage` | Paginated billable usage logs (token-consumption events). Filter by `type`, `search` (user), and `startDate`/`endDate`. |
 
 Read-only. All data is scoped to the organization that owns the API key.
 
@@ -154,16 +157,10 @@ npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
 ```
 
-Smoke test against staging:
-
-```sh
-DATADIVE_SMOKE_API_KEY=ddk_test_... DATADIVE_API_BASE_URL=https://api-staging.datadive.tools npm run test:smoke
-```
-
 Test the binary end-to-end with the MCP Inspector:
 
 ```sh
-DATADIVE_API_KEY=ddk_live_... npx @modelcontextprotocol/inspector dist/index.js
+DATADIVE_API_KEY=YOUR_API_KEY npx @modelcontextprotocol/inspector dist/index.js
 ```
 
 ## Releasing
