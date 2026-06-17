@@ -10,7 +10,7 @@
  *                       datadive-backend/src/common/pagination/pagination.dto.ts
  *   3. Controller:      datadive-backend/src/external-api/external-api-v1.controller.ts
  *
- * Last synced: 2026-06-05.
+ * Last synced: 2026-06-17.
  *
  * The MCP server forwards JSON straight to the LLM, so deeply-nested DTOs are
  * intentionally typed loosely (with `unknown` or pass-through Records) where
@@ -37,6 +37,13 @@ export interface PaginationResponse<T> {
   hasNext: boolean;
   hasPrev: boolean;
 }
+
+/**
+ * ISO-8601 date or timestamp, mirroring the backend's `@IsISO8601()` (date-only
+ * allowed). Shared by the date/timestamp query params across /v1 tools
+ * (alerts `updatedSince`, usage `startDate`/`endDate`).
+ */
+export const ISO_8601 = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
 
 /**
  * Marketplace codes accepted by `marketplace` params across /v1 endpoints
@@ -264,3 +271,85 @@ export interface BlindSpendAlertItem {
 }
 
 export type BlindSpendAlertList = PaginationResponse<BlindSpendAlertItem>;
+
+// ─── Billable features (shared by /v1/quota and /v1/usage) ───────────────────
+
+/**
+ * Billable feature types. These are both the keys of the `quota.features` object
+ * and the allowed values of the `type` filter on /v1/usage. Mirrors the backend's
+ * billable-feature enum.
+ */
+export const BILLABLE_FEATURE_TYPES = [
+  "DIVED_ASINS",
+  "PRODUCT_BRIEF_ASINS",
+  "AI_COPYWRITER_PROMPTS",
+  "RANK_RADAR_KEYWORDS",
+] as const;
+export type BillableFeatureType = (typeof BILLABLE_FEATURE_TYPES)[number];
+
+// ─── /v1/niches/:nicheId/roots  (ExternalRootResponseDto[], wrapped) ─────────
+
+export interface RootsTableItem {
+  /** A word or word-combination extracted from the master keyword list. */
+  root: string;
+  /** Count of keywords in the master list that contain this root. */
+  frequency: number;
+  /** Sum of search volume across all original keywords containing this root. */
+  broadSearchVolume: number;
+  /** broadSearchVolume / maxBroadSearchVolume, as a 0..1 fraction. */
+  broadSearchVolumeRatio: number;
+}
+
+/**
+ * Keyword-roots analysis for a Niche. `keywords` and `consolidatedKeywords` are
+ * the per-keyword breakdowns (kept opaque — the LLM sees the full JSON); `roots`
+ * and `normalizedRoots` are the ranked root tables.
+ *
+ * Note: the OpenAPI spec types the endpoint's `data` as an array, but the live
+ * API returns a single object (verified against api-qa, 2026-06-17). The client's
+ * unwrap() strips the `{ data }` envelope, so the tool returns this object directly.
+ */
+export interface NicheRoots {
+  keywords: Array<Record<string, unknown>>;
+  consolidatedKeywords: Array<Record<string, unknown>>;
+  roots: RootsTableItem[];
+  normalizedRoots: RootsTableItem[];
+  /** ISO date string of the last successful research for the niche. */
+  latestResearchDate: string;
+}
+
+// ─── /v1/quota  (ExternalQuotaResponseDto) ───────────────────────────────────
+
+export interface QuotaFeature {
+  /** Current usage count. Null when not applicable to the plan. */
+  used: number | null;
+  /** Quota capacity. Null when unlimited / not applicable. */
+  capacity: number | null;
+}
+
+export interface Quota {
+  /** ISO-8601 timestamp of the next quota reset. Null when no reset is scheduled. */
+  nextRefreshDate: string | null;
+  /** Per-billable-feature usage and capacity. */
+  features: Record<BillableFeatureType, QuotaFeature>;
+}
+
+// ─── /v1/usage  (ExternalUsageLogListDto, bare PaginationResponse) ───────────
+
+export interface UsageLogItem {
+  /** Name of the user who performed the action. Null when unknown. */
+  name: string | null;
+  email: string;
+  /** Number of tokens consumed. */
+  qty: number;
+  type: BillableFeatureType;
+  /** Specific action performed (e.g. "RANK_RADAR_CREATE"). Null when not set. */
+  action: string | null;
+  nicheId: string | null;
+  nicheName: string | null;
+  rankRadarId: string | null;
+  /** ISO timestamp of when the usage was recorded. */
+  date: string;
+}
+
+export type UsageLogList = PaginationResponse<UsageLogItem>;

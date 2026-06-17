@@ -8,8 +8,12 @@
 
 import { describe, it, expect } from "vitest";
 import { listNichesTool } from "../src/tools/list-niches.js";
+import { getNicheRootsTool } from "../src/tools/get-niche-roots.js";
 import { listIndexingIssueAlertsTool } from "../src/tools/list-indexing-issue-alerts.js";
 import { listBlindSpendAlertsTool } from "../src/tools/list-blind-spend-alerts.js";
+import { getQuotaTool } from "../src/tools/get-quota.js";
+import { listUsageTool } from "../src/tools/list-usage.js";
+import { BILLABLE_FEATURE_TYPES } from "../src/types/api.js";
 import { loadConfig } from "../src/config.js";
 
 // Gate on the explicit opt-in flag (set by `npm run test:smoke`) in addition to
@@ -55,6 +59,54 @@ describe.skipIf(!KEY)("smoke: /v1/alerts against staging", () => {
       { pageSize: 1 },
       { config: smokeConfig() },
     )) as PaginatedBody;
+    expect(Array.isArray(result.data)).toBe(true);
+    expect(result.currentPage).toBe(1);
+    expect(result.pageSize).toBe(1);
+  });
+});
+
+describe.skipIf(!KEY)("smoke: /v1/niches/:nicheId/roots against staging", () => {
+  it("get_niche_roots returns the roots tables for a real niche", async () => {
+    const config = smokeConfig();
+    const niches = (await listNichesTool.handler({ pageSize: 1 }, { config })) as PaginatedBody;
+    const first = niches.data[0] as { nicheId?: string } | undefined;
+    if (!first?.nicheId) {
+      // QA account has no niches — nothing to dive into. Skip the shape assertion.
+      console.warn("smoke: skipping get_niche_roots — no niches in this account");
+      return;
+    }
+
+    const result = (await getNicheRootsTool.handler({ nicheId: first.nicheId }, { config })) as {
+      roots: unknown;
+      normalizedRoots: unknown;
+      latestResearchDate: unknown;
+    };
+    // Envelope unwraps to a single object carrying the roots tables.
+    expect(result).toBeTypeOf("object");
+    expect(Array.isArray(result.roots)).toBe(true);
+    expect(Array.isArray(result.normalizedRoots)).toBe(true);
+  });
+});
+
+describe.skipIf(!KEY)("smoke: /v1/quota against staging", () => {
+  it("get_quota returns per-feature usage and a refresh date", async () => {
+    const result = (await getQuotaTool.handler({}, { config: smokeConfig() })) as {
+      nextRefreshDate: unknown;
+      features: Record<string, { used: unknown; capacity: unknown }>;
+    };
+    expect(result).toHaveProperty("nextRefreshDate");
+    expect(result.features).toBeTypeOf("object");
+    // Every billable feature key is present, each with used/capacity.
+    for (const feature of BILLABLE_FEATURE_TYPES) {
+      expect(result.features[feature]).toHaveProperty("used");
+      expect(result.features[feature]).toHaveProperty("capacity");
+    }
+  });
+});
+
+describe.skipIf(!KEY)("smoke: /v1/usage against staging", () => {
+  it("list_usage returns a paginated body", async () => {
+    const result = (await listUsageTool.handler({ pageSize: 1 }, { config: smokeConfig() })) as PaginatedBody;
     expect(Array.isArray(result.data)).toBe(true);
     expect(result.currentPage).toBe(1);
     expect(result.pageSize).toBe(1);

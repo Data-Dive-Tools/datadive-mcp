@@ -12,6 +12,7 @@ import { buildServer } from "../src/server.js";
 const EXPECTED_TOOLS = [
   "list_niches",
   "get_niche_keywords",
+  "get_niche_roots",
   "get_niche_competitors",
   "get_ranking_juice",
   "list_rank_radars",
@@ -19,6 +20,8 @@ const EXPECTED_TOOLS = [
   "get_asin_inventory_distribution",
   "list_indexing_issue_alerts",
   "list_blind_spend_alerts",
+  "get_quota",
+  "list_usage",
 ];
 
 describe("tool registry", () => {
