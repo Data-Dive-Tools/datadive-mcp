@@ -15,6 +15,9 @@ except as the `x-api-key` header on requests to `api.datadive.tools`.
 - "What's my ranking juice for niche X — where can I improve?"
 - "Show me my rank radars."
 - "Plot the organic ranking trend for rank radar Y from 2024-03-01 to 2024-04-01."
+- "Run a niche dive on ASIN B08N5WRWNW in the US marketplace with 5 competitors."
+- "Is my dive done yet?"
+- "Start a rank radar tracking 10 keywords for ASIN B08N5WRWNW in niche X."
 
 ## 1. Get a DataDive API key
 
@@ -96,17 +99,42 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
+| `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
+| `get_dive_status` | Poll a dive started by `create_niche_dive`: `in_progress`, `success` (carries the new `nicheId`), or `error`. |
+| `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
 | `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
 | `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |
 | `get_quota` | Current quota usage and capacity per billable feature, plus the next refresh date. No arguments. |
 | `list_usage` | Paginated billable usage logs (token-consumption events). Filter by `type`, `search` (user), and `startDate`/`endDate`. |
 
-Read-only. All data is scoped to the organization that owns the API key.
+All data is scoped to the organization that owns the API key. Most tools are
+read-only; the three `create_*` / dive tools below spend tokens — see
+[Creating dives & rank radars](#creating-dives--rank-radars).
 
-> **Coming in v1.1:** keyword roots, async niche dives with polling, rank-radar
-> creation, AI copywriter. We'll prioritize based on usage signal — if you
-> have a request, open an issue.
+> **Coming next:** AI copywriter. We'll prioritize based on usage signal — if
+> you have a request, open an issue.
+
+### Creating dives & rank radars
+
+`create_niche_dive` and `create_rank_radar` **consume billable tokens and cannot
+be undone**, so they require an explicit `confirm: true` argument. The assistant
+should confirm the cost with you before passing it. The amount scales with
+`numberOfCompetitors` (dives) / `numberOfKeywords` (rank radars). Check remaining
+balance any time with `get_quota`.
+
+To skip the per-call confirmation (e.g. in an automated setup), set
+`DATADIVE_AUTO_CONFIRM_WRITES=true` in your client config — then these tools run
+without `confirm`.
+
+Dives are **asynchronous**. `create_niche_dive` returns a `diveId` and an
+estimated completion time immediately; poll `get_dive_status` with that `diveId`
+until it reports `success`, which carries the new `nicheId` you then feed to
+`list_niches`, `get_niche_keywords`, and the other niche tools.
+
+> ⚠️ For `create_niche_dive`, `marketplace` uses full Amazon domain suffixes
+> (`com`, `co.uk`, `com.mx`, `co.jp`, …) — e.g. the UK marketplace is `co.uk`,
+> not `uk`.
 
 ## Configuration
 
@@ -114,6 +142,7 @@ Read-only. All data is scoped to the organization that owns the API key.
 |---|---|---|---|
 | `DATADIVE_API_KEY` | yes | — | Generate at https://2.datadive.tools/api-key |
 | `DATADIVE_API_BASE_URL` | no | `https://api.datadive.tools` | Override for staging |
+| `DATADIVE_AUTO_CONFIRM_WRITES` | no | `false` | Set truthy to let `create_niche_dive` / `create_rank_radar` run without `confirm: true`. |
 
 ## Troubleshooting
 

@@ -10,7 +10,7 @@
  *                       datadive-backend/src/common/pagination/pagination.dto.ts
  *   3. Controller:      datadive-backend/src/external-api/external-api-v1.controller.ts
  *
- * Last synced: 2026-06-17.
+ * Last synced: 2026-06-18.
  *
  * The MCP server forwards JSON straight to the LLM, so deeply-nested DTOs are
  * intentionally typed loosely (with `unknown` or pass-through Records) where
@@ -165,6 +165,35 @@ export type RankRadarList = PaginationResponse<RankRadarItem>;
 /** Allowed values for the `status` query param on /v1/niches/rank-radars. */
 export const RANK_RADAR_STATUSES = ["ACTIVE", "PAUSED", "ARCHIVED"] as const;
 export type RankRadarStatus = (typeof RANK_RADAR_STATUSES)[number];
+
+// ─── POST /v1/niches/rank-radars  (CreateRankRadarSuccessResponseDto, bare) ──
+
+/** Result of creating a Rank Radar. */
+export interface CreateRankRadarResult {
+  rankRadarId: string;
+}
+
+// ─── POST /v1/niches/dives  (CreateNicheDiveSuccessResponseDto, bare) ────────
+
+/** Result of kicking off a Niche Dive. Poll get_dive_status with `diveId`. */
+export interface CreateNicheDiveResult {
+  diveId: string;
+  /** ISO-8601 estimated completion timestamp. */
+  estimatedCompletionDate: string;
+}
+
+// ─── GET /v1/niches/dives/:diveId  (NicheDiveStatus*ResponseDto, bare oneOf) ──
+
+/**
+ * Niche Dive status, discriminated on `status`:
+ *   - "in_progress" → estimatedCompletionDate
+ *   - "success"     → nicheId + token usage (feed nicheId to list_niches / get_niche_*)
+ *   - "error"       → error message
+ */
+export type DiveStatus =
+  | { diveId: string; status: "in_progress"; estimatedCompletionDate: string }
+  | { diveId: string; status: "success"; nicheId: string; tokensUsed: number; tokensLeft: number }
+  | { diveId: string; status: "error"; error: string };
 
 // ─── /v1/niches/rank-radars/:rankRadarId  (KrtKeywordResponseDto[], wrapped) ─
 

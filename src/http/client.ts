@@ -112,10 +112,50 @@ export async function httpGet<T>(ctx: RequestContext, path: string, query?: Reco
       },
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    throw new ApiError("network", 0, `Network error reaching ${url}: ${msg}`);
+    throw networkError(url, e);
   }
 
+  return handleResponse<T>(res);
+}
+
+/**
+ * POST a JSON body to a /v1 write endpoint. Mirrors httpGet (same auth/UA headers,
+ * version notice, error mapping, and envelope unwrapping) but adds a JSON request
+ * body. The create endpoints return bare objects (no ResponseDto envelope), which
+ * unwrap() passes through untouched.
+ */
+export async function httpPost<T>(ctx: RequestContext, path: string, body: unknown): Promise<T> {
+  const url = buildUrl(ctx.config.baseUrl, path);
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "x-api-key": ctx.config.apiKey,
+        accept: "application/json",
+        "content-type": "application/json",
+        "user-agent": userAgent(ctx.toolName),
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw networkError(url, e);
+  }
+
+  return handleResponse<T>(res);
+}
+
+function networkError(url: string, e: unknown): ApiError {
+  const msg = e instanceof Error ? e.message : String(e);
+  return new ApiError("network", 0, `Network error reaching ${url}: ${msg}`);
+}
+
+/**
+ * Shared response handling for httpGet/httpPost: arm the one-time upgrade notice,
+ * parse the body, map HTTP errors via ApiError, and unwrap the ResponseDto envelope.
+ */
+async function handleResponse<T>(res: Response): Promise<T> {
   // The backend advertises the latest published MCP version on every response
   // (including errors); arm a one-time upgrade notice if we're behind.
   noteLatestVersion(res.headers.get(LATEST_VERSION_HEADER));

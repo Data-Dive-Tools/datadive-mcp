@@ -26,6 +26,7 @@ export function buildServer(config: Config): McpServer {
         title: tool.title,
         description: tool.description,
         inputSchema: tool.inputSchema,
+        annotations: tool.annotations,
       },
       async (args: Record<string, unknown>) => {
         try {
