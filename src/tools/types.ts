@@ -6,6 +6,7 @@
  */
 
 import type { z } from "zod";
+import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 import type { Config } from "../config.js";
 
 export interface HandlerContext {
@@ -24,6 +25,11 @@ export interface ToolDefinition<S extends z.ZodRawShape = z.ZodRawShape> {
   description: string;
   /** Zod raw shape (object of Zod field schemas) — passed through to MCP SDK. */
   inputSchema: S;
+  /**
+   * Optional MCP behavior hints (readOnlyHint, destructiveHint, etc.) so clients can
+   * flag token-spending write tools in their approval UI. Read tools may omit this.
+   */
+  annotations?: ToolAnnotations;
   /** Returns the data payload to be JSON-stringified in the tool response. */
   handler: (args: z.infer<z.ZodObject<S>>, ctx: HandlerContext) => Promise<unknown>;
 }
@@ -39,5 +45,6 @@ export interface AnyTool {
   title: string;
   description: string;
   inputSchema: z.ZodRawShape;
+  annotations?: ToolAnnotations;
   handler: (args: Record<string, unknown>, ctx: HandlerContext) => Promise<unknown>;
 }

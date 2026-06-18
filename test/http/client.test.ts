@@ -3,7 +3,7 @@ import { httpGet, unwrap, PKG_VERSION, isNewerVersion, takeUpgradeNotice } from 
 import { ApiError } from "../../src/http/errors.js";
 
 const ctx = {
-  config: { apiKey: "ddk_test", baseUrl: "https://api.datadive.tools" },
+  config: { apiKey: "ddk_test", baseUrl: "https://api.datadive.tools", autoConfirmWrites: false },
   toolName: "list_niches",
 };
 

@@ -5,12 +5,20 @@
  *   DATADIVE_API_KEY        - your DataDive API key (generate at 2.datadive.tools/api-key)
  *
  * Optional:
- *   DATADIVE_API_BASE_URL   - override the API base URL (defaults to https://api.datadive.tools)
+ *   DATADIVE_API_BASE_URL        - override the API base URL (defaults to https://api.datadive.tools)
+ *   DATADIVE_AUTO_CONFIRM_WRITES - skip the confirm gate on token-spending write tools
+ *                                  (create_niche_dive, create_rank_radar). Truthy =
+ *                                  "1"/"true"/"yes" (case-insensitive). Defaults to false.
  */
 
 export interface Config {
   apiKey: string;
   baseUrl: string;
+  /**
+   * When true, the token-spending write tools proceed without requiring `confirm: true`.
+   * A user-controlled "don't ask me again" opt-out, set via DATADIVE_AUTO_CONFIRM_WRITES.
+   */
+  autoConfirmWrites: boolean;
 }
 
 const DEFAULT_BASE_URL = "https://api.datadive.tools";
@@ -29,5 +37,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   // Normalize: strip trailing slashes so we can append "/v1/..." paths cleanly.
   const baseUrl = rawBase.replace(/\/+$/, "");
 
-  return { apiKey, baseUrl };
+  const autoConfirmWrites = ["1", "true", "yes"].includes(
+    (env.DATADIVE_AUTO_CONFIRM_WRITES ?? "").trim().toLowerCase(),
+  );
+
+  return { apiKey, baseUrl, autoConfirmWrites };
 }

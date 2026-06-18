@@ -6,6 +6,16 @@ describe("loadConfig", () => {
     const cfg = loadConfig({ DATADIVE_API_KEY: "ddk_live_abc" });
     expect(cfg.apiKey).toBe("ddk_live_abc");
     expect(cfg.baseUrl).toBe("https://api.datadive.tools");
+    expect(cfg.autoConfirmWrites).toBe(false);
+  });
+
+  it("parses DATADIVE_AUTO_CONFIRM_WRITES as a case-insensitive truthy flag", () => {
+    for (const v of ["1", "true", "TRUE", "Yes"]) {
+      expect(loadConfig({ DATADIVE_API_KEY: "k", DATADIVE_AUTO_CONFIRM_WRITES: v }).autoConfirmWrites).toBe(true);
+    }
+    for (const v of ["0", "false", "no", "", "off"]) {
+      expect(loadConfig({ DATADIVE_API_KEY: "k", DATADIVE_AUTO_CONFIRM_WRITES: v }).autoConfirmWrites).toBe(false);
+    }
   });
 
   it("trims whitespace on the api key", () => {

@@ -17,6 +17,9 @@ const EXPECTED_TOOLS = [
   "get_ranking_juice",
   "list_rank_radars",
   "get_rank_radar_data",
+  "create_rank_radar",
+  "create_niche_dive",
+  "get_dive_status",
   "get_asin_inventory_distribution",
   "list_indexing_issue_alerts",
   "list_blind_spend_alerts",
@@ -54,7 +57,7 @@ describe("tool registry", () => {
   });
 
   it("buildServer registers without throwing", () => {
-    const server = buildServer({ apiKey: "ddk_test", baseUrl: "https://api.datadive.tools" });
+    const server = buildServer({ apiKey: "ddk_test", baseUrl: "https://api.datadive.tools", autoConfirmWrites: false });
     expect(server).toBeDefined();
   });
 
