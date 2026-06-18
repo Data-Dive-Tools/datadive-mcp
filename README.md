@@ -109,7 +109,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_usage` | Paginated billable usage logs (token-consumption events). Filter by `type`, `search` (user), and `startDate`/`endDate`. |
 
 All data is scoped to the organization that owns the API key. Most tools are
-read-only; the three `create_*` / dive tools below spend tokens — see
+read-only; the two `create_*` tools below spend tokens (`get_dive_status` only
+polls a dive and is read-only) — see
 [Creating dives & rank radars](#creating-dives--rank-radars).
 
 > **Coming next:** AI copywriter. We'll prioritize based on usage signal — if
