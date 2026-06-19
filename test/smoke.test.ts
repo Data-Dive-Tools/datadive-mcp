@@ -16,7 +16,7 @@ import { listUsageTool } from "../src/tools/list-usage.js";
 import { listSellerProfilesTool } from "../src/tools/list-seller-profiles.js";
 import { getSellerCatalogTool } from "../src/tools/get-seller-catalog.js";
 import { getSellerListingChangesTool } from "../src/tools/get-seller-listing-changes.js";
-import { BILLABLE_FEATURE_TYPES } from "../src/types/api.js";
+import { BILLABLE_FEATURE_TYPES, SUPPORTED_MARKETPLACES } from "../src/types/api.js";
 import { loadConfig } from "../src/config.js";
 
 // Gate on the explicit opt-in flag (set by `npm run test:smoke`) in addition to
@@ -135,7 +135,11 @@ describe.skipIf(!KEY)("smoke: /v1/seller_profiles against staging", () => {
       return;
     }
 
-    const args = { sellerId: first.sellerId, marketplace: first.marketplace as never, pageSize: 1 };
+    const args = {
+      sellerId: first.sellerId,
+      marketplace: first.marketplace as (typeof SUPPORTED_MARKETPLACES)[number],
+      pageSize: 1,
+    };
     const catalog = (await getSellerCatalogTool.handler(args, { config })) as PaginatedBody;
     expect(Array.isArray(catalog.data)).toBe(true);
     expect(catalog.pageSize).toBe(1);
