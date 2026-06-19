@@ -18,6 +18,9 @@ except as the `x-api-key` header on requests to `api.datadive.tools`.
 - "Run a niche dive on ASIN B08N5WRWNW in the US marketplace with 5 competitors."
 - "Is my dive done yet?"
 - "Start a rank radar tracking 10 keywords for ASIN B08N5WRWNW in niche X."
+- "Which Amazon seller accounts are connected?"
+- "Search my catalog for active 'widget' products in the US."
+- "What price or content changes happened on my listings last week?"
 
 ## 1. Get a DataDive API key
 
@@ -102,7 +105,10 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive`: `in_progress`, `success` (carries the new `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
-| `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from your Connections page. |
+| `list_seller_profiles` | Paginated list of connected Amazon seller accounts. Discovery step — returns the `sellerId` + `marketplace` the seller-scoped tools below (and the alert tools) need. |
+| `get_seller_catalog` | Paginated catalog of a seller's own ASINs. Filter by `search`, `brand`, and `status` (Active by default). |
+| `get_seller_listing_changes` | Paginated price/content/image changes on a seller's listings. Filter by `types`, `asin`, `brand`, `search`, and a date range; optionally include ranking/conversion `correlation`. |
+| `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from `list_seller_profiles` or your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
 | `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |
 | `get_quota` | Current quota usage and capacity per billable feature, plus the next refresh date. No arguments. |
@@ -112,9 +118,6 @@ All data is scoped to the organization that owns the API key. Most tools are
 read-only; the two `create_*` tools below spend tokens (`get_dive_status` only
 polls a dive and is read-only) — see
 [Creating dives & rank radars](#creating-dives--rank-radars).
-
-> **Coming next:** AI copywriter. We'll prioritize based on usage signal — if
-> you have a request, open an issue.
 
 ### Creating dives & rank radars
 
