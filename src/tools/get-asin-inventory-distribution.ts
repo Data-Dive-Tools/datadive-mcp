@@ -8,7 +8,7 @@ const inputSchema = {
     .string()
     .min(1)
     .describe(
-      "Amazon seller account ID as connected to DataDive. Find it on the Connections page at https://2.datadive.tools — there is no MCP discovery tool for sellers yet.",
+      "Amazon seller account ID as connected to DataDive. Get it from `list_seller_profiles`, or find it on the Connections page at https://2.datadive.tools.",
     ),
   marketplace: z
     .enum(SUPPORTED_MARKETPLACES)
@@ -27,8 +27,8 @@ export const getAsinInventoryDistributionTool: ToolDefinition<typeof inputSchema
   description:
     "Use this when the user asks about inventory levels, stock by fulfillment center, " +
     "or where their units are sitting across Amazon's fulfillment network for a specific ASIN. " +
-    "Requires the Amazon sellerId from the user's DataDive Connections page " +
-    "(https://2.datadive.tools), the marketplace code, and the ASIN. Returns totalSellableUnits " +
+    "Requires the Amazon sellerId (from `list_seller_profiles` or the user's DataDive Connections " +
+    "page at https://2.datadive.tools), the marketplace code, and the ASIN. Returns totalSellableUnits " +
     "and a per-FC `distribution` array (fc, state, availableStock, availableStockPercentage). " +
     "`lastUpdatedAt` may be null when no successful inventory ingestion has occurred in the last 30 days.",
   inputSchema,

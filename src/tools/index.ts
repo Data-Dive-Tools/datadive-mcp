@@ -14,6 +14,9 @@ import { getRankRadarDataTool } from "./get-rank-radar-data.js";
 import { createRankRadarTool } from "./create-rank-radar.js";
 import { createNicheDiveTool } from "./create-niche-dive.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
+import { listSellerProfilesTool } from "./list-seller-profiles.js";
+import { getSellerCatalogTool } from "./get-seller-catalog.js";
+import { getSellerListingChangesTool } from "./get-seller-listing-changes.js";
 import { getAsinInventoryDistributionTool } from "./get-asin-inventory-distribution.js";
 import { listIndexingIssueAlertsTool } from "./list-indexing-issue-alerts.js";
 import { listBlindSpendAlertsTool } from "./list-blind-spend-alerts.js";
@@ -35,6 +38,9 @@ export const allTools: ReadonlyArray<AnyTool> = [
   createRankRadarTool,
   createNicheDiveTool,
   getDiveStatusTool,
+  listSellerProfilesTool,
+  getSellerCatalogTool,
+  getSellerListingChangesTool,
   getAsinInventoryDistributionTool,
   listIndexingIssueAlertsTool,
   listBlindSpendAlertsTool,

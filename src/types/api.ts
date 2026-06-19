@@ -10,7 +10,7 @@
  *                       datadive-backend/src/common/pagination/pagination.dto.ts
  *   3. Controller:      datadive-backend/src/external-api/external-api-v1.controller.ts
  *
- * Last synced: 2026-06-18.
+ * Last synced: 2026-06-19.
  *
  * The MCP server forwards JSON straight to the LLM, so deeply-nested DTOs are
  * intentionally typed loosely (with `unknown` or pass-through Records) where
@@ -382,3 +382,92 @@ export interface UsageLogItem {
 }
 
 export type UsageLogList = PaginationResponse<UsageLogItem>;
+
+// ─── /v1/seller_profiles  (SellerProfileListDto, bare PaginationResponse) ─────
+
+export interface SellerProfileItem {
+  /** Amazon seller account ID — the value other seller-scoped tools require. */
+  sellerId: string;
+  /** Display name of the connected seller account. */
+  sellerName: string;
+  /** Marketplace code, e.g. "com", "co.uk" (see SUPPORTED_MARKETPLACES). */
+  marketplace: string;
+  /** True when Amazon Advertising API credentials are connected for this account. */
+  hasAdApi: boolean;
+  /** ISO timestamp of when the account was connected to DataDive. */
+  createdAt: string;
+}
+
+export type SellerProfileList = PaginationResponse<SellerProfileItem>;
+
+// ─── /v1/seller_profiles/:sellerId/marketplaces/:marketplace/catalog ──────────
+//      (CatalogAsinListDto, bare PaginationResponse)
+
+/** Allowed values for the `status` query param on the seller catalog endpoint. */
+export const CATALOG_STATUSES = ["Active", "all"] as const;
+export type CatalogStatus = (typeof CATALOG_STATUSES)[number];
+
+export interface CatalogAsinItem {
+  asin: string;
+  title: string;
+  /** Parent ASIN for a variation child, or null for standalone/parent ASINs. */
+  parentAsin: string | null;
+  brand: string | null;
+  /** Listing status, e.g. "Active". */
+  status: string;
+  imageUrl: string | null;
+  /** True when the ASIN has variation children. Null when unknown. */
+  hasVariations: boolean | null;
+}
+
+export type SellerCatalogList = PaginationResponse<CatalogAsinItem>;
+
+// ─── /v1/seller_profiles/:sellerId/marketplaces/:marketplace/listing-changes ──
+//      (ListingChangeExternalListDto, bare PaginationResponse)
+
+/** Allowed values for the `types` query param on the listing-changes endpoint. */
+export const LISTING_CHANGE_TYPES = ["Price", "Content", "Image"] as const;
+export type ListingChangeType = (typeof LISTING_CHANGE_TYPES)[number];
+
+/** Allowed values for the `sortBy` query param on the listing-changes endpoint. */
+export const LISTING_CHANGE_SORT_BY = ["date", "type"] as const;
+export type ListingChangeSortBy = (typeof LISTING_CHANGE_SORT_BY)[number];
+
+/** Generic sort direction, shared where a `sortOrder` query param is accepted. */
+export const SORT_ORDER = ["ASC", "DESC"] as const;
+export type SortOrder = (typeof SORT_ORDER)[number];
+
+/**
+ * Optional ranking/conversion correlation for a listing change, present only when
+ * `includeCorrelations=true`. Sub-objects (salesCvr, top10/top50SearchTerms) carry
+ * before/after figures and are kept loosely typed per this file's convention.
+ */
+export interface ListingChangeCorrelation {
+  /** "PENDING" | "AVAILABLE" | "UNAVAILABLE_NO_ACTIVE_RANK_RADAR" | "UNAVAILABLE". */
+  status: string;
+  message: string | null;
+  salesCvr: Record<string, unknown> | null;
+  top10SearchTerms: Record<string, unknown> | null;
+  top50SearchTerms: Record<string, unknown> | null;
+}
+
+export interface ListingChangeItem {
+  asin: string;
+  title: string | null;
+  imageUrl: string | null;
+  /** ISO timestamp of when the change was detected. */
+  date: string;
+  /** "Price" | "Content" | "Image". */
+  type: string;
+  /** Sub-type for content changes (e.g. title/bullets/description); null otherwise. */
+  contentType: string | null;
+  description: string;
+  /** Prior value of the changed field. Shape varies by change type; kept opaque. */
+  previousValue: Record<string, unknown> | null;
+  /** New value of the changed field. Shape varies by change type; kept opaque. */
+  newValue: Record<string, unknown> | null;
+  /** Present only when `includeCorrelations=true`; null otherwise. */
+  correlation: ListingChangeCorrelation | null;
+}
+
+export type ListingChangeList = PaginationResponse<ListingChangeItem>;

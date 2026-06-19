@@ -13,6 +13,9 @@ import { listIndexingIssueAlertsTool } from "../src/tools/list-indexing-issue-al
 import { listBlindSpendAlertsTool } from "../src/tools/list-blind-spend-alerts.js";
 import { getQuotaTool } from "../src/tools/get-quota.js";
 import { listUsageTool } from "../src/tools/list-usage.js";
+import { listSellerProfilesTool } from "../src/tools/list-seller-profiles.js";
+import { getSellerCatalogTool } from "../src/tools/get-seller-catalog.js";
+import { getSellerListingChangesTool } from "../src/tools/get-seller-listing-changes.js";
 import { BILLABLE_FEATURE_TYPES } from "../src/types/api.js";
 import { loadConfig } from "../src/config.js";
 
@@ -114,6 +117,32 @@ describe.skipIf(!KEY)("smoke: /v1/usage against staging", () => {
     expect(Array.isArray(result.data)).toBe(true);
     expect(result.currentPage).toBe(1);
     expect(result.pageSize).toBe(1);
+  });
+});
+
+describe.skipIf(!KEY)("smoke: /v1/seller_profiles against staging", () => {
+  it("list_seller_profiles returns a paginated body, then catalog + listing-changes for a real seller", async () => {
+    const config = smokeConfig();
+    const profiles = (await listSellerProfilesTool.handler({ pageSize: 1 }, { config })) as PaginatedBody;
+    expect(Array.isArray(profiles.data)).toBe(true);
+    expect(profiles.currentPage).toBe(1);
+    expect(profiles.pageSize).toBe(1);
+
+    const first = profiles.data[0] as { sellerId?: string; marketplace?: string } | undefined;
+    if (!first?.sellerId || !first.marketplace) {
+      // QA account has no connected seller profiles — nothing to scope into.
+      console.warn("smoke: skipping get_seller_catalog/listing-changes — no seller profiles in this account");
+      return;
+    }
+
+    const args = { sellerId: first.sellerId, marketplace: first.marketplace as never, pageSize: 1 };
+    const catalog = (await getSellerCatalogTool.handler(args, { config })) as PaginatedBody;
+    expect(Array.isArray(catalog.data)).toBe(true);
+    expect(catalog.pageSize).toBe(1);
+
+    const changes = (await getSellerListingChangesTool.handler(args, { config })) as PaginatedBody;
+    expect(Array.isArray(changes.data)).toBe(true);
+    expect(changes.pageSize).toBe(1);
   });
 });
 
