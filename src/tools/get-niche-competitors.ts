@@ -11,11 +11,14 @@ export const getNicheCompetitorsTool: ToolDefinition<typeof inputSchema> = {
   name: "get_niche_competitors",
   title: "Get Competitors and Niche Statistics",
   description:
-    "Use this for competitor ASINs, sales/revenue benchmarks, or niche opportunity scoring. " +
-    "Retrieves the list of Competitors within the specified Niche along with Niche statistics. " +
-    "For the Niche: keyword statistics, opportunity evaluation, benchmark median values, and " +
-    "overall competitor strength assessment. For each Competitor: ASIN, sales, revenue, ratings, " +
-    "reviews, price, image URL, and ranking data.",
+    "Use this for competitor ASINs, product titles, BSR, sales/revenue benchmarks, or niche " +
+    "opportunity scoring. Retrieves the list of Competitors within the specified Niche along with " +
+    "Niche statistics. For the Niche: keyword statistics, opportunity evaluation, benchmark median " +
+    "values, and overall competitor strength assessment. For each Competitor: ASIN, product title, " +
+    "BSR, category and full category tree, sales, revenue, ratings, reviews, price, number of " +
+    "variations, image URL, total Ranking Juice, and keyword/ads ranking data. Titles support " +
+    "pack-size, material and count analysis; BSR supports ranking Competitors by sales position. " +
+    "For the Ranking Juice breakdown by title, bullets and description, use `get_ranking_juice`.",
   inputSchema,
   handler: async (args, ctx) => {
     return await httpGet<GetCompetitorListResult>(
