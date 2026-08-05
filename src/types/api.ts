@@ -123,7 +123,7 @@ export interface Competitor {
    * Total Ranking Juice for this listing. Use `get_ranking_juice` for the breakdown
    * by title, bullets and description.
    */
-  listingRankingJuice: number;
+  listingRankingJuice: { value: number };
   [key: string]: unknown;
 }
 
