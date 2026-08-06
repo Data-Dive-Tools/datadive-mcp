@@ -100,7 +100,11 @@ describe("tool registry", () => {
 describe("scope gating", () => {
   // Registers the tools against a stub transport-less server and calls the
   // registered callback directly via the SDK's internal registry.
-  async function callTool(name: string, scopes: readonly string[] | undefined, args: Record<string, unknown>) {
+  async function callTool(
+    name: string,
+    scopes: readonly string[] | undefined,
+    args: Record<string, unknown>,
+  ) {
     const server = buildServer({ ...TEST_CONFIG, scopes });
     // @ts-expect-error - _registeredTools is SDK-internal but stable; avoids a full transport harness
     const registered = server._registeredTools[name];
@@ -109,7 +113,12 @@ describe("scope gating", () => {
   }
 
   it("blocks a write tool without datadive.write", async () => {
-    const result = await callTool("create_rank_radar", [SCOPE_READ], { confirm: false });
+    const result = await callTool("create_rank_radar", [SCOPE_READ], {
+      asin: "B000000000",
+      numberOfKeywords: 5,
+      nicheId: "niche-1",
+      confirm: false,
+    });
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain("datadive.write");
   });
@@ -121,13 +130,23 @@ describe("scope gating", () => {
   });
 
   it("allows a write tool with datadive.write (reaches the confirm gate, no API call)", async () => {
-    const result = await callTool("create_rank_radar", [SCOPE_READ, SCOPE_WRITE], { confirm: false });
+    const result = await callTool("create_rank_radar", [SCOPE_READ, SCOPE_WRITE], {
+      asin: "B000000000",
+      numberOfKeywords: 5,
+      nicheId: "niche-1",
+      confirm: false,
+    });
     expect(result.isError).toBeUndefined();
     expect(result.content[0].text).toContain("confirmation_required");
   });
 
   it("does not gate when scopes are unset (stdio path)", async () => {
-    const result = await callTool("create_rank_radar", undefined, { confirm: false });
+    const result = await callTool("create_rank_radar", undefined, {
+      asin: "B000000000",
+      numberOfKeywords: 5,
+      nicheId: "niche-1",
+      confirm: false,
+    });
     expect(result.isError).toBeUndefined();
     expect(result.content[0].text).toContain("confirmation_required");
   });

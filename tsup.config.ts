@@ -2,7 +2,7 @@ import { defineConfig, type Options } from "tsup";
 
 const shared: Options = {
   format: ["esm"],
-  target: "node18",
+  target: "node22",
   platform: "node",
   outDir: "dist",
   sourcemap: true,
