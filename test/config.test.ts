@@ -4,9 +4,10 @@ import { loadConfig } from "../src/config.js";
 describe("loadConfig", () => {
   it("loads a valid key with the default base URL", () => {
     const cfg = loadConfig({ DATADIVE_API_KEY: "ddk_live_abc" });
-    expect(cfg.apiKey).toBe("ddk_live_abc");
+    expect(cfg.credentials).toEqual({ kind: "api-key", apiKey: "ddk_live_abc" });
     expect(cfg.baseUrl).toBe("https://api.datadive.tools");
     expect(cfg.autoConfirmWrites).toBe(false);
+    expect(cfg.scopes).toBeUndefined();
   });
 
   it("parses DATADIVE_AUTO_CONFIRM_WRITES as a case-insensitive truthy flag", () => {
@@ -20,7 +21,7 @@ describe("loadConfig", () => {
 
   it("trims whitespace on the api key", () => {
     const cfg = loadConfig({ DATADIVE_API_KEY: "  ddk_live_abc\n" });
-    expect(cfg.apiKey).toBe("ddk_live_abc");
+    expect(cfg.credentials).toEqual({ kind: "api-key", apiKey: "ddk_live_abc" });
   });
 
   it("strips trailing slashes from the base URL", () => {

@@ -8,10 +8,20 @@
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { Config } from "./config.js";
+import type { AnyTool } from "./tools/types.js";
+import { SCOPE_READ, SCOPE_WRITE, type Config } from "./config.js";
 import { allTools } from "./tools/index.js";
 import { ApiError } from "./http/errors.js";
 import { PKG_VERSION, takeUpgradeNotice } from "./http/client.js";
+
+/**
+ * Returns the OAuth scope a tool call needs: SCOPE_READ for read-only tools,
+ * SCOPE_WRITE for the token-spending writes. Classification comes from the
+ * `readOnlyHint` annotation, which every tool in the registry carries.
+ */
+export function requiredScope(tool: Pick<AnyTool, "annotations">): string {
+  return tool.annotations?.readOnlyHint === true ? SCOPE_READ : SCOPE_WRITE;
+}
 
 export function buildServer(config: Config): McpServer {
   const server = new McpServer({
@@ -29,6 +39,23 @@ export function buildServer(config: Config): McpServer {
         annotations: tool.annotations,
       },
       async (args: Record<string, unknown>) => {
+        // OAuth scope gate (remote path only — config.scopes is unset over stdio).
+        // The backend enforces scopes on /v1 as well; failing here just gives the
+        // model a clearer error without a round-trip.
+        const scope = requiredScope(tool);
+        if (config.scopes && !config.scopes.includes(scope)) {
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text" as const,
+                text:
+                  `Insufficient scope: this tool requires the "${scope}" scope, which was not granted ` +
+                  `to this connection. Reconnect DataDive and enable the missing permission to use it.`,
+              },
+            ],
+          };
+        }
         try {
           const data = await tool.handler(args, { config });
           const content = [

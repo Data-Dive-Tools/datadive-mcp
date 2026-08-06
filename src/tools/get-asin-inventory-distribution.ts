@@ -32,6 +32,7 @@ export const getAsinInventoryDistributionTool: ToolDefinition<typeof inputSchema
     "and a per-FC `distribution` array (fc, state, availableStock, availableStockPercentage). " +
     "`lastUpdatedAt` may be null when no successful inventory ingestion has occurred in the last 30 days.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<InventoryByFcResponse>(
       { config: ctx.config, toolName: "get_asin_inventory_distribution" },

@@ -17,6 +17,7 @@ export const getNicheCompetitorsTool: ToolDefinition<typeof inputSchema> = {
     "overall competitor strength assessment. For each Competitor: ASIN, sales, revenue, ratings, " +
     "reviews, price, image URL, and ranking data.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<GetCompetitorListResult>(
       { config: ctx.config, toolName: "get_niche_competitors" },

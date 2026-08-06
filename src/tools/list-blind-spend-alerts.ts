@@ -16,6 +16,7 @@ export const listBlindSpendAlertsTool: ToolDefinition<typeof alertsQueryInputSch
     "wasted-spend search terms, each with term, spend, sales, clicks, cvr (0-1), and impressions. Supports " +
     "pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
   inputSchema: alertsQueryInputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<BlindSpendAlertList>(
       { config: ctx.config, toolName: "list_blind_spend_alerts" },

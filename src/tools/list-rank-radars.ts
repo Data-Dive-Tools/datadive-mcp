@@ -38,6 +38,7 @@ export const listRankRadarsTool: ToolDefinition<typeof inputSchema> = {
     "top50KW, top50SV. Supports pagination metadata (currentPage, pageSize, total, lastPage, " +
     "hasNext, hasPrev).",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<RankRadarList>(
       { config: ctx.config, toolName: "list_rank_radars" },

@@ -14,6 +14,7 @@ export const listIndexingIssueAlertsTool: ToolDefinition<typeof alertsQueryInput
     "polling). Each item includes id, asin, title, imageUrl, isParent, sellerId, marketplace, lastAlertedAt, " +
     "and resolvedAt. Supports pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
   inputSchema: alertsQueryInputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<IndexingIssueAlertList>(
       { config: ctx.config, toolName: "list_indexing_issue_alerts" },

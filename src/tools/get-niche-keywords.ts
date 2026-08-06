@@ -17,6 +17,7 @@ export const getNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "relevancy (numeric score or \"Outlier\"), and competitor ASIN organic ranks " +
     "(asinRanks: { ASIN -> rank | null }). Also returns the latestResearchDate.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<GetMasterKeywordListResult>(
       { config: ctx.config, toolName: "get_niche_keywords" },

@@ -15,6 +15,7 @@ export const getQuotaTool: ToolDefinition<typeof inputSchema> = {
     "`used` and `capacity` (null when unlimited / not applicable), plus `nextRefreshDate` (ISO-8601 " +
     "timestamp of the next quota reset, or null). Takes no arguments.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (_args, ctx) => {
     return await httpGet<Quota>({ config: ctx.config, toolName: "get_quota" }, "/v1/quota");
   },
