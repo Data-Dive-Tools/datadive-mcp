@@ -2,7 +2,8 @@
  * HTTP client for the DataDive /v1 API.
  *
  * Responsibilities:
- *   1. Attach `x-api-key` from config to every request.
+ *   1. Attach auth from config.credentials to every request — `x-api-key` (local
+ *      stdio path) or `Authorization: Bearer` (remote/OAuth path).
  *   2. Tag the User-Agent with the package version + tool name so backend access
  *      logs can attribute usage per tool (no separate telemetry endpoint needed).
  *   3. Map HTTP errors via `ApiError.fromHttp`.
@@ -106,7 +107,7 @@ export async function httpGet<T>(ctx: RequestContext, path: string, query?: Reco
     res = await fetch(url, {
       method: "GET",
       headers: {
-        "x-api-key": ctx.config.apiKey,
+        ...authHeaders(ctx.config),
         accept: "application/json",
         "user-agent": userAgent(ctx.toolName),
       },
@@ -132,7 +133,7 @@ export async function httpPost<T>(ctx: RequestContext, path: string, body: unkno
     res = await fetch(url, {
       method: "POST",
       headers: {
-        "x-api-key": ctx.config.apiKey,
+        ...authHeaders(ctx.config),
         accept: "application/json",
         "content-type": "application/json",
         "user-agent": userAgent(ctx.toolName),
@@ -189,6 +190,16 @@ function buildUrl(baseUrl: string, path: string, query?: Record<string, unknown>
 
 function userAgent(toolName: string): string {
   return `datadive-mcp/${PKG_VERSION} tool/${toolName}`;
+}
+
+/**
+ * Auth header(s) for the configured credentials: `x-api-key` on the local stdio
+ * path, `Authorization: Bearer` on the remote/OAuth path. The credentials object
+ * is read per request so a host can rotate a refreshed bearer token in place.
+ */
+function authHeaders(config: Config): Record<string, string> {
+  const c = config.credentials;
+  return c.kind === "bearer" ? { authorization: `Bearer ${c.token}` } : { "x-api-key": c.apiKey };
 }
 
 /**

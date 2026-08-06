@@ -45,6 +45,7 @@ export const listUsageTool: ToolDefinition<typeof inputSchema> = {
     "email, qty (tokens consumed), type, action (specific operation), nicheId/nicheName, rankRadarId, and " +
     "date, plus pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<UsageLogList>(
       { config: ctx.config, toolName: "list_usage" },

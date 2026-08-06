@@ -19,6 +19,7 @@ export const getRankingJuiceTool: ToolDefinition<typeof inputSchema> = {
     "(rankingJuice + per-property contributions: title, bullets, description) plus per-competitor " +
     "listing scores and the latestResearchDate.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<NicheRankingJuices>(
       { config: ctx.config, toolName: "get_ranking_juice" },

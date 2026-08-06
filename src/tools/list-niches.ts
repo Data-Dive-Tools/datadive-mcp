@@ -30,6 +30,7 @@ export const listNichesTool: ToolDefinition<typeof inputSchema> = {
     "and latestResearchDate per niche, plus pagination metadata (currentPage, pageSize, total, " +
     "lastPage, hasNext, hasPrev).",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<NicheList>(
       { config: ctx.config, toolName: "list_niches" },

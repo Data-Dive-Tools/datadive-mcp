@@ -3,7 +3,11 @@ import { httpGet, unwrap, PKG_VERSION, isNewerVersion, takeUpgradeNotice } from 
 import { ApiError } from "../../src/http/errors.js";
 
 const ctx = {
-  config: { apiKey: "ddk_test", baseUrl: "https://api.datadive.tools", autoConfirmWrites: false },
+  config: {
+    credentials: { kind: "api-key" as const, apiKey: "ddk_test" },
+    baseUrl: "https://api.datadive.tools",
+    autoConfirmWrites: false,
+  },
   toolName: "list_niches",
 };
 
@@ -76,8 +80,38 @@ describe("httpGet", () => {
     const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     const headers = call[1].headers as Record<string, string>;
     expect(headers["x-api-key"]).toBe("ddk_test");
+    expect(headers["authorization"]).toBeUndefined();
     expect(headers["accept"]).toBe("application/json");
     expect(headers["user-agent"]).toBe(`datadive-mcp/${PKG_VERSION} tool/list_niches`);
+  });
+
+  it("sends Authorization: Bearer (and no x-api-key) with bearer credentials", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const bearerCtx = {
+      ...ctx,
+      config: { ...ctx.config, credentials: { kind: "bearer" as const, token: "jwt-abc" } },
+    };
+
+    await httpGet(bearerCtx, "/v1/niches");
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const headers = call[1].headers as Record<string, string>;
+    expect(headers["authorization"]).toBe("Bearer jwt-abc");
+    expect(headers["x-api-key"]).toBeUndefined();
+  });
+
+  it("reads the bearer token at request time, so a rotated token takes effect", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const credentials = { kind: "bearer" as const, token: "jwt-old" };
+    const bearerCtx = { ...ctx, config: { ...ctx.config, credentials } };
+
+    credentials.token = "jwt-new";
+    await httpGet(bearerCtx, "/v1/niches");
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect((call[1].headers as Record<string, string>)["authorization"]).toBe("Bearer jwt-new");
   });
 
   it("appends query parameters, skipping undefined and null", async () => {

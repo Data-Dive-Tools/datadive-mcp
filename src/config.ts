@@ -9,16 +9,40 @@
  *   DATADIVE_AUTO_CONFIRM_WRITES - skip the confirm gate on token-spending write tools
  *                                  (create_niche_dive, create_rank_radar). Truthy =
  *                                  "1"/"true"/"yes" (case-insensitive). Defaults to false.
+ *
+ * The env-based loader always produces api-key credentials (the local stdio path).
+ * A remote host embedding this package builds a Config directly with bearer
+ * credentials (the OAuth path) — see Credentials.
  */
 
+/** OAuth scope covering the read tools. */
+export const SCOPE_READ = "datadive.read";
+/** OAuth scope covering the token-spending write tools. */
+export const SCOPE_WRITE = "datadive.write";
+
+/**
+ * How the HTTP client authenticates against the DataDive /v1 API.
+ *  - "api-key": the local stdio path — sends `x-api-key` (DATADIVE_API_KEY).
+ *  - "bearer":  the remote/OAuth path — sends `Authorization: Bearer <token>`.
+ *               The token is read at request time, so a host may mutate the
+ *               credentials object to rotate a refreshed access token in place.
+ */
+export type Credentials = { kind: "api-key"; apiKey: string } | { kind: "bearer"; token: string };
+
 export interface Config {
-  apiKey: string;
+  credentials: Credentials;
   baseUrl: string;
   /**
    * When true, the token-spending write tools proceed without requiring `confirm: true`.
    * A user-controlled "don't ask me again" opt-out, set via DATADIVE_AUTO_CONFIRM_WRITES.
    */
   autoConfirmWrites: boolean;
+  /**
+   * OAuth scopes granted to this session. When set, tool calls are gated:
+   * read tools require SCOPE_READ and write tools SCOPE_WRITE (see server.ts).
+   * Undefined (the stdio/api-key path) means no scope gating.
+   */
+  scopes?: readonly string[];
 }
 
 const DEFAULT_BASE_URL = "https://api.datadive.tools";
@@ -41,5 +65,5 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     (env.DATADIVE_AUTO_CONFIRM_WRITES ?? "").trim().toLowerCase(),
   );
 
-  return { apiKey, baseUrl, autoConfirmWrites };
+  return { credentials: { kind: "api-key", apiKey }, baseUrl, autoConfirmWrites };
 }

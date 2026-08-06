@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import type { Config } from "../../src/config.js";
 
 export const TEST_CONFIG: Config = {
-  apiKey: "ddk_test",
+  credentials: { kind: "api-key", apiKey: "ddk_test" },
   baseUrl: "https://api.datadive.tools",
   autoConfirmWrites: false,
 };

@@ -20,6 +20,7 @@ export const getNicheRootsTool: ToolDefinition<typeof inputSchema> = {
     "broadSearchVolumeRatio (0-1, relative to the top root), plus the per-keyword breakdowns and " +
     "latestResearchDate.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<NicheRoots>(
       { config: ctx.config, toolName: "get_niche_roots" },

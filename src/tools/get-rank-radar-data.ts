@@ -31,6 +31,7 @@ export const getRankRadarDataTool: ToolDefinition<typeof inputSchema> = {
     "{ date, organicRank, impressionRank }), and any highlight annotations. Use after " +
     "`list_rank_radars` to discover a `rankRadarId`.",
   inputSchema,
+  annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
     return await httpGet<RankRadarKeywordList>(
       { config: ctx.config, toolName: "get_rank_radar_data" },

@@ -7,7 +7,16 @@
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
 import { allTools } from "../src/tools/index.js";
-import { buildServer } from "../src/server.js";
+import { buildServer, requiredScope } from "../src/server.js";
+import { SCOPE_READ, SCOPE_WRITE, type Config } from "../src/config.js";
+
+const TEST_CONFIG: Config = {
+  credentials: { kind: "api-key", apiKey: "ddk_test" },
+  baseUrl: "https://api.datadive.tools",
+  autoConfirmWrites: false,
+};
+
+const WRITE_TOOLS = ["create_niche_dive", "create_rank_radar"];
 
 const EXPECTED_TOOLS = [
   "list_niches",
@@ -60,12 +69,66 @@ describe("tool registry", () => {
   });
 
   it("buildServer registers without throwing", () => {
-    const server = buildServer({ apiKey: "ddk_test", baseUrl: "https://api.datadive.tools", autoConfirmWrites: false });
+    const server = buildServer(TEST_CONFIG);
     expect(server).toBeDefined();
   });
 
   it("tool names are unique", () => {
     const names = allTools.map((t) => t.name);
     expect(new Set(names).size).toBe(names.length);
+  });
+
+  it("every tool carries a read/write annotation (readOnlyHint or destructiveHint)", () => {
+    for (const tool of allTools) {
+      if (WRITE_TOOLS.includes(tool.name)) {
+        expect(tool.annotations?.readOnlyHint, `${tool.name} must not be read-only`).toBe(false);
+        expect(tool.annotations?.destructiveHint, `${tool.name} must carry destructiveHint`).toBe(true);
+      } else {
+        expect(tool.annotations?.readOnlyHint, `${tool.name} must carry readOnlyHint`).toBe(true);
+      }
+    }
+  });
+
+  it("requiredScope maps read tools to SCOPE_READ and write tools to SCOPE_WRITE", () => {
+    for (const tool of allTools) {
+      const expected = WRITE_TOOLS.includes(tool.name) ? SCOPE_WRITE : SCOPE_READ;
+      expect(requiredScope(tool), tool.name).toBe(expected);
+    }
+  });
+});
+
+describe("scope gating", () => {
+  // Registers the tools against a stub transport-less server and calls the
+  // registered callback directly via the SDK's internal registry.
+  async function callTool(name: string, scopes: readonly string[] | undefined, args: Record<string, unknown>) {
+    const server = buildServer({ ...TEST_CONFIG, scopes });
+    // @ts-expect-error - _registeredTools is SDK-internal but stable; avoids a full transport harness
+    const registered = server._registeredTools[name];
+    expect(registered).toBeDefined();
+    return registered.handler(args, {});
+  }
+
+  it("blocks a write tool without datadive.write", async () => {
+    const result = await callTool("create_rank_radar", [SCOPE_READ], { confirm: false });
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain("datadive.write");
+  });
+
+  it("blocks a read tool without datadive.read", async () => {
+    const result = await callTool("get_quota", [], {});
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain("datadive.read");
+  });
+
+  it("allows a write tool with datadive.write (reaches the confirm gate, no API call)", async () => {
+    const result = await callTool("create_rank_radar", [SCOPE_READ, SCOPE_WRITE], { confirm: false });
+    expect(result.isError).toBeUndefined();
+    expect(result.content[0].text).toContain("confirmation_required");
+  });
+
+  it("does not gate when scopes are unset (stdio path)", async () => {
+    const result = await callTool("create_rank_radar", undefined, { confirm: false });
+    expect(result.isError).toBeUndefined();
+    expect(result.content[0].text).toContain("confirmation_required");
   });
 });
