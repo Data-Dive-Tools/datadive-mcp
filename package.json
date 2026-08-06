@@ -1,7 +1,7 @@
 {
   "name": "@datadive-tools/mcp",
   "version": "0.7.0",
-  "description": "MCP server for DataDive — query your niches, keywords, competitors, and Rank Radar data from Claude Desktop, Claude Code, or Cursor.",
+  "description": "MCP server for DataDive \u2014 query your niches, keywords, competitors, and Rank Radar data from Claude Desktop, Claude Code, or Cursor.",
   "type": "module",
   "bin": {
     "datadive-mcp": "./dist/index.js"
@@ -31,7 +31,8 @@
     "test:smoke": "DATADIVE_SMOKE=1 vitest run test/smoke.test.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "prepare": "npm run build"
   },
   "keywords": [
     "mcp",
