@@ -16,6 +16,8 @@ except as the `x-api-key` header on requests to `api.datadive.tools`.
 - "Show me my rank radars."
 - "Plot the organic ranking trend for rank radar Y from 2024-03-01 to 2024-04-01."
 - "Run a niche dive on ASIN B08N5WRWNW in the US marketplace with 5 competitors."
+- "Refresh niche X with today's data, same competitors."
+- "Re-dive niche X with 12 competitors but keep B08N5WRWNW in the set."
 - "Is my dive done yet?"
 - "Start a rank radar tracking 10 keywords for ASIN B08N5WRWNW in niche X."
 - "Which Amazon seller accounts are connected?"
@@ -103,7 +105,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
-| `get_dive_status` | Poll a dive started by `create_niche_dive`: `in_progress`, `success` (carries the new `nicheId`), or `error`. |
+| `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
+| `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
 | `list_seller_profiles` | Paginated list of connected Amazon seller accounts. Discovery step — returns the `sellerId` + `marketplace` the seller-scoped tools below (and the alert tools) need. |
 | `get_seller_catalog` | Paginated catalog of a seller's own ASINs. Filter by `search`, `brand`, and `status` (Active by default). |
@@ -115,17 +118,18 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_usage` | Paginated billable usage logs (token-consumption events). Filter by `type`, `search` (user), and `startDate`/`endDate`. |
 
 All data is scoped to the organization that owns the API key. Most tools are
-read-only; the two `create_*` tools below spend tokens (`get_dive_status` only
-polls a dive and is read-only) — see
+read-only; the three tools below spend tokens (`get_dive_status` only polls a
+dive and is read-only) — see
 [Creating dives & rank radars](#creating-dives--rank-radars).
 
 ### Creating dives & rank radars
 
-`create_niche_dive` and `create_rank_radar` **consume billable tokens and cannot
-be undone**, so they require an explicit `confirm: true` argument. The assistant
-should confirm the cost with you before passing it. The amount scales with
-`numberOfCompetitors` (dives) / `numberOfKeywords` (rank radars). Check remaining
-balance any time with `get_quota`.
+`create_niche_dive`, `redive_niche` and `create_rank_radar` **consume billable
+tokens and cannot be undone**, so they require an explicit `confirm: true`
+argument. The assistant should confirm the cost with you before passing it. The
+amount scales with `numberOfCompetitors` (dives and re-dives) /
+`numberOfKeywords` (rank radars). Check remaining balance any time with
+`get_quota`.
 
 To skip the per-call confirmation (e.g. in an automated setup), set
 `DATADIVE_AUTO_CONFIRM_WRITES=true` in your client config — then these tools run
@@ -135,6 +139,17 @@ Dives are **asynchronous**. `create_niche_dive` returns a `diveId` and an
 estimated completion time immediately; poll `get_dive_status` with that `diveId`
 until it reports `success`, which carries the new `nicheId` you then feed to
 `list_niches`, `get_niche_keywords`, and the other niche tools.
+
+`redive_niche` refreshes a niche you already have rather than creating another
+one, and it keeps the same `nicheId` — so rank radars and reports built on that
+niche follow the refreshed data. It takes a `mode`:
+
+- `same_competitors` — re-dive the niche's current competitor set. Nothing else
+  to supply; use it purely to pull in current sales, price and keyword data.
+- `discover` — search for a fresh competitor set of `numberOfCompetitors` ASINs.
+  Steer it with `heroAsin` (the seed to build around; defaults to the niche's
+  highest-selling competitor, preferring one of your own ASINs), `lockedAsins`
+  (kept no matter what discovery finds) and `excludedAsins` (never selected).
 
 > ⚠️ For `create_niche_dive`, `marketplace` uses full Amazon domain suffixes
 > (`com`, `co.uk`, `com.mx`, `co.jp`, …) — e.g. the UK marketplace is `co.uk`,
