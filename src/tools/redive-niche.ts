@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { httpPost } from "../http/client.js";
+import { ApiError } from "../http/errors.js";
 import type { RediveNicheResult } from "../types/api.js";
 import { requireConfirmation } from "./confirm.js";
 import type { ToolDefinition } from "./types.js";
@@ -66,13 +67,24 @@ export const rediveNicheTool: ToolDefinition<typeof inputSchema> = {
   // irreversible token spend is what clients need to prompt on. The confirm gate enforces it regardless.
   annotations: { readOnlyHint: false, destructiveHint: true },
   handler: async (args, ctx) => {
+    // `numberOfCompetitors` cannot be required in the schema (same_competitors mode forbids it), so
+    // check it here — before the confirm gate, because a gate that cannot state the cost is worse
+    // than no gate. Everything else is left to the API, which names the offending field.
+    if (args.mode === "discover" && args.numberOfCompetitors === undefined) {
+      throw new ApiError(
+        "bad_request",
+        400,
+        "numberOfCompetitors is required in `discover` mode — it is how many ASINs the refreshed dive " +
+          "will contain, and therefore what it costs. Ask the user how many competitors they want " +
+          '(minimum 2), or use mode "same_competitors" to re-dive the niche\'s current set.',
+      );
+    }
+
     const pending = requireConfirmation(
       args.confirm,
       ctx,
       args.mode === "discover"
-        ? `Re-diving this niche consumes dive tokens — one batch per ASIN analyzed (${
-            args.numberOfCompetitors ?? "unspecified"
-          } requested).`
+        ? `Re-diving this niche consumes dive tokens — one batch per ASIN analyzed (${args.numberOfCompetitors} requested).`
         : "Re-diving this niche consumes dive tokens — one batch per competitor currently in the niche. " +
             "Use `get_niche_competitors` first if the user needs the exact count.",
     );

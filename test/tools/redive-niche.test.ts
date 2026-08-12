@@ -27,7 +27,7 @@ describe("redive_niche tool", () => {
     expect(url.pathname).toBe("/v1/niches/n-1/redive");
     const init = getCallInit(fetchMock);
     expect(init.method).toBe("POST");
-    // The unused discover-only fields must not reach the wire — the API rejects them in this mode.
+    // Optionals the caller left out stay out of the body rather than serializing as null.
     expect(JSON.parse(init.body as string)).toEqual({ mode: "same_competitors" });
     // The endpoint answers with the ResponseDto envelope, which the client unwraps.
     expect(result).toEqual({ diveId: "d-1", estimatedCompletionDate: "2026-08-19T00:00:00Z" });
@@ -81,6 +81,17 @@ describe("redive_niche tool", () => {
     );
 
     expect(result).toMatchObject({ status: "confirmation_required" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("fails fast in discover mode without numberOfCompetitors, before the confirm gate", async () => {
+    const fetchMock = mockFetch({});
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    // Rejected even with the gate opted out, since the cost is what cannot be stated.
+    await expect(
+      rediveNicheTool.handler({ nicheId: "n-1", mode: "discover" }, CTX_AUTO_CONFIRM),
+    ).rejects.toThrow(/numberOfCompetitors is required/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
