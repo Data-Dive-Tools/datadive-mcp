@@ -16,7 +16,7 @@ const TEST_CONFIG: Config = {
   autoConfirmWrites: false,
 };
 
-const WRITE_TOOLS = ["create_niche_dive", "create_rank_radar"];
+const WRITE_TOOLS = ["create_niche_dive", "redive_niche", "create_rank_radar"];
 
 const EXPECTED_TOOLS = [
   "list_niches",
@@ -28,6 +28,7 @@ const EXPECTED_TOOLS = [
   "get_rank_radar_data",
   "create_rank_radar",
   "create_niche_dive",
+  "redive_niche",
   "get_dive_status",
   "list_seller_profiles",
   "get_seller_catalog",

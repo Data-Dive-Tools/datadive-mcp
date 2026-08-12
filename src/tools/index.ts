@@ -13,6 +13,7 @@ import { listRankRadarsTool } from "./list-rank-radars.js";
 import { getRankRadarDataTool } from "./get-rank-radar-data.js";
 import { createRankRadarTool } from "./create-rank-radar.js";
 import { createNicheDiveTool } from "./create-niche-dive.js";
+import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
 import { listSellerProfilesTool } from "./list-seller-profiles.js";
 import { getSellerCatalogTool } from "./get-seller-catalog.js";
@@ -37,6 +38,7 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankRadarDataTool,
   createRankRadarTool,
   createNicheDiveTool,
+  rediveNicheTool,
   getDiveStatusTool,
   listSellerProfilesTool,
   getSellerCatalogTool,

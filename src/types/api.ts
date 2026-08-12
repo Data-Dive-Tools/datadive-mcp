@@ -182,6 +182,19 @@ export interface CreateNicheDiveResult {
   estimatedCompletionDate: string;
 }
 
+// ─── POST /v1/niches/:nicheId/redive  (RediveNicheResponseDto, wrapped) ──────
+
+/**
+ * Result of re-diving an existing niche. Same shape as CreateNicheDiveResult and
+ * polled the same way, but the niche keeps its existing `nicheId` — so unlike a new
+ * dive, `get_dive_status` success carries no id the caller did not already have.
+ */
+export interface RediveNicheResult {
+  diveId: string;
+  /** ISO-8601 estimated completion timestamp. */
+  estimatedCompletionDate: string;
+}
+
 // ─── GET /v1/niches/dives/:diveId  (NicheDiveStatus*ResponseDto, bare oneOf) ──
 
 /**
