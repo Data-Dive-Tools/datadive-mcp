@@ -35,7 +35,7 @@ export const createRankRadarTool: ToolDefinition<typeof inputSchema> = {
   // destructiveHint is technically "additive" here (this creates a new Rank Radar, it
   // doesn't destroy data), but we flag it destructive so clients prompt before the
   // irreversible token spend. The confirm gate enforces this server-side regardless.
-  annotations: { readOnlyHint: false, destructiveHint: true },
+  annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   handler: async (args, ctx) => {
     const pending = requireConfirmation(
       args.confirm,
