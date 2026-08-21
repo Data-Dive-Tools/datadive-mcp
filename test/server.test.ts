@@ -79,13 +79,16 @@ describe("tool registry", () => {
     expect(new Set(names).size).toBe(names.length);
   });
 
+  // `annotations` is required on ToolDefinition, so no optional chaining here: the
+  // compiler already rejects a tool that omits it, and this pins the values a
+  // connector directory reviews (epic RS-11272 / RS-11397).
   it("every tool carries a read/write annotation (readOnlyHint or destructiveHint)", () => {
     for (const tool of allTools) {
       if (WRITE_TOOLS.includes(tool.name)) {
-        expect(tool.annotations?.readOnlyHint, `${tool.name} must not be read-only`).toBe(false);
-        expect(tool.annotations?.destructiveHint, `${tool.name} must carry destructiveHint`).toBe(true);
+        expect(tool.annotations.readOnlyHint, `${tool.name} must not be read-only`).toBe(false);
+        expect(tool.annotations.destructiveHint, `${tool.name} must carry destructiveHint`).toBe(true);
       } else {
-        expect(tool.annotations?.readOnlyHint, `${tool.name} must carry readOnlyHint`).toBe(true);
+        expect(tool.annotations.readOnlyHint, `${tool.name} must carry readOnlyHint`).toBe(true);
       }
     }
   });

@@ -9,6 +9,20 @@ import type { z } from "zod";
 import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 import type { Config } from "../config.js";
 
+/**
+ * Tool annotations with `readOnlyHint` promoted to required.
+ *
+ * The MCP spec leaves every hint optional, but the in-product connector
+ * directories (Claude's Connectors Directory, ChatGPT's apps directory) reject a
+ * server whose tools do not declare read-vs-write behaviour, and a client cannot
+ * render an approval prompt without it. Making it required here means tool #N+1
+ * cannot silently regress the listing — the compiler catches it.
+ *
+ * `destructiveHint` stays optional: per spec it is only meaningful when
+ * `readOnlyHint` is false, and `test/server.test.ts` asserts the write tools set it.
+ */
+export type RequiredToolAnnotations = ToolAnnotations & { readOnlyHint: boolean };
+
 export interface HandlerContext {
   config: Config;
 }
@@ -26,10 +40,10 @@ export interface ToolDefinition<S extends z.ZodRawShape = z.ZodRawShape> {
   /** Zod raw shape (object of Zod field schemas) — passed through to MCP SDK. */
   inputSchema: S;
   /**
-   * Optional MCP behavior hints (readOnlyHint, destructiveHint, etc.) so clients can
-   * flag token-spending write tools in their approval UI. Read tools may omit this.
+   * MCP behavior hints so clients can flag token-spending write tools in their
+   * approval UI. `readOnlyHint` is mandatory; write tools also set `destructiveHint`.
    */
-  annotations?: ToolAnnotations;
+  annotations: RequiredToolAnnotations;
   /** Returns the data payload to be JSON-stringified in the tool response. */
   handler: (args: z.infer<z.ZodObject<S>>, ctx: HandlerContext) => Promise<unknown>;
 }
@@ -45,6 +59,6 @@ export interface AnyTool {
   title: string;
   description: string;
   inputSchema: z.ZodRawShape;
-  annotations?: ToolAnnotations;
+  annotations: RequiredToolAnnotations;
   handler: (args: Record<string, unknown>, ctx: HandlerContext) => Promise<unknown>;
 }
