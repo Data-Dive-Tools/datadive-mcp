@@ -18,10 +18,15 @@ import type { Config } from "../config.js";
  * render an approval prompt without it. Making it required here means tool #N+1
  * cannot silently regress the listing — the compiler catches it.
  *
- * `destructiveHint` stays optional: per spec it is only meaningful when
- * `readOnlyHint` is false, and `test/server.test.ts` asserts the write tools set it.
+ * Write tools (`readOnlyHint: false`) must additionally declare:
+ *
+ * - `destructiveHint` — per spec only meaningful on writes; Claude always prompts on it.
+ * - `openWorldHint` — OpenAI's plugin review requires it on every write tool: `true` if
+ *   the tool changes publicly visible internet state, `false` for a closed system like a
+ *   customer's own DataDive account. Missing or wrong values are a named rejection cause.
  */
-export type RequiredToolAnnotations = ToolAnnotations & { readOnlyHint: boolean };
+export type RequiredToolAnnotations = ToolAnnotations &
+  ({ readOnlyHint: true } | { readOnlyHint: false; destructiveHint: boolean; openWorldHint: boolean });
 
 export interface HandlerContext {
   config: Config;

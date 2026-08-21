@@ -87,6 +87,9 @@ describe("tool registry", () => {
       if (WRITE_TOOLS.includes(tool.name)) {
         expect(tool.annotations.readOnlyHint, `${tool.name} must not be read-only`).toBe(false);
         expect(tool.annotations.destructiveHint, `${tool.name} must carry destructiveHint`).toBe(true);
+        // OpenAI's plugin review requires openWorldHint on write tools. Our writes only
+        // touch the caller's own DataDive account — a closed system — so it is false.
+        expect(tool.annotations.openWorldHint, `${tool.name} must carry openWorldHint`).toBe(false);
       } else {
         expect(tool.annotations.readOnlyHint, `${tool.name} must carry readOnlyHint`).toBe(true);
       }
