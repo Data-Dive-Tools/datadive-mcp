@@ -56,7 +56,9 @@ export const rediveNicheTool: ToolDefinition<typeof inputSchema> = {
   description:
     "Use this to refresh an existing niche's research with current Amazon data, instead of creating a new " +
     "niche with `create_niche_dive`. ⚠️ Spends dive tokens (one batch per ASIN dived) and cannot be undone — " +
-    "set `confirm: true` only after the user approves the cost. Two modes: `same_competitors` re-dives the " +
+    "set `confirm: true` only after the user approves the cost. Not safe to retry: each call spends tokens " +
+    "again and starts a separate re-dive — if a call errors or times out, poll `get_dive_status` instead of " +
+    "re-calling. Two modes: `same_competitors` re-dives the " +
     "niche's current competitor set (no other argument needed) and `discover` finds a fresh set, sized by " +
     "`numberOfCompetitors` and steerable with `heroAsin` / `lockedAsins` / `excludedAsins`. Runs " +
     "asynchronously: returns a `diveId` and an `estimatedCompletionDate` — poll `get_dive_status` with that " +

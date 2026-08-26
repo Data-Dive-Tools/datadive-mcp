@@ -29,7 +29,9 @@ export const createRankRadarTool: ToolDefinition<typeof inputSchema> = {
   description:
     "Use this to start tracking organic and sponsored keyword rankings for an ASIN within a niche. " +
     "⚠️ Spends Search Term tokens (cost scales with `numberOfKeywords`) and cannot be undone — set " +
-    "`confirm: true` only after the user approves the cost. Returns the new `rankRadarId`; read its data " +
+    "`confirm: true` only after the user approves the cost. Not safe to retry: each call spends tokens again " +
+    "and creates a separate Rank Radar — if a call errors or times out, check `list_rank_radars` instead of " +
+    "re-calling. Returns the new `rankRadarId`; read its data " +
     "later with `get_rank_radar_data`. Requires `asin`, `numberOfKeywords` (min 1), and a `nicheId` from `list_niches`.",
   inputSchema,
   // destructiveHint is technically "additive" here (this creates a new Rank Radar, it
