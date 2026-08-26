@@ -32,6 +32,8 @@ export const createNicheDiveTool: ToolDefinition<typeof inputSchema> = {
   description:
     "Use this to start new niche research from a seed ASIN. ⚠️ Spends dive tokens (cost scales with " +
     "`numberOfCompetitors`) and cannot be undone — set `confirm: true` only after the user approves the cost. " +
+    "Not safe to retry: each call spends tokens again and starts a separate dive — if a call errors or times " +
+    "out, poll `get_dive_status` (or check `list_niches`) instead of re-calling. " +
     "The dive runs asynchronously: this returns immediately with a `diveId` and an `estimatedCompletionDate`. " +
     "Poll `get_dive_status` with that `diveId` until it reports `success` (which carries the new `nicheId` for " +
     "use with `list_niches`, `get_niche_keywords`, etc.). Requires `marketplace`, `asin`, and `numberOfCompetitors` (min 2).",

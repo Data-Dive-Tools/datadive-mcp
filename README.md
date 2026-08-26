@@ -135,6 +135,11 @@ To skip the per-call confirmation (e.g. in an automated setup), set
 `DATADIVE_AUTO_CONFIRM_WRITES=true` in your client config — then these tools run
 without `confirm`.
 
+None of the three is **safe to retry** — each call spends tokens again and
+creates a separate dive / re-dive / Rank Radar, even with identical arguments. If
+a call errors or times out, check `get_dive_status` / `list_niches` /
+`list_rank_radars` for what already exists before calling again.
+
 Dives are **asynchronous**. `create_niche_dive` returns a `diveId` and an
 estimated completion time immediately; poll `get_dive_status` with that `diveId`
 until it reports `success`, which carries the new `nicheId` you then feed to
