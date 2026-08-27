@@ -67,7 +67,7 @@ export const rediveNicheTool: ToolDefinition<typeof inputSchema> = {
   inputSchema,
   // Same reasoning as create_niche_dive: a re-dive is additive rather than destructive, but the
   // irreversible token spend is what clients need to prompt on. The confirm gate enforces it regardless.
-  annotations: { readOnlyHint: false, destructiveHint: true },
+  annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   handler: async (args, ctx) => {
     // `numberOfCompetitors` cannot be required in the schema (same_competitors mode forbids it), so
     // check it here — before the confirm gate, because a gate that cannot state the cost is worse
