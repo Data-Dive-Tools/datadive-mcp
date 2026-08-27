@@ -534,3 +534,62 @@ export interface ListingChangeItem {
 }
 
 export type ListingChangeList = PaginationResponse<ListingChangeItem>;
+
+// ─── /v1/niches/rank-radars/:rankRadarId/search-terms  (ExternalAddSearchTermsResponseDto, wrapped) ──
+
+/**
+ * Where each submitted search term ended up. `manual` and `suggestions` are terms the
+ * niche had never seen; the rest were already known to the niche in that role.
+ * Mirrors the backend's SearchTermOriginBreakdown.
+ */
+export interface SearchTermOriginBreakdown {
+  tracked: string[];
+  paused: string[];
+  outliers: string[];
+  residues: string[];
+  ppc: string[];
+  /** Terms the niche has never seen, typed in by the user. */
+  manual: string[];
+  /** Terms the niche has never seen, accepted from the Rank Radar keyword suggestions. */
+  suggestions: string[];
+}
+
+export interface AddSearchTermsResult {
+  originBreakdown: SearchTermOriginBreakdown;
+  /** search term -> rankRadarKeywordId, the id the archive/resume search-term tools take. */
+  keywordToRankRadarKeywordIdMap: Record<string, string>;
+}
+
+/** Backend cap on how many search terms one add call accepts (ADD_SEARCH_TERM_MAX_LIMIT). */
+export const ADD_SEARCH_TERMS_MAX = 1000;
+
+// ─── /v1/niches/:nicheId/ai-copywriter  (AI Copywriter, wrapped) ─────────────
+
+/**
+ * Generation strategies the AI Copywriter accepts. Mirrors the backend's
+ * GenerateAiCopywriterPromptOption enum.
+ */
+export const LISTING_COPY_STRATEGIES = ["cosmo", "ranking-juice", "nlp", "cosmo-rufus"] as const;
+export type ListingCopyStrategy = (typeof LISTING_COPY_STRATEGIES)[number];
+
+/** Returned immediately when a generation is enqueued. */
+export interface CreateListingCopyResult {
+  generationId: string;
+  status: "generating";
+}
+
+export interface ListingCopyResult {
+  title: string;
+  bullets: string[];
+  description: string;
+  itemHighlights: string;
+  /** Ranking Juice metrics for the generated copy (value + per-field contribution). */
+  rankingJuice: Record<string, unknown>;
+  methodology_breakdown?: unknown;
+}
+
+/** Polled status of a generation. Discriminated on `status`, like DiveStatus. */
+export type ListingCopyGenerationStatus =
+  | { generationId: string; status: "generating" }
+  | { generationId: string; status: "complete"; result: ListingCopyResult }
+  | { generationId: string; status: "failed"; error: string };

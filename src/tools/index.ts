@@ -15,6 +15,15 @@ import { createRankRadarTool } from "./create-rank-radar.js";
 import { createNicheDiveTool } from "./create-niche-dive.js";
 import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
+import { deleteNicheTool } from "./delete-niche.js";
+import { archiveRankRadarTool } from "./archive-rank-radar.js";
+import { resumeRankRadarTool } from "./resume-rank-radar.js";
+import { deleteRankRadarTool } from "./delete-rank-radar.js";
+import { addRankRadarSearchTermsTool } from "./add-rank-radar-search-terms.js";
+import { archiveRankRadarSearchTermsTool } from "./archive-rank-radar-search-terms.js";
+import { resumeRankRadarSearchTermsTool } from "./resume-rank-radar-search-terms.js";
+import { generateListingCopyTool } from "./generate-listing-copy.js";
+import { getListingCopyGenerationStatusTool } from "./get-listing-copy-generation-status.js";
 import { listSellerProfilesTool } from "./list-seller-profiles.js";
 import { getSellerCatalogTool } from "./get-seller-catalog.js";
 import { getSellerListingChangesTool } from "./get-seller-listing-changes.js";
@@ -40,6 +49,15 @@ export const allTools: ReadonlyArray<AnyTool> = [
   createNicheDiveTool,
   rediveNicheTool,
   getDiveStatusTool,
+  addRankRadarSearchTermsTool,
+  archiveRankRadarSearchTermsTool,
+  resumeRankRadarSearchTermsTool,
+  archiveRankRadarTool,
+  resumeRankRadarTool,
+  deleteRankRadarTool,
+  deleteNicheTool,
+  generateListingCopyTool,
+  getListingCopyGenerationStatusTool,
   listSellerProfilesTool,
   getSellerCatalogTool,
   getSellerListingChangesTool,
