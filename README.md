@@ -100,7 +100,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the niche-scoped tools below. |
 | `get_niche_keywords` | Master keyword list for a niche: search volume, relevancy, competitor ASIN ranks. |
 | `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
-| `get_niche_competitors` | Competitor ASINs and niche statistics (sales, revenue, ratings, opportunity score). |
+| `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |

@@ -98,10 +98,40 @@ export interface GetMasterKeywordListResult {
 // ─── /v1/niches/:nicheId/competitors  (GetCompetitorListResult, wrapped) ─────
 
 /**
- * Niche competitors response — many nested DTOs from the backend (MklStatisticsData,
- * OpportunityEvaluation, MklBenchmark, CompetitorsStrength, AsinListItem). We type
- * the outer shape and leave the inner objects as opaque records; the LLM sees the
- * full JSON and can reason about it. Tighten if a specific consumer needs it.
+ * A single Competitor row. The fields documented here are the ones worth naming for
+ * a consumer; the index signature keeps the rest of the payload (keyword and ads
+ * diagnostics, evaluation labels) available to the LLM without enumerating it.
+ */
+export interface Competitor {
+  asin: string;
+  /** Product title. */
+  title: string;
+  /** Best Sellers Rank. Null when Amazon publishes none for the product. */
+  bsr: number | null;
+  /** Amazon category name. Null when unknown. */
+  category: string | null;
+  /** Full category path, e.g. "Pet Supplies > Dogs > Apparel & Accessories". Null when unknown. */
+  categoryTree: string | null;
+  brand: string | null;
+  price: number | null;
+  rating: number | null;
+  reviewCount: number | null;
+  sales: number | null;
+  revenue: number | null;
+  numberOfVariations: number;
+  /**
+   * Total Ranking Juice for this listing. Use `get_ranking_juice` for the breakdown
+   * by title, bullets and description.
+   */
+  listingRankingJuice: { value: number };
+  [key: string]: unknown;
+}
+
+/**
+ * Niche competitors response — several nested DTOs from the backend (MklStatisticsData,
+ * OpportunityEvaluation, MklBenchmark, CompetitorsStrength). We type the outer shape and
+ * the competitor rows, and leave the niche-level aggregates as opaque records; the LLM
+ * sees the full JSON and can reason about it. Tighten if a specific consumer needs it.
  */
 export interface GetCompetitorListResult {
   /** Marketplace enum (AmazonStore in backend). */
@@ -110,7 +140,7 @@ export interface GetCompetitorListResult {
   opportunityEvaluation: Record<string, unknown>;
   benchmark: Record<string, unknown>;
   competitorsStrength: Record<string, unknown>;
-  competitors: Array<Record<string, unknown>>;
+  competitors: Competitor[];
   latestResearchDate: string;
 }
 
