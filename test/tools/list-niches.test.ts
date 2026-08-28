@@ -18,6 +18,12 @@ describe("list_niches tool", () => {
     expect(listNichesTool.description.toLowerCase()).toContain("niche");
   });
 
+  it("no longer carries the temporary paging warning", () => {
+    const description = listNichesTool.description.toLowerCase();
+    expect(description).not.toContain("does not apply paging");
+    expect(description).not.toContain("no server-side search");
+  });
+
   it("calls /v1/niches with no query when no args provided", async () => {
     const fetchMock = mockFetch({
       data: [],

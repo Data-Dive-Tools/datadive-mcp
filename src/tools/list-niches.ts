@@ -6,6 +6,13 @@ import type { ToolDefinition } from "./types.js";
 /** Mirrors the API's `PaginationParams.MAX_PAGE_SIZE`; larger values are rejected there with 400. */
 export const LIST_NICHES_MAX_PAGE_SIZE = 50;
 
+/**
+ * `searchText`, `searchAsin`, `orderBy` and `sortOrder` are forwarded to `GET /v1/niches`, which
+ * accepts them since the 2026-09-07 API release. They were withdrawn on 2026-08-28 because the
+ * endpoint bound only `currentPage`/`pageSize` and dropped unknown query params silently, so they
+ * filtered nothing; the same release also fixed paging, which TypeORM had been discarding on the
+ * joined builder (RS-11494). Do not re-add a filter here before the route reads it.
+ */
 const inputSchema = {
   currentPage: z
     .number()
