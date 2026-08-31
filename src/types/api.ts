@@ -171,15 +171,33 @@ export interface NicheRankingJuices {
 
 // ─── /v1/niches/rank-radars  (ExternalRankRadarListResponseDto, wrapped) ─────
 
-export interface RankRadarAsin {
-  id: string;
-  krtId: string;
-  asin: string;
-}
+/**
+ * States a Rank Radar can be reported in. Matches the backend's `ExternalRankRadarStatus`, so a
+ * value read out of a response can be fed straight back into the `status` filter.
+ *
+ * `PAUSED` is what the API's own archive endpoint produces (tracking stopped, data kept);
+ * `ARCHIVED` is a Rank Radar that was deleted.
+ */
+export const RANK_RADAR_STATES = ["ACTIVE", "PAUSED", "ARCHIVED"] as const;
+export type RankRadarState = (typeof RANK_RADAR_STATES)[number];
 
-export interface RankRadarItem {
+/**
+ * Accepted values of the `status` query param on /v1/niches/rank-radars. `ALL` is filter-only —
+ * it selects active and paused together and never appears as an item's own status.
+ *
+ * The API rejects anything else with 400 (datadive-backend `ExternalKeywordRankTrackerStatus`).
+ * Before RS-11518 it accepted only `ALL`/`PAUSED` and silently answered anything else with the
+ * active set, so this list must not be widened ahead of the API.
+ */
+export const RANK_RADAR_STATUSES = [...RANK_RADAR_STATES, "ALL"] as const;
+export type RankRadarStatus = (typeof RANK_RADAR_STATUSES)[number];
+
+/** A row exactly as `/v1/niches/rank-radars` sends it, before the tool minimizes it. */
+export interface ApiRankRadarItem {
   id: string;
-  asin: RankRadarAsin;
+  status: RankRadarState;
+  /** Only `asin` carries information; `id`/`krtId` are internal row identifiers. */
+  asin: { id: string; krtId: string; asin: string };
   marketplace: string;
   keywordCount: number;
   title: string;
@@ -190,11 +208,13 @@ export interface RankRadarItem {
   top50SV: number | null;
 }
 
-export type RankRadarList = PaginationResponse<RankRadarItem>;
+/** A row as `list_rank_radars` returns it: `asin` flattened to the ASIN, no internal identifiers. */
+export interface RankRadarItem extends Omit<ApiRankRadarItem, "asin"> {
+  asin: string;
+}
 
-/** Allowed values for the `status` query param on /v1/niches/rank-radars. */
-export const RANK_RADAR_STATUSES = ["ACTIVE", "PAUSED", "ARCHIVED"] as const;
-export type RankRadarStatus = (typeof RANK_RADAR_STATUSES)[number];
+export type ApiRankRadarList = PaginationResponse<ApiRankRadarItem>;
+export type RankRadarList = PaginationResponse<RankRadarItem>;
 
 // ─── POST /v1/niches/rank-radars  (CreateRankRadarSuccessResponseDto, bare) ──
 

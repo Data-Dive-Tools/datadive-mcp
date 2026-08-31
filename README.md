@@ -102,7 +102,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
-| `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId` or `status`. |
+| `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText` or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
@@ -179,7 +179,7 @@ specific HTTP status from the DataDive API.
 | **Subscription is inactive or paused** | Resume billing at https://2.datadive.tools — the API key is valid but the subscription isn't active. |
 | **Forbidden** | The key is valid but doesn't have access to that resource. Usually a niche/rank-radar that belongs to a different org. |
 | **Rate limit exceeded** | Wait a few seconds and retry. |
-| **Bad request** | Check the parameters — the message echoes the server's validation error (e.g., `pageSize must not exceed 100`). |
+| **Bad request** | Check the parameters — the message echoes the server's validation error (e.g., `pageSize must not exceed 50`). |
 | **DataDive API error (5xx)** | Transient backend issue. Try again; if it persists, contact support. |
 | **Network error reaching …** | Your machine can't reach `api.datadive.tools` — check VPN / firewall / DNS. |
 
