@@ -16,7 +16,35 @@ const TEST_CONFIG: Config = {
   autoConfirmWrites: false,
 };
 
-const WRITE_TOOLS = ["create_niche_dive", "redive_niche", "create_rank_radar"];
+const WRITE_TOOLS = [
+  "create_niche_dive",
+  "redive_niche",
+  "create_rank_radar",
+  "add_rank_radar_search_terms",
+  "pause_rank_radar_search_terms",
+  "resume_rank_radar_search_terms",
+  "pause_rank_radar",
+  "resume_rank_radar",
+  "delete_rank_radar",
+  "delete_niche",
+  "generate_listing_copy",
+];
+
+/**
+ * Write tools that require `confirm: true` before they touch the API. The gate is
+ * reserved for actions that cannot be undone: data loss (the two deletes) or a
+ * permanent token spend (dives, rank radar creation, listing copy). Pause/resume
+ * and add-search-terms only move Daily Tracked Keywords capacity, which the backend
+ * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
+ */
+const CONFIRM_GATED_TOOLS = [
+  "create_niche_dive",
+  "redive_niche",
+  "create_rank_radar",
+  "delete_niche",
+  "delete_rank_radar",
+  "generate_listing_copy",
+];
 
 const EXPECTED_TOOLS = [
   "list_niches",
@@ -30,6 +58,15 @@ const EXPECTED_TOOLS = [
   "create_niche_dive",
   "redive_niche",
   "get_dive_status",
+  "add_rank_radar_search_terms",
+  "pause_rank_radar_search_terms",
+  "resume_rank_radar_search_terms",
+  "pause_rank_radar",
+  "resume_rank_radar",
+  "delete_rank_radar",
+  "delete_niche",
+  "generate_listing_copy",
+  "get_listing_copy_generation_status",
   "list_seller_profiles",
   "get_seller_catalog",
   "get_seller_listing_changes",
@@ -93,6 +130,13 @@ describe("tool registry", () => {
       } else {
         expect(tool.annotations.readOnlyHint, `${tool.name} must carry readOnlyHint`).toBe(true);
       }
+    }
+  });
+
+  it("exactly the irreversible write tools expose a `confirm` argument", () => {
+    for (const tool of allTools) {
+      const hasConfirm = "confirm" in tool.inputSchema;
+      expect(hasConfirm, `${tool.name} confirm gate`).toBe(CONFIRM_GATED_TOOLS.includes(tool.name));
     }
   });
 

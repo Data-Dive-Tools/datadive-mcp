@@ -147,6 +147,31 @@ export async function httpPost<T>(ctx: RequestContext, path: string, body: unkno
   return handleResponse<T>(res);
 }
 
+/**
+ * DELETE a /v1 resource. Same auth/UA headers, version notice and error mapping as
+ * httpGet. The delete endpoints answer 204 No Content, so handleResponse resolves to
+ * `null` — callers return their own confirmation payload rather than that null.
+ */
+export async function httpDelete<T>(ctx: RequestContext, path: string): Promise<T> {
+  const url = buildUrl(ctx.config.baseUrl, path);
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        ...authHeaders(ctx.config),
+        accept: "application/json",
+        "user-agent": userAgent(ctx.toolName),
+      },
+    });
+  } catch (e) {
+    throw networkError(url, e);
+  }
+
+  return handleResponse<T>(res);
+}
+
 function networkError(url: string, e: unknown): ApiError {
   const msg = e instanceof Error ? e.message : String(e);
   return new ApiError("network", 0, `Network error reaching ${url}: ${msg}`);
