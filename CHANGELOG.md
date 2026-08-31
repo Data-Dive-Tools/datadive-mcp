@@ -1,5 +1,42 @@
 # @datadive-tools/mcp
 
+## 0.11.0
+
+### Minor Changes
+
+- ff085cb: Document the fields `get_niche_competitors` now returns. The `/v1/niches/{nicheId}/competitors` endpoint gained `title` and `bsr` (previously stripped from the response, so unavailable through any v1 endpoint), and its `category`, `categoryTree` and `advertisedKwsEvaluation` fields are now part of the published contract instead of undeclared extras.
+  - The tool description names product title, BSR, category and category tree, so the model knows they are available. BSR supports ranking Competitors by sales position within mentioned category.
+  - `Competitor` is now a real type in `src/types/api.ts` rather than an opaque `Record<string, unknown>`. It keeps an index signature, so the remaining keyword and ads diagnostics stay visible to the model.
+  - `listingRankingJuice` on a Competitor keeps its `{ value }` object but no longer carries the `contribution` breakdown, so existing `listingRankingJuice.value` reads keep working. `get_ranking_juice` remains the tool for the per-property breakdown.
+
+  No tool inputs changed and no tool was added or removed.
+
+- f7280cd: `list_niches`: withdraw the search and ordering inputs, state the paging limitation (RS-11517).
+  - Removed `searchText`, `searchAsin`, `orderBy` and `sortOrder`. `GET /v1/niches` binds only `currentPage` and `pageSize` and drops unknown query params silently, so these four filtered nothing while the tool told the model they did.
+  - The description now says that the API does not apply paging yet: one call returns every niche of the account whatever `currentPage`/`pageSize` say, the pagination metadata describes a page that was not applied, and walking pages only repeats the same rows. Read `data` once and filter locally.
+  - Verified against prod on 2026-08-28 on an org with 907 niches: `pageSize: 2` returned all 907 rows; page 2 was byte-identical to page 1; `searchText: "dog hat"` was byte-identical again, though only 80 rows contain that text.
+
+  Both the filters and normal paging come back once the API fix ships (planned 2026-09-07). No change to the tool name or the response shape.
+
+- db1f633: Add nine tools covering the remaining public `/v1` write endpoints: `add_rank_radar_search_terms`, `pause_rank_radar_search_terms`, `resume_rank_radar_search_terms`, `pause_rank_radar`, `resume_rank_radar`, `delete_rank_radar`, `delete_niche`, `generate_listing_copy` and `get_listing_copy_generation_status`. The pause tools sit on the API's "archive" endpoints, renamed because archiving there pauses — `status: ARCHIVED` in `list_rank_radars` means deleted.
+
+  The `confirm: true` gate is applied only where an action cannot be undone — the two deletes and `generate_listing_copy`, which spends an AI Copywriter prompt. Pause/resume and add-search-terms are not gated: they move Daily Tracked Keywords capacity, which the backend frees again on pause, and each is undone by its counterpart.
+
+  Also adds `httpDelete` to the API client.
+
+- 69561d2: `list_rank_radars`: correct the status enum, cap `pageSize`, and stop leaking `krt_asin` internals (RS-11518).
+  - `status` now offers the values the API actually honors: `ACTIVE`, `PAUSED`, `ARCHIVED` and `ALL`. The three advertised before were partly fiction — the API accepted only `ALL`/`PAUSED` and answered anything else with the active set and no error, so `status: "ARCHIVED"` returned every active Rank Radar. The paired API fix (RS-11518) makes each value select what it names and rejects an unknown one with 400.
+  - `pageSize` is capped at 50, the API's real maximum. The schema claimed 100, which the API silently replaced with the default 20.
+  - Each item's `asin` is now the ASIN string instead of a `krt_asin` row. The row carried `id`, `krtId` (a copy of the item's own `id`), `parent_asin`, `image_url`, `variation_attributes`, `created_at`, `updated_at` and `deleted_at` — internal identifiers and logging timestamps that no tool accepts as input.
+  - Each item now carries `status` in the same vocabulary the filter accepts. It used to be the internal `"normal"`, which matched no input value.
+  - The description no longer names fields that are not returned.
+
+### Patch Changes
+
+- f2176ce: Require complete read/write annotations on every tool, and add `openWorldHint: false` to the three write tools.
+
+  `annotations` is now a required field on `ToolDefinition` / `AnyTool`: read tools must declare `readOnlyHint: true`; write tools must declare `readOnlyHint: false` plus `destructiveHint` and `openWorldHint`. The in-product connector directories review these — Claude's Connectors Directory requires `title` + `readOnlyHint`/`destructiveHint`, and OpenAI's plugin review additionally requires `openWorldHint` on write tools and names missing or wrong hint values as a rejection cause. `create_niche_dive`, `create_rank_radar` and `redive_niche` set `openWorldHint: false`: they change only the caller's own DataDive account, never public internet state.
+
 ## 0.10.0
 
 ### Minor Changes
