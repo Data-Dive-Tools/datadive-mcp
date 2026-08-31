@@ -21,9 +21,9 @@ const WRITE_TOOLS = [
   "redive_niche",
   "create_rank_radar",
   "add_rank_radar_search_terms",
-  "archive_rank_radar_search_terms",
+  "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",
-  "archive_rank_radar",
+  "pause_rank_radar",
   "resume_rank_radar",
   "delete_rank_radar",
   "delete_niche",
@@ -33,9 +33,9 @@ const WRITE_TOOLS = [
 /**
  * Write tools that require `confirm: true` before they touch the API. The gate is
  * reserved for actions that cannot be undone: data loss (the two deletes) or a
- * permanent token spend (dives, rank radar creation, listing copy). Archive/resume
+ * permanent token spend (dives, rank radar creation, listing copy). Pause/resume
  * and add-search-terms only move Daily Tracked Keywords capacity, which the backend
- * refunds on pause/archive/delete, so they are reversible and are NOT gated (RS-11529).
+ * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
  */
 const CONFIRM_GATED_TOOLS = [
   "create_niche_dive",
@@ -59,9 +59,9 @@ const EXPECTED_TOOLS = [
   "redive_niche",
   "get_dive_status",
   "add_rank_radar_search_terms",
-  "archive_rank_radar_search_terms",
+  "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",
-  "archive_rank_radar",
+  "pause_rank_radar",
   "resume_rank_radar",
   "delete_rank_radar",
   "delete_niche",

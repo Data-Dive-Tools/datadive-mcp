@@ -16,11 +16,11 @@ import { createNicheDiveTool } from "./create-niche-dive.js";
 import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
 import { deleteNicheTool } from "./delete-niche.js";
-import { archiveRankRadarTool } from "./archive-rank-radar.js";
+import { pauseRankRadarTool } from "./pause-rank-radar.js";
 import { resumeRankRadarTool } from "./resume-rank-radar.js";
 import { deleteRankRadarTool } from "./delete-rank-radar.js";
 import { addRankRadarSearchTermsTool } from "./add-rank-radar-search-terms.js";
-import { archiveRankRadarSearchTermsTool } from "./archive-rank-radar-search-terms.js";
+import { pauseRankRadarSearchTermsTool } from "./pause-rank-radar-search-terms.js";
 import { resumeRankRadarSearchTermsTool } from "./resume-rank-radar-search-terms.js";
 import { generateListingCopyTool } from "./generate-listing-copy.js";
 import { getListingCopyGenerationStatusTool } from "./get-listing-copy-generation-status.js";
@@ -50,9 +50,9 @@ export const allTools: ReadonlyArray<AnyTool> = [
   rediveNicheTool,
   getDiveStatusTool,
   addRankRadarSearchTermsTool,
-  archiveRankRadarSearchTermsTool,
+  pauseRankRadarSearchTermsTool,
   resumeRankRadarSearchTermsTool,
-  archiveRankRadarTool,
+  pauseRankRadarTool,
   resumeRankRadarTool,
   deleteRankRadarTool,
   deleteNicheTool,

@@ -16,11 +16,11 @@ const inputSchema = {
 
 export const resumeRankRadarSearchTermsTool: ToolDefinition<typeof inputSchema> = {
   name: "resume_rank_radar_search_terms",
-  title: "Resume Archived Search Terms of a Rank Radar",
+  title: "Resume Paused Search Terms of a Rank Radar",
   description:
-    "Use this to start tracking keywords again that were paused with `archive_rank_radar_search_terms`. Each " +
+    "Use this to start tracking keywords again that were paused with `pause_rank_radar_search_terms`. Each " +
     "resumed keyword takes back one Daily Tracked Keywords slot, and the call fails if the quota is " +
-    "exhausted — check `get_quota` first. Reversible with `archive_rank_radar_search_terms`, so it needs no " +
+    "exhausted — check `get_quota` first. Reversible with `pause_rank_radar_search_terms`, so it needs no " +
     "`confirm`. Takes keyword ids, not keyword text: get them from `get_rank_radar_data`. Safe to repeat: " +
     "already-active terms are left unchanged.",
   inputSchema,

@@ -108,12 +108,12 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
-| `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `archive_rank_radar_search_terms`. |
-| `archive_rank_radar_search_terms` | Pauses individual keywords of a rank radar, keeping their history and freeing their tracking slots. Takes keyword ids from `get_rank_radar_data`. |
+| `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `pause_rank_radar_search_terms`. |
+| `pause_rank_radar_search_terms` | Pauses individual keywords of a rank radar, keeping their history and freeing their tracking slots. Takes keyword ids from `get_rank_radar_data`. |
 | `resume_rank_radar_search_terms` | Restarts tracking on paused keywords of a rank radar. Takes back one tracking slot each. |
-| `archive_rank_radar` | Pauses a whole rank radar (listed under `status: PAUSED`, not `ARCHIVED`). Tracking stops, the history is kept, and the tracking slots are freed. Reversible with `resume_rank_radar`. |
+| `pause_rank_radar` | Pauses a whole rank radar (what the API calls archiving — listed under `status: PAUSED`, not `ARCHIVED`). Tracking stops, the history is kept, and the tracking slots are freed. Reversible with `resume_rank_radar`. |
 | `resume_rank_radar` | Reactivates a paused rank radar, restoring as many keywords as the remaining quota allows (most relevant first). |
-| `delete_rank_radar` | **Destroys ranking history.** Deletes a rank radar permanently (listed under `status: ARCHIVED`) and frees its tracking slots. Requires `confirm: true` — prefer `archive_rank_radar` if the data may be wanted later. |
+| `delete_rank_radar` | **Destroys ranking history.** Deletes a rank radar permanently (listed under `status: ARCHIVED`) and frees its tracking slots. Requires `confirm: true` — prefer `pause_rank_radar` if the data may be wanted later. |
 | `delete_niche` | **Destroys niche data.** Deletes a niche with its keywords, competitors and dive history; spent dive tokens are not refunded. Blocked while a rank radar uses the niche. Requires `confirm: true`. |
 | `generate_listing_copy` | **Spends an AI Copywriter prompt.** Drafts an optimised title, bullets and description from a niche's keyword research. Nothing is published to Amazon. Async — returns a `generationId`. Requires `confirm: true`. |
 | `get_listing_copy_generation_status` | Poll a draft started by `generate_listing_copy`: `generating`, `complete` (carries the generated copy), or `failed`. Free to poll. |
@@ -146,10 +146,10 @@ assistant to confirm the cost with you first:
 
 Check your remaining balance any time with `get_quota`.
 
-The other write tools — `archive_rank_radar`, `resume_rank_radar` and the three
+The other write tools — `pause_rank_radar`, `resume_rank_radar` and the three
 `*_rank_radar_search_terms` tools — need no confirmation. They only move Daily
-Tracked Keywords capacity, which is freed again when you pause or archive, and
-each is undone by its counterpart.
+Tracked Keywords capacity, which is freed again when you pause, and each is
+undone by its counterpart.
 
 To skip the per-call confirmation (e.g. in an automated setup), set
 `DATADIVE_AUTO_CONFIRM_WRITES=true` in your client config — then all six run

@@ -26,9 +26,9 @@ export const addRankRadarSearchTermsTool: ToolDefinition<typeof inputSchema> = {
     "`create_rank_radar`. New keywords are added to the niche and tracked from now on; any matching keyword " +
     "that was previously paused is resumed. Each newly tracked keyword takes one Daily Tracked Keywords slot, " +
     "and the call fails if the quota is exhausted — check `get_quota` first. Reversible with " +
-    "`archive_rank_radar_search_terms`, which frees the slots again, so it needs no `confirm`. Returns " +
+    "`pause_rank_radar_search_terms`, which frees the slots again, so it needs no `confirm`. Returns " +
     "`originBreakdown` (where each submitted term ended up) and `keywordToRankRadarKeywordIdMap`, whose ids " +
-    "are what the archive/resume search-term tools take.",
+    "are what the pause/resume search-term tools take.",
   inputSchema,
   annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   handler: async (args, ctx) => {

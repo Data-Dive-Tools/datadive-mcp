@@ -21,8 +21,9 @@ export const deleteRankRadarTool: ToolDefinition<typeof inputSchema> = {
     "Use this to permanently remove a Rank Radar and all of its keyword ranking history. ⚠️ Cannot be undone " +
     "— there is no restore endpoint; set `confirm: true` only after the user approves. It does free the Daily " +
     "Tracked Keywords quota those keywords held. Deleted Rank Radars are what `list_rank_radars` returns for " +
-    "`status: ARCHIVED`. If the user only wants to stop tracking for a while and keep the history, use " +
-    "`archive_rank_radar` instead: it frees the same quota and is reversible with `resume_rank_radar`.",
+    "`status: ARCHIVED`. If the user only wants to stop tracking for a while and keep the history — or asks " +
+    "to 'archive' the Rank Radar, which is what the DataDive API calls pausing — use `pause_rank_radar` " +
+    "instead: it frees the same quota and is reversible with `resume_rank_radar`.",
   inputSchema,
   annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   handler: async (args, ctx) => {
@@ -30,7 +31,7 @@ export const deleteRankRadarTool: ToolDefinition<typeof inputSchema> = {
       args.confirm,
       ctx,
       "Deleting this Rank Radar removes its keyword ranking history permanently. It frees the Daily " +
-        "Tracked Keywords quota, but the history cannot be recovered — `archive_rank_radar` frees the " +
+        "Tracked Keywords quota, but the history cannot be recovered — `pause_rank_radar` frees the " +
         "same quota and is reversible.",
     );
     if (pending) return pending;

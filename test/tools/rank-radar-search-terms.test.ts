@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { addRankRadarSearchTermsTool } from "../../src/tools/add-rank-radar-search-terms.js";
-import { archiveRankRadarSearchTermsTool } from "../../src/tools/archive-rank-radar-search-terms.js";
+import { pauseRankRadarSearchTermsTool } from "../../src/tools/pause-rank-radar-search-terms.js";
 import { resumeRankRadarSearchTermsTool } from "../../src/tools/resume-rank-radar-search-terms.js";
 import { CTX, mockFetch, mockNoContentFetch, getCallUrl, getCallInit } from "./_helpers.js";
 
@@ -44,7 +44,7 @@ describe("add_rank_radar_search_terms tool", () => {
   });
 });
 
-describe("archive/resume_rank_radar_search_terms tools", () => {
+describe("pause/resume_rank_radar_search_terms tools", () => {
   let originalFetch: typeof fetch;
   beforeEach(() => {
     originalFetch = globalThis.fetch;
@@ -53,8 +53,9 @@ describe("archive/resume_rank_radar_search_terms tools", () => {
     globalThis.fetch = originalFetch;
   });
 
+  // `pause_rank_radar_search_terms` still POSTs to the API's `/archive` endpoint — the rename is MCP-side only.
   it.each([
-    ["archive", archiveRankRadarSearchTermsTool, "archived"],
+    ["archive", pauseRankRadarSearchTermsTool, "paused"],
     ["resume", resumeRankRadarSearchTermsTool, "resumed"],
   ] as const)("%s POSTs the keyword ids and reports the new state", async (verb, tool, status) => {
     const fetchMock = mockNoContentFetch();
@@ -72,7 +73,7 @@ describe("archive/resume_rank_radar_search_terms tools", () => {
   });
 
   it("requires at least one keyword id, and UUIDs rather than keyword text", () => {
-    const { rankRadarKeywordIds } = archiveRankRadarSearchTermsTool.inputSchema;
+    const { rankRadarKeywordIds } = pauseRankRadarSearchTermsTool.inputSchema;
     expect(() => rankRadarKeywordIds.parse([])).toThrow();
     expect(() => rankRadarKeywordIds.parse(["dog raincoat"])).toThrow();
     expect(rankRadarKeywordIds.parse(KW_IDS)).toEqual(KW_IDS);

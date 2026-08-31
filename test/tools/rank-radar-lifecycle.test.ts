@@ -1,17 +1,17 @@
 /**
- * Archive / resume tools for a whole Rank Radar. These are deliberately NOT
+ * Pause / resume tools for a whole Rank Radar. These are deliberately NOT
  * confirm-gated: they only move Daily Tracked Keywords capacity, which the backend
  * refunds on pause, and each is undone by its counterpart (RS-11529).
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { archiveRankRadarTool } from "../../src/tools/archive-rank-radar.js";
+import { pauseRankRadarTool } from "../../src/tools/pause-rank-radar.js";
 import { resumeRankRadarTool } from "../../src/tools/resume-rank-radar.js";
 import { CTX, mockNoContentFetch, getCallUrl, getCallInit } from "./_helpers.js";
 
 const RR_ID = "3f4a1c2e-5b6d-4e7f-8a9b-0c1d2e3f4a5b";
 
-describe("archive_rank_radar / resume_rank_radar tools", () => {
+describe("pause_rank_radar / resume_rank_radar tools", () => {
   let originalFetch: typeof fetch;
   beforeEach(() => {
     originalFetch = globalThis.fetch;
@@ -20,8 +20,9 @@ describe("archive_rank_radar / resume_rank_radar tools", () => {
     globalThis.fetch = originalFetch;
   });
 
+  // `pause_rank_radar` still POSTs to the API's `/archive` endpoint — the rename is MCP-side only.
   it.each([
-    ["archive", archiveRankRadarTool, "archived"],
+    ["archive", pauseRankRadarTool, "paused"],
     ["resume", resumeRankRadarTool, "resumed"],
   ] as const)("%s POSTs to the lifecycle endpoint and reports the new state", async (verb, tool, status) => {
     const fetchMock = mockNoContentFetch();
@@ -38,11 +39,11 @@ describe("archive_rank_radar / resume_rank_radar tools", () => {
     const fetchMock = mockNoContentFetch();
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await archiveRankRadarTool.handler({ rankRadarId: RR_ID }, CTX);
+    await pauseRankRadarTool.handler({ rankRadarId: RR_ID }, CTX);
     await resumeRankRadarTool.handler({ rankRadarId: RR_ID }, CTX);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect("confirm" in archiveRankRadarTool.inputSchema).toBe(false);
+    expect("confirm" in pauseRankRadarTool.inputSchema).toBe(false);
     expect("confirm" in resumeRankRadarTool.inputSchema).toBe(false);
   });
 });
