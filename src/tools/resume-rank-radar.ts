@@ -8,9 +8,10 @@ const inputSchema = {
 
 export const resumeRankRadarTool: ToolDefinition<typeof inputSchema> = {
   name: "resume_rank_radar",
-  title: "Resume an Archived Rank Radar",
+  title: "Resume a Paused Rank Radar",
   description:
-    "Use this to restart tracking on a Rank Radar that was archived with `archive_rank_radar`. Keywords are " +
+    "Use this to restart tracking on a Rank Radar that was archived with `archive_rank_radar` (shown by " +
+    "`list_rank_radars` under `status: PAUSED`; a deleted, `ARCHIVED` one cannot be resumed). Keywords are " +
     "resumed as far as the available Daily Tracked Keywords quota allows, most relevant first — so with a " +
     "tight quota only part of the original keyword set comes back; check `get_quota` first if that matters. " +
     "Reversible with `archive_rank_radar`, so it needs no `confirm`. Fails with a bad-request error when " +

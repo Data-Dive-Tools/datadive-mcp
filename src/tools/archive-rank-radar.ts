@@ -14,8 +14,9 @@ export const archiveRankRadarTool: ToolDefinition<typeof inputSchema> = {
     "keywords and the Daily Tracked Keywords quota they held is freed for other Rank Radars, while the Rank " +
     "Radar and its ranking history are kept. Fully reversible with `resume_rank_radar`, so it needs no " +
     "`confirm` — prefer it over `delete_rank_radar` whenever the user may want the data back. Archived Rank " +
-    "Radars show up in `list_rank_radars` under `status: PAUSED`. Safe to repeat: archiving an already " +
-    "archived Rank Radar succeeds and changes nothing.",
+    "Radars show up in `list_rank_radars` under `status: PAUSED` — not `ARCHIVED`, which covers Rank Radars " +
+    "removed with `delete_rank_radar`. Safe to repeat: archiving an already archived Rank Radar succeeds " +
+    "and changes nothing.",
   inputSchema,
   annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   handler: async (args, ctx) => {

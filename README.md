@@ -111,9 +111,9 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `archive_rank_radar_search_terms`. |
 | `archive_rank_radar_search_terms` | Pauses individual keywords of a rank radar, keeping their history and freeing their tracking slots. Takes keyword ids from `get_rank_radar_data`. |
 | `resume_rank_radar_search_terms` | Restarts tracking on paused keywords of a rank radar. Takes back one tracking slot each. |
-| `archive_rank_radar` | Pauses a whole rank radar. Tracking stops, the history is kept, and the tracking slots are freed. Reversible with `resume_rank_radar`. |
-| `resume_rank_radar` | Reactivates an archived rank radar, restoring as many keywords as the remaining quota allows (most relevant first). |
-| `delete_rank_radar` | **Destroys ranking history.** Deletes a rank radar permanently and frees its tracking slots. Requires `confirm: true` — prefer `archive_rank_radar` if the data may be wanted later. |
+| `archive_rank_radar` | Pauses a whole rank radar (listed under `status: PAUSED`, not `ARCHIVED`). Tracking stops, the history is kept, and the tracking slots are freed. Reversible with `resume_rank_radar`. |
+| `resume_rank_radar` | Reactivates a paused rank radar, restoring as many keywords as the remaining quota allows (most relevant first). |
+| `delete_rank_radar` | **Destroys ranking history.** Deletes a rank radar permanently (listed under `status: ARCHIVED`) and frees its tracking slots. Requires `confirm: true` — prefer `archive_rank_radar` if the data may be wanted later. |
 | `delete_niche` | **Destroys niche data.** Deletes a niche with its keywords, competitors and dive history; spent dive tokens are not refunded. Blocked while a rank radar uses the niche. Requires `confirm: true`. |
 | `generate_listing_copy` | **Spends an AI Copywriter prompt.** Drafts an optimised title, bullets and description from a niche's keyword research. Nothing is published to Amazon. Async — returns a `generationId`. Requires `confirm: true`. |
 | `get_listing_copy_generation_status` | Poll a draft started by `generate_listing_copy`: `generating`, `complete` (carries the generated copy), or `failed`. Free to poll. |
