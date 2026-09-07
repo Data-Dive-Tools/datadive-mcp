@@ -197,6 +197,7 @@ specific HTTP status from the DataDive API.
 |---|---|
 | **Authentication failed: your DATADIVE_API_KEY is invalid or expired** | The key is wrong, deleted, or expired. Generate a new one at https://2.datadive.tools/api-key. |
 | **Subscription is inactive or paused** | Resume billing at https://2.datadive.tools — the API key is valid but the subscription isn't active. |
+| **Quota exceeded** / **… quota exceeded** | The subscription's quota for that billable feature (Dive tokens, Rank Radar tracked keywords, AI Copywriter prompts, …) is used up. The message names the feature, the usage, the next refresh date when there is one, and links to the subscription overview page where it can be raised. Don't retry until it has been. |
 | **Forbidden** | The key is valid but doesn't have access to that resource. Usually a niche/rank-radar that belongs to a different org. |
 | **Rate limit exceeded** | Wait a few seconds and retry. |
 | **Bad request** | Check the parameters — the message echoes the server's validation error (e.g., `pageSize must not exceed 50`). |
