@@ -218,9 +218,26 @@ export type RankRadarList = PaginationResponse<RankRadarItem>;
 
 // ─── POST /v1/niches/rank-radars  (CreateRankRadarSuccessResponseDto, bare) ──
 
+/**
+ * A non-blocking notice the API attaches to an otherwise successful write (RS-11615).
+ * `message` is customer-facing prose composed by the backend so every surface — the
+ * DataDive UI, the public API and this server — words it identically; show it verbatim
+ * rather than paraphrasing it. Treat an unrecognised `code` as informational.
+ */
+export interface ApiWarning {
+  /** Machine-readable code, e.g. `FAMILY_ALREADY_TRACKED`. */
+  code: string;
+  message: string;
+  /** Ids of the existing resources the warning refers to, when it names any. */
+  existingRankRadarIds?: string[];
+}
+
 /** Result of creating a Rank Radar. */
 export interface CreateRankRadarResult {
-  rankRadarId: string;
+  /** `null` when the request was a dry run, because nothing was created. */
+  rankRadarId: string | null;
+  /** Non-blocking notices about this creation. Empty or absent when there is nothing to flag. */
+  warnings?: ApiWarning[];
 }
 
 // ─── POST /v1/niches/dives  (CreateNicheDiveSuccessResponseDto, bare) ────────

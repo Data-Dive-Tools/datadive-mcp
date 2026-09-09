@@ -146,6 +146,14 @@ assistant to confirm the cost with you first:
 
 Check your remaining balance any time with `get_quota`.
 
+`create_rank_radar` uses that first, unconfirmed call to preview the creation
+against the API, so the note it comes back with can tell you something specific
+rather than only the token cost — for instance that the product family you asked
+for is already tracked by another of your Rank Radars, which would spend Tracked
+Search Terms on it twice. The preview creates nothing and spends nothing, and a
+warning never blocks the creation: two Rank Radars on one family is how you
+track two different sets of search terms and keep separate statistics.
+
 The other write tools — `pause_rank_radar`, `resume_rank_radar` and the three
 `*_rank_radar_search_terms` tools — need no confirmation. They only move Daily
 Tracked Keywords capacity, which is freed again when you pause, and each is
