@@ -4,7 +4,7 @@
  * "I forgot to add the new tool to allTools" class of bug.
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { z } from "zod";
 import { allTools } from "../src/tools/index.js";
 import { buildServer, requiredScope } from "../src/server.js";
@@ -149,6 +149,26 @@ describe("tool registry", () => {
 });
 
 describe("scope gating", () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  /**
+   * Since RS-11615 create_rank_radar's unconfirmed pass previews the creation with
+   * `dryRun: true` rather than answering offline, so reaching its confirm gate now needs
+   * a reachable API. This stubs that dry run: nothing created, nothing flagged.
+   */
+  function stubDryRun() {
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ rankRadarId: null, warnings: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+    ) as unknown as typeof fetch;
+  }
+
   // Registers the tools against a stub transport-less server and calls the
   // registered callback directly via the SDK's internal registry.
   async function callTool(
@@ -180,7 +200,8 @@ describe("scope gating", () => {
     expect(result.content[0].text).toContain("datadive.read");
   });
 
-  it("allows a write tool with datadive.write (reaches the confirm gate, no API call)", async () => {
+  it("allows a write tool with datadive.write (reaches the confirm gate)", async () => {
+    stubDryRun();
     const result = await callTool("create_rank_radar", [SCOPE_READ, SCOPE_WRITE], {
       asin: "B000000000",
       numberOfKeywords: 5,
@@ -192,6 +213,7 @@ describe("scope gating", () => {
   });
 
   it("does not gate when scopes are unset (stdio path)", async () => {
+    stubDryRun();
     const result = await callTool("create_rank_radar", undefined, {
       asin: "B000000000",
       numberOfKeywords: 5,

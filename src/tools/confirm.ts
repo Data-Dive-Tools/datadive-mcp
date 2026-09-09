@@ -12,6 +12,7 @@
  * (see config.ts) — a persistent "don't ask me again".
  */
 
+import type { ApiWarning } from "../types/api.js";
 import type { HandlerContext } from "./types.js";
 
 export interface ConfirmationRequired {
@@ -19,6 +20,33 @@ export interface ConfirmationRequired {
   message: string;
   /** Human-readable note on what this action will cost in tokens. */
   costNote: string;
+  /**
+   * Non-blocking notices the API reported for this exact request, obtained from a
+   * dry run (RS-11615). Absent when the tool has no dry-run preview or the API
+   * flagged nothing. Each `message` is customer-facing text to be shown verbatim.
+   */
+  warnings?: ApiWarning[];
+}
+
+/**
+ * Whether the gate applies — whether the tool must stop and ask before spending
+ * anything. Split out from requireConfirmation so a tool can run a read-only preview
+ * first and fold its result into the payload; see create_rank_radar's dry run.
+ */
+export function needsConfirmation(confirm: boolean | undefined, ctx: HandlerContext): boolean {
+  return !(confirm === true || ctx.config.autoConfirmWrites);
+}
+
+/** The gate payload. `warnings` is omitted entirely when there are none, to keep the JSON quiet. */
+export function confirmationRequired(costNote: string, warnings?: ApiWarning[]): ConfirmationRequired {
+  return {
+    status: "confirmation_required",
+    message:
+      "This action spends billable tokens and cannot be undone. Confirm the cost with " +
+      "the user, then call again with `confirm: true` to proceed.",
+    costNote,
+    ...(warnings && warnings.length > 0 ? { warnings } : {}),
+  };
 }
 
 /**
@@ -30,12 +58,6 @@ export function requireConfirmation(
   ctx: HandlerContext,
   costNote: string,
 ): ConfirmationRequired | null {
-  if (confirm === true || ctx.config.autoConfirmWrites) return null;
-  return {
-    status: "confirmation_required",
-    message:
-      "This action spends billable tokens and cannot be undone. Confirm the cost with " +
-      "the user, then call again with `confirm: true` to proceed.",
-    costNote,
-  };
+  if (!needsConfirmation(confirm, ctx)) return null;
+  return confirmationRequired(costNote);
 }
