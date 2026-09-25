@@ -103,7 +103,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText` or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
-| `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range. |
+| `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Paged by keyword: walk `currentPage` while `hasNext` is true, `pageSize` up to 100. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
