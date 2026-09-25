@@ -275,12 +275,13 @@ export type DiveStatus =
   | { diveId: string; status: "success"; nicheId: string; tokensUsed: number; tokensLeft: number }
   | { diveId: string; status: "error"; error: string };
 
-// ─── /v1/niches/rank-radars/:rankRadarId  (KrtKeywordResponseDto[], wrapped) ─
+// ─── /v1/niches/rank-radars/:rankRadarId  (KrtKeywordListResponseDto, wrapped) ─
 
 export interface KrtAsinRank {
-  /** ISO date string. */
+  /** yyyy-mm-dd. */
   date: string;
   organicRank?: number | null;
+  sponsoredRank?: number | null;
   impressionRank?: number | null;
 }
 
@@ -288,12 +289,19 @@ export interface KrtKeyword {
   id: string;
   keyword: string;
   searchVolume: number | null;
+  /** Phrase relevancy score for this keyword within its Niche. */
+  relevancy?: number | null;
   ranks: KrtAsinRank[];
   /** Highlight annotations (KrtHighlightDto in backend); kept opaque for MVP. */
   highlights: Array<Record<string, unknown>>;
+  /** PPC data. Still sent by the API but due for removal (RS-11744); kept opaque. */
+  adData?: Record<string, unknown> | null;
+  /** SQP data. Still sent by the API but due for removal (RS-11744); kept opaque. */
+  sqpData?: Record<string, unknown> | null;
 }
 
-export type RankRadarKeywordList = KrtKeyword[];
+/** One page of a Rank Radar's active keywords (paged since RS-11683); paused keywords are not included. */
+export type RankRadarKeywordList = PaginationResponse<KrtKeyword>;
 
 // ─── /v1/sellers/:sellerId/marketplaces/:marketplace/asins/:asin/inventory ────
 //      (InventoryByFcResponseDto, wrapped)
