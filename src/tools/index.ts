@@ -11,6 +11,8 @@ import { getNicheCompetitorsTool } from "./get-niche-competitors.js";
 import { getRankingJuiceTool } from "./get-ranking-juice.js";
 import { listRankRadarsTool } from "./list-rank-radars.js";
 import { getRankRadarDataTool } from "./get-rank-radar-data.js";
+import { getRankRadarSqpDataTool } from "./get-rank-radar-sqp-data.js";
+import { getRankRadarPpcDataTool } from "./get-rank-radar-ppc-data.js";
 import { createRankRadarTool } from "./create-rank-radar.js";
 import { createNicheDiveTool } from "./create-niche-dive.js";
 import { rediveNicheTool } from "./redive-niche.js";
@@ -27,6 +29,7 @@ import { getListingCopyGenerationStatusTool } from "./get-listing-copy-generatio
 import { listSellerProfilesTool } from "./list-seller-profiles.js";
 import { getSellerCatalogTool } from "./get-seller-catalog.js";
 import { getSellerListingChangesTool } from "./get-seller-listing-changes.js";
+import { listPpcCampaignsTool } from "./list-ppc-campaigns.js";
 import { getAsinInventoryDistributionTool } from "./get-asin-inventory-distribution.js";
 import { listIndexingIssueAlertsTool } from "./list-indexing-issue-alerts.js";
 import { listBlindSpendAlertsTool } from "./list-blind-spend-alerts.js";
@@ -45,6 +48,8 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankingJuiceTool,
   listRankRadarsTool,
   getRankRadarDataTool,
+  getRankRadarSqpDataTool,
+  getRankRadarPpcDataTool,
   createRankRadarTool,
   createNicheDiveTool,
   rediveNicheTool,
@@ -61,6 +66,7 @@ export const allTools: ReadonlyArray<AnyTool> = [
   listSellerProfilesTool,
   getSellerCatalogTool,
   getSellerListingChangesTool,
+  listPpcCampaignsTool,
   getAsinInventoryDistributionTool,
   listIndexingIssueAlertsTool,
   listBlindSpendAlertsTool,

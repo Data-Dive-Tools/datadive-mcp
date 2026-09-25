@@ -104,6 +104,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText` or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Paged by keyword: walk `currentPage` while `hasNext` is true, `pageSize` up to 100. |
+| `get_rank_radar_sqp_data` | Amazon Search Query Performance per Rank Radar keyword: search volume, impressions, clicks, cart adds, purchases — market total vs this ASIN family. Same date range and paging as `get_rank_radar_data`. |
+| `get_rank_radar_ppc_data` | Sponsored Products metrics per Rank Radar keyword: sponsored rank, spend, sales, ACOS, CPC, match types; optional per-campaign breakdown. Same date range and paging as `get_rank_radar_data`. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
@@ -120,6 +122,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_seller_profiles` | Paginated list of connected Amazon seller accounts. Discovery step — returns the `sellerId` + `marketplace` the seller-scoped tools below (and the alert tools) need. |
 | `get_seller_catalog` | Paginated catalog of a seller's own ASINs. Filter by `search`, `brand`, and `status` (Active by default). |
 | `get_seller_listing_changes` | Paginated price/content/image changes on a seller's listings. Filter by `types`, `asin`, `brand`, `search`, and a date range; optionally include ranking/conversion `correlation`. |
+| `list_ppc_campaigns` | Sponsored Products campaigns of a seller account with window totals and a per-placement breakdown. Filter by `asin` / `parentAsin`, `state`, `search`; sort by any metric. Window up to 90 days (default 30). |
 | `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from `list_seller_profiles` or your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
 | `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |

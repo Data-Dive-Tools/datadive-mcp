@@ -303,6 +303,167 @@ export interface KrtKeyword {
 /** One page of a Rank Radar's active keywords (paged since RS-11683); paused keywords are not included. */
 export type RankRadarKeywordList = PaginationResponse<KrtKeyword>;
 
+// ─── /v1/niches/rank-radars/:rankRadarId/sqp  (RankRadarSqpKeywordListResponseDto, bare) ─
+
+/** SQP metrics of one keyword, aggregated over the requested range. Null when Amazon has no SQP data for it. */
+export interface RankRadarSqpKeyword {
+  id: string;
+  keyword: string;
+  numberOfDaysWithData: number | null;
+  searchQueryVolume: number | null;
+  searchQueryScore: number | null;
+  impressionsTotalCount: number | null;
+  impressionsAsinCount: number | null;
+  impressionsAsinShare: number | null;
+  clicksTotalCount: number | null;
+  clicksAsinCount: number | null;
+  clicksAsinShare: number | null;
+  clicksClickRate: number | null;
+  cartAddsTotalCount: number | null;
+  cartAddsAsinCount: number | null;
+  cartAddsAsinShare: number | null;
+  cartAddsCartAddRate: number | null;
+  purchasesTotalCount: number | null;
+  purchasesAsinCount: number | null;
+  purchasesAsinShare: number | null;
+  purchasesPurchaseRate: number | null;
+  ctrTotal: number | null;
+  ctrAsin: number | null;
+  cvrTotal: number | null;
+  cvrAsin: number | null;
+}
+
+export type RankRadarSqpKeywordList = PaginationResponse<RankRadarSqpKeyword>;
+
+// ─── /v1/niches/rank-radars/:rankRadarId/ppc  (RankRadarPpcKeywordListResponseDto, bare) ─
+
+/** One campaign/ad group targeting the keyword; present only with `includeCampaigns=true`. */
+export interface RankRadarPpcCampaign {
+  campaignId: number;
+  campaignName: string;
+  adGroupName: string;
+  matchType: string | null;
+  targeting: string | null;
+  costPerClicks: number | null;
+  totalImpressions: number | null;
+  totalOrders: number | null;
+  totalClicks: number | null;
+  ppcSpend: number | null;
+  ppcSales: number | null;
+  clickThroughRate: number | null;
+  conversionRate: number | null;
+  acos: number | null;
+}
+
+/** PPC metrics of one keyword, aggregated over the requested range. */
+export interface RankRadarPpcKeyword {
+  id: string;
+  keyword: string;
+  /** Median sponsored rank over the range. */
+  sponsoredRank: number | null;
+  impressionRank: number | null;
+  impressionRankShare: number | null;
+  exactMatches: number | null;
+  phraseMatches: number | null;
+  broadMatches: number | null;
+  autoMatches: number | null;
+  organicSales: number | null;
+  ppcSales: number | null;
+  ppcSpend: number | null;
+  costPerClicks: number | null;
+  clickThroughRate: number | null;
+  conversionRate: number | null;
+  totalClicks: number;
+  totalImpressions: number;
+  totalOrders: number;
+  acos: number;
+  campaigns?: RankRadarPpcCampaign[];
+}
+
+export type RankRadarPpcKeywordList = PaginationResponse<RankRadarPpcKeyword>;
+
+// ─── /v1/seller_profiles/:sellerId/marketplaces/:marketplace/ppc/campaigns ───
+//      (PpcCampaignsExternalListDto, bare PaginationResponse)
+
+/** Mirrors the backend's `PpcCampaignsBaseSortBy`. */
+export const PPC_CAMPAIGN_BASE_SORT_BY = [
+  "name",
+  "state",
+  "bidStrategy",
+  "budget",
+  "impressions",
+  "clicks",
+  "ctr",
+  "cpc",
+  "spend",
+  "unitsSold",
+  "sales",
+  "acos",
+  "cvr",
+  "tosImpressionShare",
+] as const;
+
+/** Mirrors the backend's `PpcCampaignsPlacementSortBy`; accepted only with placements included. */
+export const PPC_CAMPAIGN_PLACEMENT_SORT_BY = [
+  ...(["tos", "ros", "pp", "off"] as const).flatMap((p) =>
+    (["Impressions", "Clicks", "Spend", "Sales", "UnitsSold", "Ctr", "Cpc", "Acos"] as const).map(
+      (m) => `${p}${m}` as const,
+    ),
+  ),
+  "tosBidAdjustment",
+  "rosBidAdjustment",
+  "ppBidAdjustment",
+] as const;
+
+/** Mirrors the backend's `CampaignStateFilter`. */
+export const PPC_CAMPAIGN_STATES = ["ENABLED", "PAUSED"] as const;
+
+export interface PpcPlacementMetrics {
+  /** Placement bid adjustment, percent. Null for off-Amazon, which has none. */
+  bidAdjustment: number | null;
+  impressions: number;
+  clicks: number;
+  ctr: number | null;
+  cpc: number | null;
+  spend: number;
+  unitsSold: number;
+  sales: number;
+  acos: number | null;
+}
+
+export interface PpcCampaign {
+  campaignId: number;
+  name: string;
+  type: string | null;
+  state: string;
+  targetingType: string | null;
+  bidStrategy: string | null;
+  budget: { type: string | null; amount: number | null; currencyCode: string | null };
+  impressions: number;
+  clicks: number;
+  ctr: number | null;
+  cpc: number | null;
+  cvr: number | null;
+  spend: number;
+  unitsSold: number;
+  orders: number;
+  sales: number;
+  tosImpressionShare: number | null;
+  acos: number | null;
+  roas: number | null;
+  tacos: number | null;
+  asinCount: number;
+  placements?: {
+    topOfSearch: PpcPlacementMetrics;
+    restOfSearch: PpcPlacementMetrics;
+    productPage: PpcPlacementMetrics;
+    offAmazon: PpcPlacementMetrics;
+    homePageBidAdjustment: number | null;
+  };
+}
+
+export type PpcCampaignList = PaginationResponse<PpcCampaign>;
+
 // ─── /v1/sellers/:sellerId/marketplaces/:marketplace/asins/:asin/inventory ────
 //      (InventoryByFcResponseDto, wrapped)
 
