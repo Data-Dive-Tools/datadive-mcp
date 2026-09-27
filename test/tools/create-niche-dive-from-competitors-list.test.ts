@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { z } from "zod";
-import { createNicheFromCompetitorsListTool } from "../../src/tools/create-niche-from-competitors-list.js";
+import { createNicheDiveFromCompetitorsListTool } from "../../src/tools/create-niche-dive-from-competitors-list.js";
 import { CTX, CTX_AUTO_CONFIRM, mockFetch, getCallUrl, getCallInit } from "./_helpers.js";
 
-const schema = z.object(createNicheFromCompetitorsListTool.inputSchema);
+const schema = z.object(createNicheDiveFromCompetitorsListTool.inputSchema);
 const RESULT = { diveId: "d-1", estimatedCompletionDate: "2026-09-28T01:00:00Z" };
 
-describe("create_niche_from_competitors_list tool", () => {
+describe("create_niche_dive_from_competitors_list tool", () => {
   let originalFetch: typeof fetch;
   beforeEach(() => {
     originalFetch = globalThis.fetch;
@@ -19,7 +19,7 @@ describe("create_niche_from_competitors_list tool", () => {
     const fetchMock = mockFetch({ success: true, data: RESULT });
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const result = await createNicheFromCompetitorsListTool.handler(
+    const result = await createNicheDiveFromCompetitorsListTool.handler(
       { marketplace: "com", asins: ["B08N5WRWNW", "B09617YV4C"], confirm: true },
       CTX,
     );
@@ -38,7 +38,7 @@ describe("create_niche_from_competitors_list tool", () => {
     const fetchMock = mockFetch({});
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const result = await createNicheFromCompetitorsListTool.handler(
+    const result = await createNicheDiveFromCompetitorsListTool.handler(
       { marketplace: "com", asins: ["B08N5WRWNW", "B09617YV4C", "B0ABCDEFGH"] },
       CTX,
     );
@@ -52,7 +52,7 @@ describe("create_niche_from_competitors_list tool", () => {
     const fetchMock = mockFetch({ success: true, data: RESULT });
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await createNicheFromCompetitorsListTool.handler(
+    await createNicheDiveFromCompetitorsListTool.handler(
       { marketplace: "com", asins: ["B08N5WRWNW", "B09617YV4C"] },
       CTX_AUTO_CONFIRM,
     );

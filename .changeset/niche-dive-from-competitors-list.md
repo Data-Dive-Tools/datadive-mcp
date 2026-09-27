@@ -2,7 +2,7 @@
 "@datadive-tools/mcp": minor
 ---
 
-Add `create_niche_dive_from_competitors` (RS-11631).
+Add `create_niche_dive_from_competitors_list` (RS-11631).
 
 `POST /v1/niches/dive_with_competitors` (RS-11148) builds a niche from an explicit list of 2–200 competitor ASINs, with no automatic competitor discovery — the API side of the extension's "ASIN tray → Create Niche" flow. The MCP had no tool for it, so an assistant could only research a niche by discovering competitors around one seed ASIN.
 
