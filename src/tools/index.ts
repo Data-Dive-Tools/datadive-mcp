@@ -15,6 +15,7 @@ import { getRankRadarSqpDataTool } from "./get-rank-radar-sqp-data.js";
 import { getRankRadarPpcDataTool } from "./get-rank-radar-ppc-data.js";
 import { createRankRadarTool } from "./create-rank-radar.js";
 import { createNicheDiveTool } from "./create-niche-dive.js";
+import { createNicheDiveFromCompetitorsTool } from "./create-niche-dive-from-competitors.js";
 import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
 import { deleteNicheTool } from "./delete-niche.js";
@@ -52,6 +53,7 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankRadarPpcDataTool,
   createRankRadarTool,
   createNicheDiveTool,
+  createNicheDiveFromCompetitorsTool,
   rediveNicheTool,
   getDiveStatusTool,
   addRankRadarSearchTermsTool,
