@@ -13,3 +13,5 @@ export { loadConfig, SCOPE_READ, SCOPE_WRITE } from "./config.js";
 export type { Config, Credentials } from "./config.js";
 export { ApiError } from "./http/errors.js";
 export { PKG_VERSION } from "./http/client.js";
+export { SERVER_INSTRUCTIONS, WHATS_NEW, WHATS_NEW_PROMPT, whatsNewPromptText } from "./whats-new.js";
+export type { WhatsNewEntry } from "./whats-new.js";
