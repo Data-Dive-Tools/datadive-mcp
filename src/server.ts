@@ -13,6 +13,7 @@ import { SCOPE_READ, SCOPE_WRITE, type Config } from "./config.js";
 import { allTools } from "./tools/index.js";
 import { ApiError } from "./http/errors.js";
 import { PKG_VERSION, takeUpgradeNotice } from "./http/client.js";
+import { SERVER_INSTRUCTIONS, WHATS_NEW_PROMPT, whatsNewPromptText } from "./whats-new.js";
 
 /**
  * Returns the OAuth scope a tool call needs: SCOPE_READ for read-only tools,
@@ -24,10 +25,21 @@ export function requiredScope(tool: Pick<AnyTool, "annotations">): string {
 }
 
 export function buildServer(config: Config): McpServer {
-  const server = new McpServer({
-    name: "datadive",
-    version: PKG_VERSION,
-  });
+  const server = new McpServer(
+    {
+      name: "datadive",
+      version: PKG_VERSION,
+    },
+    { instructions: SERVER_INSTRUCTIONS },
+  );
+
+  server.registerPrompt(
+    WHATS_NEW_PROMPT.name,
+    { title: WHATS_NEW_PROMPT.title, description: WHATS_NEW_PROMPT.description },
+    () => ({
+      messages: [{ role: "user" as const, content: { type: "text" as const, text: whatsNewPromptText() } }],
+    }),
+  );
 
   for (const tool of allTools) {
     server.registerTool(
@@ -81,7 +93,8 @@ export function buildServer(config: Config): McpServer {
             content: [
               {
                 type: "text" as const,
-                text: err instanceof ApiError ? err.message : err instanceof Error ? err.message : String(err),
+                text:
+                  err instanceof ApiError ? err.message : err instanceof Error ? err.message : String(err),
               },
             ],
           };
