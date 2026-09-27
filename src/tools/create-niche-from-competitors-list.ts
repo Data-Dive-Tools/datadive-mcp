@@ -40,8 +40,8 @@ const inputSchema = {
     ),
 };
 
-export const createNicheDiveFromCompetitorsTool: ToolDefinition<typeof inputSchema> = {
-  name: "create_niche_dive_from_competitors",
+export const createNicheFromCompetitorsListTool: ToolDefinition<typeof inputSchema> = {
+  name: "create_niche_from_competitors_list",
   title: "Create a Niche Dive from a Competitor List",
   description:
     "Use this when the user already knows which products belong in the niche — e.g. they list competitor " +
@@ -68,7 +68,7 @@ export const createNicheDiveFromCompetitorsTool: ToolDefinition<typeof inputSche
     if (pending) return pending;
 
     return await httpPost<CreateNicheDiveResult>(
-      { config: ctx.config, toolName: "create_niche_dive_from_competitors" },
+      { config: ctx.config, toolName: "create_niche_from_competitors_list" },
       "/v1/niches/dive_with_competitors",
       { marketplace: args.marketplace, asins: args.asins },
     );
