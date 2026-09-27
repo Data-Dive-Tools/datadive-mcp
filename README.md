@@ -107,6 +107,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_rank_radar_sqp_data` | Amazon Search Query Performance per Rank Radar keyword: search volume, impressions, clicks, cart adds, purchases — market total vs this ASIN family. Same date range and paging as `get_rank_radar_data`. |
 | `get_rank_radar_ppc_data` | Sponsored Products metrics per Rank Radar keyword: sponsored rank, spend, sales, ACOS, CPC, match types; optional per-campaign breakdown. Same date range and paging as `get_rank_radar_data`. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
+| `create_niche_dive_from_competitors_list` | **Spends dive tokens.** Starts niche research from your own list of 2–200 competitor ASINs, with no automatic discovery. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |

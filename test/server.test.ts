@@ -18,6 +18,7 @@ const TEST_CONFIG: Config = {
 
 const WRITE_TOOLS = [
   "create_niche_dive",
+  "create_niche_dive_from_competitors_list",
   "redive_niche",
   "create_rank_radar",
   "add_rank_radar_search_terms",
@@ -39,6 +40,7 @@ const WRITE_TOOLS = [
  */
 const CONFIRM_GATED_TOOLS = [
   "create_niche_dive",
+  "create_niche_dive_from_competitors_list",
   "redive_niche",
   "create_rank_radar",
   "delete_niche",
@@ -58,6 +60,7 @@ const EXPECTED_TOOLS = [
   "get_rank_radar_ppc_data",
   "create_rank_radar",
   "create_niche_dive",
+  "create_niche_dive_from_competitors_list",
   "redive_niche",
   "get_dive_status",
   "add_rank_radar_search_terms",

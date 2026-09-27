@@ -25,6 +25,14 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.16.0",
+    released: "2026-09-28",
+    items: [
+      "Niche research from your own competitor list (`create_niche_dive_from_competitors_list`): give 2 to 200 " +
+        "ASINs and the niche is built from exactly those products, with no automatic competitor search.",
+    ],
+  },
+  {
     version: "0.15.0",
     released: "2026-09-28",
     items: [
