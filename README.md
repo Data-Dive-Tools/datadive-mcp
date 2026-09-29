@@ -103,7 +103,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
 | `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText` or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
-| `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Paged by keyword: walk `currentPage` while `hasNext` is true, `pageSize` up to 100. |
+| `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Returns every active keyword by default; pass `currentPage`/`pageSize` (up to 100) to read one page at a time. |
 | `get_rank_radar_sqp_data` | Amazon Search Query Performance per Rank Radar keyword: search volume, impressions, clicks, cart adds, purchases — market total vs this ASIN family. Same date range and paging as `get_rank_radar_data`. |
 | `get_rank_radar_ppc_data` | Sponsored Products metrics per Rank Radar keyword: sponsored rank, spend, sales, ACOS, CPC, match types; optional per-campaign breakdown. Same date range and paging as `get_rank_radar_data`. |
 | `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |

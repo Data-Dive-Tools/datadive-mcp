@@ -25,6 +25,14 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.16.1",
+    released: "2026-09-29",
+    items: [
+      "`get_rank_radar_data` returns every tracked keyword of a Rank Radar in one answer again, also in AI " +
+        "apps that still show its older inputs. Pass `currentPage` / `pageSize` to read one page at a time.",
+    ],
+  },
+  {
     version: "0.16.0",
     released: "2026-09-28",
     items: [
