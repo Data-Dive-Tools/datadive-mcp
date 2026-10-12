@@ -15,7 +15,10 @@ export const getNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "Retrieves the master keyword list for the specified Niche — the relevant search terms " +
     "monitored for ranking and performance metrics. For each keyword, returns search volume, " +
     "relevancy (numeric score or \"Outlier\"), and competitor ASIN organic ranks " +
-    "(asinRanks: { ASIN -> rank | null }). Also returns the latestResearchDate.",
+    "(asinRanks: { ASIN -> rank | null }), plus `origin`: `mkl` (found by the dive), `manual` (added by " +
+    "hand with `add_niche_keywords`), `outlier` / `residue` (moved in from those lists). Only `manual`, " +
+    "`outlier` and `residue` keywords can be taken out with `remove_niche_keywords`. Also returns the " +
+    "latestResearchDate.",
   inputSchema,
   annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
