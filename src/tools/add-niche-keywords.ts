@@ -63,7 +63,9 @@ export const addNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "poll `get_dive_status` with `refresh.diveId`; the `addedManually` keywords show in the MKL once it " +
     "succeeds. A confirmed call is not safe to retry: if it errors or times out, poll `get_dive_status` or " +
     "re-read `get_niche_keywords` instead of re-calling. Limited to 2 calls per minute per niche, so batch " +
-    "keywords into one call. Undo with `remove_niche_keywords`.",
+    "keywords into one call. Undo with `remove_niche_keywords`. A keyword hidden by the niche's keyword " +
+    "exclusions stays hidden after an add: check `list_keyword_exclusions` and remove the exclusion with " +
+    "`remove_keyword_exclusions` first.",
   inputSchema,
   // Like redive_niche: additive, but it can spend Dive tokens irreversibly, which is what clients
   // need to prompt on. The confirm gate covers the paid path regardless.

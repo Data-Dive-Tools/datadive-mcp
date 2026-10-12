@@ -23,7 +23,7 @@ export const removeNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "`removedManual` — added by hand (`manual`), deleted from the niche; `sentBackToOutliers` / " +
     "`sentBackToResidue` — moved in from those lists (`outlier` / `residue`), listed there again with their " +
     "data kept; `notRemovable` — found by the dive itself (`mkl`) or not in the niche, left unchanged. To hide " +
-    "a keyword the dive found, use a keyword exclusion instead. Free, and safe to repeat: a keyword already " +
+    "a keyword the dive found, use `add_keyword_exclusions` instead. Free, and safe to repeat: a keyword already " +
     "removed comes back under `notRemovable`. Adding a hand-added keyword back later re-dives the niche and " +
     "costs Dive tokens if the niche is stale by then. Limited to 2 calls per minute per niche.",
   inputSchema,
