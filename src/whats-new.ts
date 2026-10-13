@@ -25,6 +25,15 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.17.0",
+    released: "2026-10-12",
+    items: [
+      "Add your own keywords to a niche's Master Keyword List, or take them back out (`add_niche_keywords`, " +
+        "`remove_niche_keywords`). Free while the niche is fresh; on an older niche you are asked to confirm " +
+        "the Dive tokens first. `get_niche_keywords` now shows where each keyword came from.",
+    ],
+  },
+  {
     version: "0.16.1",
     released: "2026-09-29",
     items: [

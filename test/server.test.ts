@@ -20,6 +20,8 @@ const WRITE_TOOLS = [
   "create_niche_dive",
   "create_niche_dive_from_competitors_list",
   "redive_niche",
+  "add_niche_keywords",
+  "remove_niche_keywords",
   "create_rank_radar",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
@@ -37,11 +39,14 @@ const WRITE_TOOLS = [
  * permanent token spend (dives, rank radar creation, listing copy). Pause/resume
  * and add-search-terms only move Daily Tracked Keywords capacity, which the backend
  * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
+ * add_niche_keywords is gated only on a stale niche, where it re-dives (RS-11860);
+ * remove_niche_keywords is free and is not.
  */
 const CONFIRM_GATED_TOOLS = [
   "create_niche_dive",
   "create_niche_dive_from_competitors_list",
   "redive_niche",
+  "add_niche_keywords",
   "create_rank_radar",
   "delete_niche",
   "delete_rank_radar",
@@ -63,6 +68,8 @@ const EXPECTED_TOOLS = [
   "create_niche_dive_from_competitors_list",
   "redive_niche",
   "get_dive_status",
+  "add_niche_keywords",
+  "remove_niche_keywords",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",

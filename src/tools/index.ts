@@ -18,6 +18,8 @@ import { createNicheDiveTool } from "./create-niche-dive.js";
 import { createNicheDiveFromCompetitorsListTool } from "./create-niche-dive-from-competitors-list.js";
 import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
+import { addNicheKeywordsTool } from "./add-niche-keywords.js";
+import { removeNicheKeywordsTool } from "./remove-niche-keywords.js";
 import { deleteNicheTool } from "./delete-niche.js";
 import { pauseRankRadarTool } from "./pause-rank-radar.js";
 import { resumeRankRadarTool } from "./resume-rank-radar.js";
@@ -56,6 +58,8 @@ export const allTools: ReadonlyArray<AnyTool> = [
   createNicheDiveFromCompetitorsListTool,
   rediveNicheTool,
   getDiveStatusTool,
+  addNicheKeywordsTool,
+  removeNicheKeywordsTool,
   addRankRadarSearchTermsTool,
   pauseRankRadarSearchTermsTool,
   resumeRankRadarSearchTermsTool,
