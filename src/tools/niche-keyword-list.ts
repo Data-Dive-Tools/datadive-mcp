@@ -10,7 +10,11 @@
 import { z } from "zod";
 import { NICHE_KEYWORD_MAX_LENGTH, NICHE_KEYWORDS_MAX_PER_CALL } from "../types/api.js";
 
-export const nicheKeyword = z.string().trim().toLowerCase().min(1).max(NICHE_KEYWORD_MAX_LENGTH);
+/**
+ * A fresh schema per use: one instance shared by two fields is emitted as a `$ref` to the first in the
+ * tool's JSON Schema, which some MCP clients do not resolve.
+ */
+export const nicheKeyword = () => z.string().trim().toLowerCase().min(1).max(NICHE_KEYWORD_MAX_LENGTH);
 
 /** Rejects a list holding the same keyword twice, compared after normalisation. */
 export function uniqueKeywords<T extends z.ZodType<string[]>>(schema: T, field: string) {
@@ -20,6 +24,6 @@ export function uniqueKeywords<T extends z.ZodType<string[]>>(schema: T, field: 
 }
 
 export const nicheKeywordList = uniqueKeywords(
-  z.array(nicheKeyword).min(1).max(NICHE_KEYWORDS_MAX_PER_CALL),
+  z.array(nicheKeyword()).min(1).max(NICHE_KEYWORDS_MAX_PER_CALL),
   "keywords",
 );

@@ -17,7 +17,8 @@ export const getNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "relevancy (numeric score or \"Outlier\"), and competitor ASIN organic ranks " +
     "(asinRanks: { ASIN -> rank | null }), plus `origin`: `mkl` (found by the dive), `manual` (added by " +
     "hand with `add_niche_keywords`), `outlier` / `residue` (moved in from those lists). Only `manual`, " +
-    "`outlier` and `residue` keywords can be taken out with `remove_niche_keywords`. Also returns the " +
+    "`outlier` and `residue` keywords can be taken out with `remove_niche_keywords`. Keywords hidden by the " +
+    "niche's keyword exclusions are not listed; see `list_keyword_exclusions`. Also returns the " +
     "latestResearchDate.",
   inputSchema,
   annotations: { readOnlyHint: true },
