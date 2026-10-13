@@ -74,6 +74,44 @@ describe("get_asin_inventory_distribution tool", () => {
     expect((result as { lastUpdatedAt: unknown }).lastUpdatedAt).toBeNull();
   });
 
+  it("passes the inventory metrics and locked fields through unchanged (RS-11919)", async () => {
+    const inner = {
+      asin: "B08XYZ1234",
+      sellerId: "A1B2C3",
+      marketplace: "com",
+      lastUpdatedAt: "2026-10-12T00:00:00.000Z",
+      distributionLastUpdatedAt: "2026-10-10T00:00:00.000Z",
+      fulfillableStock: null,
+      totalStock: null,
+      reservedStock: null,
+      inboundStock: null,
+      researchingStock: null,
+      unfulfillableStock: null,
+      daysOfStock: null,
+      daysOfStockSource: null,
+      daysOfStock30: null,
+      daysOfStock90: null,
+      inLowInventoryState: false,
+      estWeeklyLilf: null,
+      estLtsfNextAssessment: null,
+      ltsfLastMonthActual: 9.87,
+      agedUnits: 14,
+      oldestUnitAgeDays: 220,
+      currency: "USD",
+      lockedFields: ["fulfillableStock", "daysOfStock"],
+      lockedReason: "PLAN_UPGRADE_REQUIRED",
+      totalSellableUnits: 0,
+      distribution: [],
+    };
+    globalThis.fetch = mockFetch({ data: inner }) as unknown as typeof fetch;
+
+    const result = await getAsinInventoryDistributionTool.handler(
+      { sellerId: "A1B2C3", marketplace: "com", asin: "B08XYZ1234" },
+      CTX,
+    );
+    expect(result).toEqual(inner);
+  });
+
   it("rejects an ASIN that is not 10 uppercase alphanumeric characters", () => {
     const schema = z.object(getAsinInventoryDistributionTool.inputSchema);
     const base = { sellerId: "A1B2C3", marketplace: "com" } as const;

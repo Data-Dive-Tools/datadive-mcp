@@ -561,8 +561,33 @@ export interface InventoryByFcResponse {
   sellerId: string;
   /** Marketplace enum: "com", "ca", "co.uk", "com.mx", "in", "fr", "de", "es", "it", "co.jp". */
   marketplace: string;
-  /** ISO timestamp of last successful ingestion. Null if none in the last 30 days. */
+  /** ISO timestamp of the last live-stock refresh, which the metrics come from. Null if none in the last 30 days. */
   lastUpdatedAt: string | null;
+  /** ISO timestamp of the last `distribution` refresh, usually up to 2 days behind. Null if none in the last 30 days. */
+  distributionLastUpdatedAt: string | null;
+  // Metrics: null when Amazon has no data, or when listed in `lockedFields`.
+  fulfillableStock: number | null;
+  totalStock: number | null;
+  reservedStock: number | null;
+  inboundStock: number | null;
+  researchingStock: number | null;
+  unfulfillableStock: number | null;
+  daysOfStock: number | null;
+  daysOfStockSource: "AMAZON" | "ESTIMATE" | null;
+  daysOfStock30: number | null;
+  daysOfStock90: number | null;
+  inLowInventoryState: boolean | null;
+  /** Fees are in `currency`. */
+  estWeeklyLilf: number | null;
+  estLtsfNextAssessment: number | null;
+  ltsfLastMonthActual: number | null;
+  agedUnits: number | null;
+  oldestUnitAgeDays: number | null;
+  /** ISO 4217 marketplace currency, e.g. "USD". */
+  currency: string;
+  /** Metrics the user's plan does not include; returned as null. */
+  lockedFields: string[];
+  lockedReason: "PLAN_UPGRADE_REQUIRED" | null;
   totalSellableUnits: number;
   distribution: InventoryByFcItem[];
 }
