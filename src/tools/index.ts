@@ -25,6 +25,12 @@ import { deleteRankRadarTool } from "./delete-rank-radar.js";
 import { addRankRadarSearchTermsTool } from "./add-rank-radar-search-terms.js";
 import { pauseRankRadarSearchTermsTool } from "./pause-rank-radar-search-terms.js";
 import { resumeRankRadarSearchTermsTool } from "./resume-rank-radar-search-terms.js";
+import { listRankRadarTagsTool } from "./list-rank-radar-tags.js";
+import { createRankRadarTagTool } from "./create-rank-radar-tag.js";
+import { updateRankRadarTagTool } from "./update-rank-radar-tag.js";
+import { deleteRankRadarTagTool } from "./delete-rank-radar-tag.js";
+import { addRankRadarTagSearchTermsTool } from "./add-rank-radar-tag-search-terms.js";
+import { removeRankRadarTagSearchTermsTool } from "./remove-rank-radar-tag-search-terms.js";
 import { generateListingCopyTool } from "./generate-listing-copy.js";
 import { getListingCopyGenerationStatusTool } from "./get-listing-copy-generation-status.js";
 import { listSellerProfilesTool } from "./list-seller-profiles.js";
@@ -51,6 +57,7 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankRadarDataTool,
   getRankRadarSqpDataTool,
   getRankRadarPpcDataTool,
+  listRankRadarTagsTool,
   createRankRadarTool,
   createNicheDiveTool,
   createNicheDiveFromCompetitorsListTool,
@@ -59,6 +66,11 @@ export const allTools: ReadonlyArray<AnyTool> = [
   addRankRadarSearchTermsTool,
   pauseRankRadarSearchTermsTool,
   resumeRankRadarSearchTermsTool,
+  createRankRadarTagTool,
+  updateRankRadarTagTool,
+  addRankRadarTagSearchTermsTool,
+  removeRankRadarTagSearchTermsTool,
+  deleteRankRadarTagTool,
   pauseRankRadarTool,
   resumeRankRadarTool,
   deleteRankRadarTool,
