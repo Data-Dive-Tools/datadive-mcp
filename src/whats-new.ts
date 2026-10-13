@@ -31,6 +31,8 @@ export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
       "Add your own keywords to a niche's Master Keyword List, or take them back out (`add_niche_keywords`, " +
         "`remove_niche_keywords`). Free while the niche is fresh; on an older niche you are asked to confirm " +
         "the Dive tokens first. `get_niche_keywords` now shows where each keyword came from.",
+      "See and change which keywords a niche hides (`list_keyword_exclusions`, `add_keyword_exclusions`, " +
+        "`remove_keyword_exclusions`): exclude one exact keyword, or every keyword containing a phrase. Free.",
     ],
   },
   {

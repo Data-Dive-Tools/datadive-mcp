@@ -141,6 +141,38 @@ export interface RemoveNicheKeywordsResult {
   notRemovable: string[];
 }
 
+// ─── /v1/niches/:nicheId/keyword-exclusions  (KeywordExclusionsDto, wrapped) ──
+
+/** Mirrors the API's `KEYWORD_EXCLUSIONS_MAX_PER_REQUEST` and `KEYWORD_EXCLUSIONS_MAX_PER_NICHE`. */
+export const KEYWORD_EXCLUSIONS_MAX_PER_CALL = 100;
+export const KEYWORD_EXCLUSIONS_MAX_PER_NICHE = 1000;
+
+export interface KeywordExclusions {
+  /** Oldest first. `searchVolume` is 0 when the niche has no such keyword. */
+  exact: Array<{ keyword: string; searchVolume: number }>;
+  /** Oldest first. Volume and count of the keywords the phrase hides, besides exact-excluded ones. */
+  phrase: Array<{ phrase: string; searchVolume: number; excludedKeywordsCount: number }>;
+}
+
+export interface KeywordExclusionEntries {
+  exact: string[];
+  phrase: string[];
+}
+
+/** POST /v1/niches/:nicheId/keyword-exclusions: the lists after the add, plus what changed. */
+export interface AddKeywordExclusionsResult extends KeywordExclusions {
+  added: KeywordExclusionEntries;
+  /** Already excluded; left as is. */
+  unchanged: KeywordExclusionEntries;
+}
+
+/** POST /v1/niches/:nicheId/keyword-exclusions/remove: the lists after the remove, plus what changed. */
+export interface RemoveKeywordExclusionsResult extends KeywordExclusions {
+  removed: KeywordExclusionEntries;
+  /** Were not excluded; left as is. */
+  unchanged: KeywordExclusionEntries;
+}
+
 // ─── /v1/niches/:nicheId/competitors  (GetCompetitorListResult, wrapped) ─────
 
 /**
