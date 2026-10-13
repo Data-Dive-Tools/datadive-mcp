@@ -6,6 +6,7 @@
 
 import { listNichesTool } from "./list-niches.js";
 import { getNicheKeywordsTool } from "./get-niche-keywords.js";
+import { listKeywordExclusionsTool } from "./list-keyword-exclusions.js";
 import { getNicheRootsTool } from "./get-niche-roots.js";
 import { getNicheCompetitorsTool } from "./get-niche-competitors.js";
 import { getRankingJuiceTool } from "./get-ranking-juice.js";
@@ -18,6 +19,10 @@ import { createNicheDiveTool } from "./create-niche-dive.js";
 import { createNicheDiveFromCompetitorsListTool } from "./create-niche-dive-from-competitors-list.js";
 import { rediveNicheTool } from "./redive-niche.js";
 import { getDiveStatusTool } from "./get-dive-status.js";
+import { addNicheKeywordsTool } from "./add-niche-keywords.js";
+import { removeNicheKeywordsTool } from "./remove-niche-keywords.js";
+import { addKeywordExclusionsTool } from "./add-keyword-exclusions.js";
+import { removeKeywordExclusionsTool } from "./remove-keyword-exclusions.js";
 import { deleteNicheTool } from "./delete-niche.js";
 import { pauseRankRadarTool } from "./pause-rank-radar.js";
 import { resumeRankRadarTool } from "./resume-rank-radar.js";
@@ -50,6 +55,7 @@ import type { AnyTool } from "./types.js";
 export const allTools: ReadonlyArray<AnyTool> = [
   listNichesTool,
   getNicheKeywordsTool,
+  listKeywordExclusionsTool,
   getNicheRootsTool,
   getNicheCompetitorsTool,
   getRankingJuiceTool,
@@ -63,6 +69,10 @@ export const allTools: ReadonlyArray<AnyTool> = [
   createNicheDiveFromCompetitorsListTool,
   rediveNicheTool,
   getDiveStatusTool,
+  addNicheKeywordsTool,
+  removeNicheKeywordsTool,
+  addKeywordExclusionsTool,
+  removeKeywordExclusionsTool,
   addRankRadarSearchTermsTool,
   pauseRankRadarSearchTermsTool,
   resumeRankRadarSearchTermsTool,

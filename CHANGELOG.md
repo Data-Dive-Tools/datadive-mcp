@@ -1,5 +1,25 @@
 # @datadive-tools/mcp
 
+## 0.17.0
+
+### Minor Changes
+
+- 39c1426: Add `list_keyword_exclusions`, `add_keyword_exclusions` and `remove_keyword_exclusions` (RS-11864).
+
+  `/v1/niches/{nicheId}/keyword-exclusions` (RS-11863) lets API users read and change the keywords a niche hides from its Master Keyword List. The MCP had no tool for it, so an assistant could not explain a missing keyword or hide irrelevant ones.
+  - Exact and phrase entries, 1–100 in total per call. The total spans both optional lists, so it is checked before the request; per-entry rules (lower-cased, trimmed, ≤255 characters, unique) are in the schema.
+  - No confirm gate: exclusions spend nothing, and each tool is undone by the other. Responses are passed through, with `unchanged` making repeats safe.
+  - `add_niche_keywords`, `remove_niche_keywords` and `get_niche_keywords` now point at the exclusion tools where a keyword is hidden rather than missing.
+
+- c36f422: Add `add_niche_keywords` and `remove_niche_keywords` (RS-11860).
+
+  `POST /v1/niches/{nicheId}/keywords` and `…/keywords/remove` (RS-11858) let API users change a niche's Master Keyword List. The MCP had no tool for them, so an assistant could read the MKL but not add the user's own keywords or undo an add.
+  - `add_niche_keywords` is free on a fresh niche and adds in one call. On a stale niche the add re-dives the niche for one Dive token per competitor, so the first call saves nothing and returns `confirmation_required` with `tokenCost`; the confirmed call passes it back as `maxTokensUsed`, so it can never cost more than the user approved.
+  - The unconfirmed call is a real call capped at `maxTokensUsed: 0`, not a dry run plus a real call, so a free add uses one of the route's 2 requests per minute instead of both.
+  - `remove_niche_keywords` is free and ungated, and returns the API's per-origin breakdown as-is.
+  - Keywords are lower-cased and trimmed the way the API does, so a case-only duplicate is refused before any call.
+  - `get_niche_keywords` documents the new `origin` field; `get_dive_status` accepts the re-dive id.
+
 ## 0.16.1
 
 ### Patch Changes

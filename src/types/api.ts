@@ -81,18 +81,96 @@ export type NicheList = PaginationResponse<NicheItem>;
 /** Map of competitor ASIN -> rank (or null when unranked). */
 export type AsinRanks = Record<string, number | null>;
 
+/**
+ * How a keyword got into the Master Keyword List: `mkl` found by the dive, `manual` added by hand,
+ * `outlier` / `residue` moved in from those lists. The last three are what `remove_niche_keywords`
+ * can take back out.
+ */
+export type MklKeywordOrigin = "mkl" | "manual" | "outlier" | "residue";
+
 export interface MasterKeyword {
   keyword: string;
   searchVolume: number;
   /** "Outlier" or a numeric relevancy score. */
   relevancy: string | number;
   asinRanks: AsinRanks;
+  origin: MklKeywordOrigin;
 }
 
 export interface GetMasterKeywordListResult {
   keywords: MasterKeyword[];
   /** ISO date string. */
   latestResearchDate: string;
+}
+
+// ─── POST /v1/niches/:nicheId/keywords  (AddNicheKeywordsResponseDto, wrapped) ─
+
+/** Mirrors the API's `ADD_MANUAL_KEYWORDS_MAX_LIMIT` and `MANUAL_KEYWORD_MAX_LENGTH`. */
+export const NICHE_KEYWORDS_MAX_PER_CALL = 100;
+export const NICHE_KEYWORD_MAX_LENGTH = 255;
+
+export interface AddNicheKeywordsResult {
+  /** Every submitted keyword, in exactly one group. */
+  originBreakdown: {
+    alreadyInMkl: string[];
+    takenFromOutliers: string[];
+    takenFromResidue: string[];
+    addedManually: string[];
+  };
+  /** Dive tokens spent (or, on a dry run, the most the re-dive can cost). 0 for a fresh niche. */
+  tokensUsed: number;
+  /** Present only when the add re-dived a stale niche; poll `get_dive_status` with `diveId`. */
+  refresh?: { diveId: string; estimatedCompletionDate: string };
+}
+
+/** 400 body when a stale-niche add would cost more than `maxTokensUsed`. Nothing is saved or charged. */
+export interface MaxTokensExceededBody {
+  error: "MAX_TOKENS_EXCEEDED";
+  message: string;
+  maxTokensUsed: number;
+  tokensUsed: number;
+}
+
+// ─── POST /v1/niches/:nicheId/keywords/remove  (RemoveNicheKeywordsResponseDto, wrapped) ─
+
+export interface RemoveNicheKeywordsResult {
+  removedManual: string[];
+  sentBackToOutliers: string[];
+  sentBackToResidue: string[];
+  /** Found by the dive itself, or not in the niche at all. Left unchanged. */
+  notRemovable: string[];
+}
+
+// ─── /v1/niches/:nicheId/keyword-exclusions  (KeywordExclusionsDto, wrapped) ──
+
+/** Mirrors the API's `KEYWORD_EXCLUSIONS_MAX_PER_REQUEST` and `KEYWORD_EXCLUSIONS_MAX_PER_NICHE`. */
+export const KEYWORD_EXCLUSIONS_MAX_PER_CALL = 100;
+export const KEYWORD_EXCLUSIONS_MAX_PER_NICHE = 1000;
+
+export interface KeywordExclusions {
+  /** Oldest first. `searchVolume` is 0 when the niche has no such keyword. */
+  exact: Array<{ keyword: string; searchVolume: number }>;
+  /** Oldest first. Volume and count of the keywords the phrase hides, besides exact-excluded ones. */
+  phrase: Array<{ phrase: string; searchVolume: number; excludedKeywordsCount: number }>;
+}
+
+export interface KeywordExclusionEntries {
+  exact: string[];
+  phrase: string[];
+}
+
+/** POST /v1/niches/:nicheId/keyword-exclusions: the lists after the add, plus what changed. */
+export interface AddKeywordExclusionsResult extends KeywordExclusions {
+  added: KeywordExclusionEntries;
+  /** Already excluded; left as is. */
+  unchanged: KeywordExclusionEntries;
+}
+
+/** POST /v1/niches/:nicheId/keyword-exclusions/remove: the lists after the remove, plus what changed. */
+export interface RemoveKeywordExclusionsResult extends KeywordExclusions {
+  removed: KeywordExclusionEntries;
+  /** Were not excluded; left as is. */
+  unchanged: KeywordExclusionEntries;
 }
 
 // ─── /v1/niches/:nicheId/competitors  (GetCompetitorListResult, wrapped) ─────

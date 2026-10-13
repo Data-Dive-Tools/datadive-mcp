@@ -8,7 +8,8 @@ const inputSchema = {
     .string()
     .min(1)
     .describe(
-      "The dive identifier returned by `create_niche_dive`, `create_niche_dive_from_competitors_list` or `redive_niche`.",
+      "The dive identifier returned by `create_niche_dive`, `create_niche_dive_from_competitors_list` or " +
+        "`redive_niche`, or the `refresh.diveId` returned by `add_niche_keywords`.",
     ),
 };
 
@@ -17,7 +18,7 @@ export const getDiveStatusTool: ToolDefinition<typeof inputSchema> = {
   title: "Get Niche Dive Status",
   description:
     "Use this to poll a niche dive started with `create_niche_dive`, `create_niche_dive_from_competitors_list` or " +
-    "`redive_niche` until it finishes. " +
+    "`redive_niche`, or the re-dive `add_niche_keywords` started on a stale niche, until it finishes. " +
     "Returns one of three shapes keyed by `status`: `in_progress` (with `estimatedCompletionDate`), " +
     "`success` (with the `nicheId` plus `tokensUsed`/`tokensLeft`), or `error` (with an `error` message). " +
     "On `success`, use the `nicheId` with `list_niches`, `get_niche_keywords`, `get_niche_competitors`, etc. " +
