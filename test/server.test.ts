@@ -22,6 +22,8 @@ const WRITE_TOOLS = [
   "redive_niche",
   "add_niche_keywords",
   "remove_niche_keywords",
+  "add_keyword_exclusions",
+  "remove_keyword_exclusions",
   "create_rank_radar",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
@@ -40,7 +42,8 @@ const WRITE_TOOLS = [
  * and add-search-terms only move Daily Tracked Keywords capacity, which the backend
  * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
  * add_niche_keywords is gated only on a stale niche, where it re-dives (RS-11860);
- * remove_niche_keywords is free and is not.
+ * remove_niche_keywords and the keyword exclusion tools are free and undone by their
+ * counterparts, so they are not (RS-11864).
  */
 const CONFIRM_GATED_TOOLS = [
   "create_niche_dive",
@@ -56,6 +59,7 @@ const CONFIRM_GATED_TOOLS = [
 const EXPECTED_TOOLS = [
   "list_niches",
   "get_niche_keywords",
+  "list_keyword_exclusions",
   "get_niche_roots",
   "get_niche_competitors",
   "get_ranking_juice",
@@ -70,6 +74,8 @@ const EXPECTED_TOOLS = [
   "get_dive_status",
   "add_niche_keywords",
   "remove_niche_keywords",
+  "add_keyword_exclusions",
+  "remove_keyword_exclusions",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",

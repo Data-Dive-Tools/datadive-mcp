@@ -111,6 +111,9 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `add_niche_keywords` | Adds keywords to a niche's Master Keyword List (1–100 per call). Free on a niche dived in the last 24 hours. **On an older niche it re-dives the niche and spends dive tokens** — then it asks for `confirm: true` first. |
 | `remove_niche_keywords` | Takes keywords back out of a niche's Master Keyword List: hand-added ones are deleted, ones from Outliers/Residue go back there, dive-found ones stay. Free. |
+| `list_keyword_exclusions` | The keywords a niche hides from its Master Keyword List: exact entries with their search volume, phrase entries with how many keywords and how much search volume they hide. |
+| `add_keyword_exclusions` | Hides keywords from a niche's Master Keyword List — `exact` (one keyword) or `phrase` (every keyword containing it), 1–100 entries per call. Free; undone by `remove_keyword_exclusions`. |
+| `remove_keyword_exclusions` | Removes exact or phrase exclusions so the keywords they hid show again. Free. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
 | `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `pause_rank_radar_search_terms`. |
@@ -168,8 +171,8 @@ undone by its counterpart.
 `add_niche_keywords` asks for `confirm: true` only when it would spend: on a
 niche dived in the last 24 hours its first call adds the keywords for free, while
 on an older niche that call changes nothing and returns the Dive token cost of the
-re-dive the add triggers. `remove_niche_keywords` is free and needs no
-confirmation.
+re-dive the add triggers. `remove_niche_keywords` and the keyword exclusion
+tools are free and need no confirmation.
 
 To skip the per-call confirmation (e.g. in an automated setup), set
 `DATADIVE_AUTO_CONFIRM_WRITES=true` in your client config — then all six run
