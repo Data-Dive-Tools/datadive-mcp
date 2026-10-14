@@ -43,6 +43,12 @@ export interface Config {
    * Undefined (the stdio/api-key path) means no scope gating.
    */
   scopes?: readonly string[];
+  /**
+   * The end user's IP address, sent as `x-forwarded-for` so the DataDive API logs and rate-limits
+   * the person behind the call rather than the host making it. Set only by the hosted (remote)
+   * MCP server, which takes it from its own load balancer; the stdio path leaves it unset.
+   */
+  forwardedFor?: string;
 }
 
 const DEFAULT_BASE_URL = "https://api.datadive.tools";

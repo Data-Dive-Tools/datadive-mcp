@@ -101,6 +101,26 @@ describe("httpGet", () => {
     expect(headers["x-api-key"]).toBeUndefined();
   });
 
+  it("forwards the end user's IP as x-forwarded-for when the host provides it", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await httpGet({ ...ctx, config: { ...ctx.config, forwardedFor: "203.0.113.7" } }, "/v1/niches");
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect((call[1].headers as Record<string, string>)["x-forwarded-for"]).toBe("203.0.113.7");
+  });
+
+  it("sends no x-forwarded-for on the stdio path", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await httpGet(ctx, "/v1/niches");
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect((call[1].headers as Record<string, string>)["x-forwarded-for"]).toBeUndefined();
+  });
+
   it("reads the bearer token at request time, so a rotated token takes effect", async () => {
     const fetchMock = mockFetch({ body: { data: { ok: true } } });
     globalThis.fetch = fetchMock as unknown as typeof fetch;

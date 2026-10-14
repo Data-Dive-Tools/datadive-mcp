@@ -108,6 +108,7 @@ export async function httpGet<T>(ctx: RequestContext, path: string, query?: Reco
       method: "GET",
       headers: {
         ...authHeaders(ctx.config),
+        ...forwardedForHeader(ctx.config),
         accept: "application/json",
         "user-agent": userAgent(ctx.toolName),
       },
@@ -134,6 +135,7 @@ export async function httpPost<T>(ctx: RequestContext, path: string, body: unkno
       method: "POST",
       headers: {
         ...authHeaders(ctx.config),
+        ...forwardedForHeader(ctx.config),
         accept: "application/json",
         "content-type": "application/json",
         "user-agent": userAgent(ctx.toolName),
@@ -162,6 +164,7 @@ export async function httpPatch<T>(ctx: RequestContext, path: string, body: unkn
       method: "PATCH",
       headers: {
         ...authHeaders(ctx.config),
+        ...forwardedForHeader(ctx.config),
         accept: "application/json",
         "content-type": "application/json",
         "user-agent": userAgent(ctx.toolName),
@@ -189,6 +192,7 @@ export async function httpDelete<T>(ctx: RequestContext, path: string): Promise<
       method: "DELETE",
       headers: {
         ...authHeaders(ctx.config),
+        ...forwardedForHeader(ctx.config),
         accept: "application/json",
         "user-agent": userAgent(ctx.toolName),
       },
@@ -253,6 +257,10 @@ function userAgent(toolName: string): string {
 function authHeaders(config: Config): Record<string, string> {
   const c = config.credentials;
   return c.kind === "bearer" ? { authorization: `Bearer ${c.token}` } : { "x-api-key": c.apiKey };
+}
+
+function forwardedForHeader(config: Config): Record<string, string> {
+  return config.forwardedFor ? { "x-forwarded-for": config.forwardedFor } : {};
 }
 
 /**
