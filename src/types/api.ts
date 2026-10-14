@@ -363,6 +363,28 @@ export interface KrtAsinRank {
   impressionRank?: number | null;
 }
 
+/**
+ * A tag ("highlight") attached to a Rank Radar keyword in its ranking timeline. Same object as a
+ * row in `list_rank_radar_tags` — the `id` field is the one the tag-management tools (update,
+ * delete, add/remove search terms) take as `tagId`. The v1 response field names are frozen, so
+ * this type does not rename them: `krtId` is the Rank Radar id, `krtKeywordId` the keyword id.
+ * `type` is the backend `KRTHighlightType` enum; the system "paused" tag uses the reserved colour
+ * `TAG_RESERVED_COLOR` and is also surfaced here.
+ */
+export interface KrtHighlight {
+  id: string;
+  krtId: string;
+  krtKeywordId: string;
+  title: string;
+  description: string | null;
+  color: string | null;
+  type: string;
+  /** ISO-8601 timestamp or date; null when the tag has no window. */
+  startAt: string | null;
+  /** ISO-8601 timestamp or date; null when the tag has no window. */
+  endAt: string | null;
+}
+
 export interface KrtKeyword {
   id: string;
   keyword: string;
@@ -370,8 +392,8 @@ export interface KrtKeyword {
   /** Phrase relevancy score for this keyword within its Niche. */
   relevancy?: number | null;
   ranks: KrtAsinRank[];
-  /** Highlight annotations (KrtHighlightDto in backend); kept opaque for MVP. */
-  highlights: Array<Record<string, unknown>>;
+  /** User tags on this keyword — the same objects `list_rank_radar_tags` returns (RS-11822). */
+  highlights: KrtHighlight[];
   /** PPC data. Still sent by the API but due for removal (RS-11744); kept opaque. */
   adData?: Record<string, unknown> | null;
   /** SQP data. Still sent by the API but due for removal (RS-11744); kept opaque. */
@@ -380,6 +402,46 @@ export interface KrtKeyword {
 
 /** One page of a Rank Radar's active keywords (paged since RS-11683); paused keywords are not included. */
 export type RankRadarKeywordList = PaginationResponse<KrtKeyword>;
+
+// ─── /v1/niches/rank-radars/:rankRadarId/tags  (RS-11822) ────────────────────────────────────
+
+/** Mirrors backend `TAG_TITLE_MAX_LENGTH`. */
+export const TAG_TITLE_MAX_LENGTH = 100;
+
+/** Mirrors backend `TAG_KEYWORD_IDS_MAX` — attach/detach cap and initial-assignment cap on create. */
+export const TAG_KEYWORD_IDS_MAX = 1000;
+
+/**
+ * Reserved for the system "paused" tag the quota pauser writes. Rejected with 400 on tag
+ * create and update; the system tag that uses it is excluded from `list_rank_radar_tags` and
+ * returns 404 on update / delete / search-term attach / search-term remove.
+ */
+export const TAG_RESERVED_COLOR = "#EB5757";
+
+/** `#RRGGBB` only, matching the UI colour picker's output. Not `#C9D` short form, not `rgba(...)`. */
+export const TAG_HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+
+/** A single tag row — `list` returns these, `create` and `update` return one of them. */
+export interface RankRadarTag {
+  id: string;
+  title: string;
+  color: string | null;
+  description: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  keywordCount: number;
+  createdAt: string | null;
+}
+
+/** `GET /v1/niches/rank-radars/:rankRadarId/tags` — bare paginated body (follows the backend list pattern). */
+export type RankRadarTagList = PaginationResponse<RankRadarTag>;
+
+/**
+ * `POST .../tags/:tagId/search-terms` (attach) and `.../search-terms/remove` (detach). Kept
+ * opaque for now — the backend side ships in RS-11821 and its response shape is not yet frozen.
+ * When RS-11821 lands, tighten this to the real DTO.
+ */
+export type TagSearchTermsResult = Record<string, unknown>;
 
 // ─── /v1/niches/rank-radars/:rankRadarId/sqp  (RankRadarSqpKeywordListResponseDto, bare) ─
 

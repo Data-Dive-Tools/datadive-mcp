@@ -25,9 +25,19 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
-    version: "0.17.0",
-    released: "2026-10-12",
+    version: "0.17.1",
+    released: "2026-10-13",
     items: [
+      "Rank Radar tags end-to-end: list, create, update, delete tags, and attach or detach up to 1000 " +
+        "keywords per call (`list_rank_radar_tags`, `create_rank_radar_tag`, `update_rank_radar_tag`, " +
+        "`delete_rank_radar_tag`, `add_rank_radar_tag_search_terms`, `remove_rank_radar_tag_search_terms`). " +
+        "The highlights on each keyword in `get_rank_radar_data` are the same objects, so you can go " +
+        "from a ranking view to editing its tags without a round trip.",
+    ]},
+    {
+      version: "0.17.0",
+      released: "2026-10-12",
+      items: [
       "Add your own keywords to a niche's Master Keyword List, or take them back out (`add_niche_keywords`, " +
         "`remove_niche_keywords`). Free while the niche is fresh; on an older niche you are asked to confirm " +
         "the Dive tokens first. `get_niche_keywords` now shows where each keyword came from.",

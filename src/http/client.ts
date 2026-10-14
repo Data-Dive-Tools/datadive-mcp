@@ -148,6 +148,34 @@ export async function httpPost<T>(ctx: RequestContext, path: string, body: unkno
 }
 
 /**
+ * PATCH a JSON body to a /v1 write endpoint. Mirrors httpPost (same auth/UA headers,
+ * version notice, error mapping, envelope unwrapping) but uses PATCH for partial
+ * updates (`update_rank_radar_tag`, RS-11822). Backend returns the updated resource
+ * wrapped in the usual ResponseDto envelope.
+ */
+export async function httpPatch<T>(ctx: RequestContext, path: string, body: unknown): Promise<T> {
+  const url = buildUrl(ctx.config.baseUrl, path);
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        ...authHeaders(ctx.config),
+        accept: "application/json",
+        "content-type": "application/json",
+        "user-agent": userAgent(ctx.toolName),
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw networkError(url, e);
+  }
+
+  return handleResponse<T>(res);
+}
+
+/**
  * DELETE a /v1 resource. Same auth/UA headers, version notice and error mapping as
  * httpGet. The delete endpoints answer 204 No Content, so handleResponse resolves to
  * `null` — callers return their own confirmation payload rather than that null.

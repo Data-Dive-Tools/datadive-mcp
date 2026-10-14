@@ -33,6 +33,11 @@ const WRITE_TOOLS = [
   "delete_rank_radar",
   "delete_niche",
   "generate_listing_copy",
+  "create_rank_radar_tag",
+  "update_rank_radar_tag",
+  "delete_rank_radar_tag",
+  "add_rank_radar_tag_search_terms",
+  "remove_rank_radar_tag_search_terms",
 ];
 
 /**
@@ -53,6 +58,7 @@ const CONFIRM_GATED_TOOLS = [
   "create_rank_radar",
   "delete_niche",
   "delete_rank_radar",
+  "delete_rank_radar_tag",
   "generate_listing_copy",
 ];
 
@@ -67,6 +73,12 @@ const EXPECTED_TOOLS = [
   "get_rank_radar_data",
   "get_rank_radar_sqp_data",
   "get_rank_radar_ppc_data",
+  "list_rank_radar_tags",
+  "create_rank_radar_tag",
+  "update_rank_radar_tag",
+  "delete_rank_radar_tag",
+  "add_rank_radar_tag_search_terms",
+  "remove_rank_radar_tag_search_terms",
   "create_rank_radar",
   "create_niche_dive",
   "create_niche_dive_from_competitors_list",

@@ -74,10 +74,12 @@ export const getRankRadarDataTool: ToolDefinition<typeof inputSchema> = {
     "and continue with `currentPage` + 1 while `hasNext` is true. The response carries currentPage, pageSize, " +
     "total, lastPage, hasNext and hasPrev; `total` is the Rank Radar's active keyword count. Paused keywords " +
     "are not included. Each keyword has id, keyword, searchVolume, relevancy, ranks (per-day " +
-    "{ date, organicRank, sponsoredRank, impressionRank }), and any highlight annotations. A rank of 101 means " +
-    "the product was not in the top 100 results that day. For PPC metrics use `get_rank_radar_ppc_data`; for " +
-    "Search Query Performance use `get_rank_radar_sqp_data`. Use after `list_rank_radars` to discover a " +
-    "`rankRadarId`.",
+    "{ date, organicRank, sponsoredRank, impressionRank }), and `highlights` — the user tags on this " +
+    "keyword. Each `highlights` entry is the same object `list_rank_radar_tags` returns (id, title, " +
+    "color, description, startAt, endAt, type, krtId, krtKeywordId); its `id` is the `tagId` the " +
+    "tag-management tools take. A rank of 101 means the product was not in the top 100 results that " +
+    "day. For PPC metrics use `get_rank_radar_ppc_data`; for Search Query Performance use " +
+    "`get_rank_radar_sqp_data`. Use after `list_rank_radars` to discover a `rankRadarId`.",
   inputSchema,
   annotations: { readOnlyHint: true },
   handler: async (args, ctx) => {
