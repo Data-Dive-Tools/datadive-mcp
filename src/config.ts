@@ -49,6 +49,13 @@ export interface Config {
    * MCP server, which takes it from its own load balancer; the stdio path leaves it unset.
    */
   forwardedFor?: string;
+  /**
+   * Extra headers the hosted (remote) MCP server sends on every DataDive API call, e.g. the
+   * proxy secret that proves to the API the call came through that server. They can never
+   * replace the credential, `accept`, `content-type` or `user-agent` headers this package sets.
+   * The stdio path leaves it unset.
+   */
+  extraHeaders?: Readonly<Record<string, string>>;
 }
 
 const DEFAULT_BASE_URL = "https://api.datadive.tools";
