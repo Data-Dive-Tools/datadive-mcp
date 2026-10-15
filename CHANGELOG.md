@@ -1,5 +1,32 @@
 # @datadive-tools/mcp
 
+## 0.18.0
+
+### Minor Changes
+
+- 62e2b73: `get_asin_inventory_distribution` returns the ASIN's inventory metrics (RS-11919).
+
+  `GET /v1/sellers/{sellerId}/marketplaces/{marketplace}/asins/{asin}/inventory` (RS-11919) now returns the per-ASIN metrics the DataDive Inventory page shows, next to the per-fulfillment-center distribution. The tool passes them through; its title and description now say so, so an assistant reaches for it on stock, days-of-stock, LILF, LTSF and aged-inventory questions.
+  - New fields: `fulfillableStock`, `totalStock`, `reservedStock`, `inboundStock`, `researchingStock`, `unfulfillableStock`, `daysOfStock` + `daysOfStockSource`, `daysOfStock30`, `daysOfStock90`, `inLowInventoryState`, `estWeeklyLilf`, `estLtsfNextAssessment`, `ltsfLastMonthActual`, `agedUnits`, `oldestUnitAgeDays`, and `currency` for the fees.
+  - A metric is `null`, never `0`, when Amazon has no data. Metrics the plan does not include are `null` and listed in `lockedFields`, with `lockedReason`.
+  - **Changed meaning:** `lastUpdatedAt` now dates the live stock the metrics come from. The distribution date it used to carry is the new `distributionLastUpdatedAt`, usually up to 2 days behind.
+  - The tool keeps its name so existing agents and saved prompts keep working.
+
+- 7e9e01b: Add Rank Radar tag management (RS-11822).
+
+  Six new tools cover the full tag lifecycle on a Rank Radar:
+  - `list_rank_radar_tags` — enumerate tags on a Rank Radar.
+  - `create_rank_radar_tag` — create a tag, optionally attaching up to 1000 keywords in the same call.
+  - `update_rank_radar_tag` — partial update of title, colour, description, or `startAt`/`endAt` window.
+  - `delete_rank_radar_tag` — remove a tag (confirm-gated, since deletion is irreversible).
+  - `add_rank_radar_tag_search_terms` / `remove_rank_radar_tag_search_terms` — attach or detach up to 1000 keyword ids per call, idempotent.
+
+  The `highlights` field on each keyword in `get_rank_radar_data` is now typed as `KrtHighlight` — the same shape `list_rank_radar_tags` returns — so a caller can jump from a ranking view to editing its tags without a round trip. Title clashes answer 409 `{ error: 'TAG_TITLE_EXISTS', existingTagId }` so callers can reuse the existing tag instead of retrying. The reserved colour `#EB5757` (the system "paused" tag) is rejected with 400 on create and update.
+
+### Patch Changes
+
+- 7762e4a: The hosted MCP server can now pass the end user's IP address to the DataDive API (`forwardedFor` in the tool config, sent as `x-forwarded-for`), so API logs and rate limits see the person behind a call instead of the MCP server. The local stdio setup is unchanged.
+
 ## 0.17.0
 
 ### Minor Changes
