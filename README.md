@@ -129,7 +129,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_seller_catalog` | Paginated catalog of a seller's own ASINs. Filter by `search`, `brand`, and `status` (Active by default). |
 | `get_seller_listing_changes` | Paginated price/content/image changes on a seller's listings. Filter by `types`, `asin`, `brand`, `search`, and a date range; optionally include ranking/conversion `correlation`. |
 | `list_ppc_campaigns` | Sponsored Products campaigns of a seller account with window totals and a per-placement breakdown. Filter by `asin` / `parentAsin`, `state`, `search`; sort by any metric. Window up to 90 days (default 30). |
-| `get_asin_inventory_distribution` | Per-fulfillment-center sellable inventory for an ASIN. Requires `sellerId` from `list_seller_profiles` or your Connections page. |
+| `get_asin_inventory_distribution` | Inventory metrics for an ASIN (stock, days of stock, low-inventory state, LILF and LTSF fees, aged units) and its per-fulfillment-center sellable inventory. Requires `sellerId` from `list_seller_profiles` or your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |
 | `list_blind_spend_alerts` | Paginated list of blind-spend alerts — ad spend on search terms with little or no sales, with per-term spend/clicks/CVR. Same filters as above. |
 | `get_quota` | Current quota usage and capacity per billable feature, plus the next refresh date. No arguments. |
