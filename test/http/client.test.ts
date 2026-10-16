@@ -121,6 +121,30 @@ describe("httpGet", () => {
     expect((call[1].headers as Record<string, string>)["x-forwarded-for"]).toBeUndefined();
   });
 
+  it("sends extraHeaders on every request", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const extraHeaders = { "x-dd-proxy-secret": "s3cret" };
+
+    await httpGet({ ...ctx, config: { ...ctx.config, extraHeaders } }, "/v1/niches");
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect((call[1].headers as Record<string, string>)["x-dd-proxy-secret"]).toBe("s3cret");
+  });
+
+  it("never lets extraHeaders replace the credential or user-agent", async () => {
+    const fetchMock = mockFetch({ body: { data: { ok: true } } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const extraHeaders = { "X-Api-Key": "forged", "user-agent": "forged" };
+
+    await httpGet({ ...ctx, config: { ...ctx.config, extraHeaders } }, "/v1/niches");
+
+    const headers = (fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].headers as Record<string, string>;
+    expect(headers["X-Api-Key"]).toBeUndefined();
+    expect(headers["x-api-key"]).not.toBe("forged");
+    expect(headers["user-agent"]).not.toBe("forged");
+  });
+
   it("reads the bearer token at request time, so a rotated token takes effect", async () => {
     const fetchMock = mockFetch({ body: { data: { ok: true } } });
     globalThis.fetch = fetchMock as unknown as typeof fetch;
