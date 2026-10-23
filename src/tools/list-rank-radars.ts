@@ -7,6 +7,7 @@ import {
   type RankRadarItem,
   type RankRadarList,
 } from "../types/api.js";
+import { tagFilterIdList } from "./niche-tag-ids.js";
 import type { ToolDefinition } from "./types.js";
 
 /** Mirrors the API's `PaginationParams.MAX_PAGE_SIZE`; a larger value is not honoured there. */
@@ -35,6 +36,18 @@ const inputSchema = {
         "and paused together. Archived Rank Radars are returned only by an explicit ARCHIVED.",
     ),
   searchText: z.string().optional().describe("Filter Rank Radars by ASIN or product title."),
+  spaces: tagFilterIdList("spaces")
+    .optional()
+    .describe(
+      "Only Rank Radars whose niche is in at least one of these Spaces (ids from `list_spaces`, up to 100). " +
+        "Combines with `labels` and the other filters with AND.",
+    ),
+  labels: tagFilterIdList("labels")
+    .optional()
+    .describe(
+      "Only Rank Radars whose niche has at least one of these labels (ids from `list_labels`, up to 100). " +
+        "Combines with `spaces` and the other filters with AND.",
+    ),
 };
 
 /**
@@ -53,7 +66,8 @@ export const listRankRadarsTool: ToolDefinition<typeof inputSchema> = {
   title: "List Rank Radars",
   description:
     "Use this to find a `rankRadarId` before calling `get_rank_radar_data`. Filter by `nicheId` " +
-    "if the user has already identified a niche. " +
+    "if the user has already identified a niche, or by `spaces` / `labels` (ids from `list_spaces` / " +
+    "`list_labels`), which match through the Rank Radar's niche. " +
     "Retrieves a paginated list of Rank Radars — keyword-rank trackers monitoring organic and " +
     "sponsored positions for specific ASINs over time. Each item includes id, status (ACTIVE, " +
     "PAUSED or ARCHIVED), asin, marketplace, keywordCount, title, imageUrl, and summary metrics: " +
@@ -72,6 +86,8 @@ export const listRankRadarsTool: ToolDefinition<typeof inputSchema> = {
         nicheId: args.nicheId,
         status: args.status,
         searchText: args.searchText,
+        spaces: args.spaces,
+        labels: args.labels,
       },
     );
 

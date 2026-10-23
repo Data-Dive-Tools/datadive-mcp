@@ -25,6 +25,16 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.20.0",
+    released: "2026-10-23",
+    items: [
+      "See your Spaces and labels (`list_spaces`, `list_labels`), put a niche into them or take it out " +
+        "(`add_niche_spaces`, `remove_niche_spaces`, `add_niche_labels`, `remove_niche_labels`), and filter " +
+        "`list_niches` and `list_rank_radars` by Space and label. Free. Changing a niche's Spaces and " +
+        "labels is for the organization owner or a team admin; a Space you only have view rights on is refused.",
+    ],
+  },
+  {
     version: "0.17.1",
     released: "2026-10-13",
     items: [
