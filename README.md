@@ -98,6 +98,11 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | Tool | Description |
 |---|---|
 | `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the niche-scoped tools below. |
+| `list_fast_keywords` | Paginated list of your organization's Fast Keywords runs (`fastKeywordsId`, ASIN, status, keyword count, search volume). Filter by `search` or `marketplace`. |
+| `get_fast_keywords` | One Fast Keywords result: product, keyword roots and the top 10 competitors. Poll it until `status` is `success`. |
+| `get_fast_keywords_keywords` | The keywords of a finished Fast Keywords run: search volume, organic and sponsored rank, highest volume first. Paged (up to 100). |
+| `run_fast_keywords` | **Spends 1 dive token.** Finds a product's keywords from just its ASIN. Async — poll `get_fast_keywords`. Previews the cost first and requires `confirm: true`. |
+| `refresh_fast_keywords` | **Spends 1 dive token.** Re-runs a Fast Keywords result; allowed once every 24 hours. Requires `confirm: true`. |
 | `get_niche_keywords` | Master keyword list for a niche: search volume, relevancy, competitor ASIN ranks. |
 | `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
@@ -106,7 +111,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Returns every active keyword by default; pass `currentPage`/`pageSize` (up to 100) to read one page at a time. |
 | `get_rank_radar_sqp_data` | Amazon Search Query Performance per Rank Radar keyword: search volume, impressions, clicks, cart adds, purchases — market total vs this ASIN family. Same date range and paging as `get_rank_radar_data`. |
 | `get_rank_radar_ppc_data` | Sponsored Products metrics per Rank Radar keyword: sponsored rank, spend, sales, ACOS, CPC, match types; optional per-campaign breakdown. Same date range and paging as `get_rank_radar_data`. |
-| `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
+| `create_niche_dive` | **Spends dive tokens.** Starts new niche research from a seed ASIN. Async — returns a `diveId` to poll with `get_dive_status`. Pass `fastKeywordsRequestId` (from `run_fast_keywords`) to link it to a Fast Keywords run. Requires `confirm: true`. |
 | `create_niche_dive_from_competitors_list` | **Spends dive tokens.** Starts niche research from your own list of 2–200 competitor ASINs, with no automatic discovery. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `redive_niche` | **Spends dive tokens.** Refreshes an existing niche with current data — either the same competitors or a newly discovered set. Async — returns a `diveId` to poll with `get_dive_status`. Requires `confirm: true`. |
 | `add_niche_keywords` | Adds keywords to a niche's Master Keyword List (1–100 per call). Free on a niche dived in the last 24 hours. **On an older niche it re-dives the niche and spends dive tokens** — then it asks for `confirm: true` first. |

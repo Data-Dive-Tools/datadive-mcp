@@ -17,6 +17,8 @@ const TEST_CONFIG: Config = {
 };
 
 const WRITE_TOOLS = [
+  "run_fast_keywords",
+  "refresh_fast_keywords",
   "create_niche_dive",
   "create_niche_dive_from_competitors_list",
   "redive_niche",
@@ -47,10 +49,13 @@ const WRITE_TOOLS = [
  * and add-search-terms only move Daily Tracked Keywords capacity, which the backend
  * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
  * add_niche_keywords is gated only on a stale niche, where it re-dives (RS-11860);
- * remove_niche_keywords and the keyword exclusion tools are free and undone by their
+ * run_fast_keywords and refresh_fast_keywords spend 1 Dive token (RS-12020), so they are gated on a dry-run
+ * preview. remove_niche_keywords and the keyword exclusion tools are free and undone by their
  * counterparts, so they are not (RS-11864).
  */
 const CONFIRM_GATED_TOOLS = [
+  "run_fast_keywords",
+  "refresh_fast_keywords",
   "create_niche_dive",
   "create_niche_dive_from_competitors_list",
   "redive_niche",
@@ -64,6 +69,11 @@ const CONFIRM_GATED_TOOLS = [
 
 const EXPECTED_TOOLS = [
   "list_niches",
+  "list_fast_keywords",
+  "get_fast_keywords",
+  "get_fast_keywords_keywords",
+  "run_fast_keywords",
+  "refresh_fast_keywords",
   "get_niche_keywords",
   "list_keyword_exclusions",
   "get_niche_roots",
