@@ -26,6 +26,10 @@ const WRITE_TOOLS = [
   "remove_niche_keywords",
   "add_keyword_exclusions",
   "remove_keyword_exclusions",
+  "add_niche_spaces",
+  "remove_niche_spaces",
+  "add_niche_labels",
+  "remove_niche_labels",
   "create_rank_radar",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
@@ -52,6 +56,8 @@ const WRITE_TOOLS = [
  * run_fast_keywords and refresh_fast_keywords spend 1 Dive token (RS-12020), so they are gated on a dry-run
  * preview. remove_niche_keywords and the keyword exclusion tools are free and undone by their
  * counterparts, so they are not (RS-11864).
+ * remove_niche_keywords and the keyword exclusion tools are free and undone by their
+ * counterparts, so they are not (RS-11864); neither are the niche Space and label tools (RS-12030).
  */
 const CONFIRM_GATED_TOOLS = [
   "run_fast_keywords",
@@ -74,6 +80,8 @@ const EXPECTED_TOOLS = [
   "get_fast_keywords_keywords",
   "run_fast_keywords",
   "refresh_fast_keywords",
+  "list_spaces",
+  "list_labels",
   "get_niche_keywords",
   "list_keyword_exclusions",
   "get_niche_roots",
@@ -98,6 +106,10 @@ const EXPECTED_TOOLS = [
   "remove_niche_keywords",
   "add_keyword_exclusions",
   "remove_keyword_exclusions",
+  "add_niche_spaces",
+  "remove_niche_spaces",
+  "add_niche_labels",
+  "remove_niche_labels",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",

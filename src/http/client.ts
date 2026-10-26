@@ -239,6 +239,11 @@ function buildUrl(baseUrl: string, path: string, query?: Record<string, unknown>
   if (query) {
     for (const [k, v] of Object.entries(query)) {
       if (v === undefined || v === null) continue;
+      if (Array.isArray(v)) {
+        // One `k=a&k=b` pair per item: `String([1, 2])` would send `k=1,2`, which the API reads as one bad id.
+        for (const item of v) u.searchParams.append(k, String(item));
+        continue;
+      }
       u.searchParams.set(k, String(v));
     }
   }

@@ -25,13 +25,23 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
-    version: "0.20.0",
+    version: "0.20.1",
     released: "2026-10-23",
     items: [
-      "Run Fast Keywords from just an ASIN and read the result (`run_fast_keywords`, `get_fast_keywords`, " +
+       "Run Fast Keywords from just an ASIN and read the result (`run_fast_keywords`, `get_fast_keywords`, " +
         "`get_fast_keywords_keywords`, `list_fast_keywords`, `refresh_fast_keywords`). A run costs 1 Dive token " +
         "and asks you to confirm first. A finished run can be refreshed once every 24 hours, and " +
         "`create_niche_dive` can now link a full niche dive to the Fast Keywords run it follows.",
+    ]
+  },
+  {
+    version: "0.20.0",
+    released: "2026-10-23",
+    items: [
+      "See your Spaces and labels (`list_spaces`, `list_labels`), put a niche into them or take it out " +
+        "(`add_niche_spaces`, `remove_niche_spaces`, `add_niche_labels`, `remove_niche_labels`), and filter " +
+        "`list_niches` and `list_rank_radars` by Space and label. Free. Changing a niche's Spaces and " +
+        "labels is for the organization owner or a team admin; a Space you only have view rights on is refused.",
     ],
   },
   {

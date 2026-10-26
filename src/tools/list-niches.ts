@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { httpGet } from "../http/client.js";
 import type { NicheList } from "../types/api.js";
+import { tagFilterIdList } from "./niche-tag-ids.js";
 import type { ToolDefinition } from "./types.js";
 
 /** Mirrors the API's `PaginationParams.MAX_PAGE_SIZE`; larger values are rejected there with 400. */
@@ -11,7 +12,8 @@ export const LIST_NICHES_MAX_PAGE_SIZE = 50;
  * accepts them since the 2026-09-07 API release. They were withdrawn on 2026-08-28 because the
  * endpoint bound only `currentPage`/`pageSize` and dropped unknown query params silently, so they
  * filtered nothing; the same release also fixed paging, which TypeORM had been discarding on the
- * joined builder (RS-11494). Do not re-add a filter here before the route reads it.
+ * joined builder (RS-11494). Do not re-add a filter here before the route reads it. `spaces` and `labels`
+ * (RS-12029) are read by the route and sent as repeated keys, which is what its array parsing accepts.
  */
 const inputSchema = {
   currentPage: z
@@ -54,6 +56,18 @@ const inputSchema = {
     .enum(["ASC", "DESC"])
     .optional()
     .describe("Sort direction. Defaults to DESC for `lastDived` and ASC for `name`."),
+  spaces: tagFilterIdList("spaces")
+    .optional()
+    .describe(
+      "Only niches in at least one of these Spaces (ids from `list_spaces`, up to 100). Combines with " +
+        "`labels` and the other filters with AND.",
+    ),
+  labels: tagFilterIdList("labels")
+    .optional()
+    .describe(
+      "Only niches with at least one of these labels (ids from `list_labels`, up to 100). Combines with " +
+        "`spaces` and the other filters with AND.",
+    ),
 };
 
 export const listNichesTool: ToolDefinition<typeof inputSchema> = {
@@ -66,7 +80,8 @@ export const listNichesTool: ToolDefinition<typeof inputSchema> = {
     "or product category being tracked. Returns nicheId, heroKeyword, nicheLabel, marketplace " +
     "(com/uk/de/...), and latestResearchDate per niche, plus pagination metadata (currentPage, " +
     "pageSize, total, lastPage, hasNext, hasPrev). Narrow with `searchText` (label/keyword) or " +
-    "`searchAsin` (a competitor ASIN) instead of scanning pages; a page holds at most " +
+    "`searchAsin` (a competitor ASIN), `spaces` or `labels` (ids from `list_spaces` / `list_labels`) instead of " +
+    "scanning pages; each niche lists the ids of its `spaces` and `labels`. A page holds at most " +
     `${LIST_NICHES_MAX_PAGE_SIZE} niches, so the full list of a large account needs several calls.`,
   inputSchema,
   annotations: { readOnlyHint: true },
@@ -81,6 +96,8 @@ export const listNichesTool: ToolDefinition<typeof inputSchema> = {
         searchAsin: args.searchAsin,
         orderBy: args.orderBy,
         sortOrder: args.sortOrder,
+        spaces: args.spaces,
+        labels: args.labels,
       },
     );
   },

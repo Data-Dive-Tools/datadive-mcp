@@ -168,6 +168,16 @@ describe("httpGet", () => {
     expect(call[0]).toBe("https://api.datadive.tools/v1/niches?currentPage=2&pageSize=50");
   });
 
+  it("sends an array query parameter as repeated keys, and nothing for an empty one", async () => {
+    const fetchMock = mockFetch({ body: { data: [] } });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await httpGet(ctx, "/v1/niches", { spaces: [1, 2], labels: [], currentPage: 1 });
+
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(call[0]).toBe("https://api.datadive.tools/v1/niches?spaces=1&spaces=2&currentPage=1");
+  });
+
   it("throws an ApiError on 401", async () => {
     globalThis.fetch = mockFetch({ status: 401, body: { message: "Api key is invalid" } }) as unknown as typeof fetch;
     await expect(httpGet(ctx, "/v1/niches")).rejects.toBeInstanceOf(ApiError);

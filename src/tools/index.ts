@@ -10,6 +10,12 @@ import { getFastKeywordsTool } from "./get-fast-keywords.js";
 import { getFastKeywordsKeywordsTool } from "./get-fast-keywords-keywords.js";
 import { runFastKeywordsTool } from "./run-fast-keywords.js";
 import { refreshFastKeywordsTool } from "./refresh-fast-keywords.js";
+import { listSpacesTool } from "./list-spaces.js";
+import { listLabelsTool } from "./list-labels.js";
+import { addNicheSpacesTool } from "./add-niche-spaces.js";
+import { removeNicheSpacesTool } from "./remove-niche-spaces.js";
+import { addNicheLabelsTool } from "./add-niche-labels.js";
+import { removeNicheLabelsTool } from "./remove-niche-labels.js";
 import { getNicheKeywordsTool } from "./get-niche-keywords.js";
 import { listKeywordExclusionsTool } from "./list-keyword-exclusions.js";
 import { getNicheRootsTool } from "./get-niche-roots.js";
@@ -62,6 +68,8 @@ export const allTools: ReadonlyArray<AnyTool> = [
   listFastKeywordsTool,
   getFastKeywordsTool,
   getFastKeywordsKeywordsTool,
+  listSpacesTool,
+  listLabelsTool,
   getNicheKeywordsTool,
   listKeywordExclusionsTool,
   getNicheRootsTool,
@@ -83,6 +91,10 @@ export const allTools: ReadonlyArray<AnyTool> = [
   removeNicheKeywordsTool,
   addKeywordExclusionsTool,
   removeKeywordExclusionsTool,
+  addNicheSpacesTool,
+  removeNicheSpacesTool,
+  addNicheLabelsTool,
+  removeNicheLabelsTool,
   addRankRadarSearchTermsTool,
   pauseRankRadarSearchTermsTool,
   resumeRankRadarSearchTermsTool,

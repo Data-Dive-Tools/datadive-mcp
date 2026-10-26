@@ -77,8 +77,24 @@ describe("list_niches tool", () => {
     );
   });
 
+  it("sends spaces and labels as repeated query keys", async () => {
+    const fetchMock = mockFetch({ data: [], currentPage: 1, pageSize: 20, total: 0, lastPage: 1, hasNext: false, hasPrev: false });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await listNichesTool.handler({ spaces: [1, 2], labels: [7] }, CTX);
+
+    expect(getCallUrl(fetchMock)).toBe("https://api.datadive.tools/v1/niches?spaces=1&spaces=2&labels=7");
+  });
+
   describe("input schema", () => {
     const schema = z.object(listNichesTool.inputSchema);
+
+    it("takes up to 100 unique positive integer ids for spaces and labels", () => {
+      expect(schema.safeParse({ spaces: [1, 2], labels: [3] }).success).toBe(true);
+      expect(schema.safeParse({ spaces: [1, 1] }).success).toBe(false);
+      expect(schema.safeParse({ labels: [0] }).success).toBe(false);
+      expect(schema.safeParse({ spaces: Array.from({ length: 101 }, (_, i) => i + 1) }).success).toBe(false);
+    });
 
     it("caps pageSize at the API maximum instead of over-asking", () => {
       expect(LIST_NICHES_MAX_PAGE_SIZE).toBe(50);

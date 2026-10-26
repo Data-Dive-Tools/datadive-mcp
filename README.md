@@ -98,6 +98,9 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | Tool | Description |
 |---|---|
 | `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the niche-scoped tools below. |
+| `list_niches` | Paginated list of your niches. Discovery step — returns `nicheId`s for the niche-scoped tools below. Filter by `searchText`, `searchAsin`, `spaces` or `labels`; each niche lists the ids of its `spaces` and `labels`. |
+| `list_spaces` | Your Spaces as a tree (`id`, `name`, `path`, `children`). A connected member sees only the Spaces they have rights on. Ids feed `add_niche_spaces` and the `spaces` filters. |
+| `list_labels` | Your labels as a tree. Ids feed `add_niche_labels` and the `labels` filters. |
 | `list_fast_keywords` | Paginated list of your organization's Fast Keywords runs (`fastKeywordsId`, ASIN, status, keyword count, search volume). Filter by `search` or `marketplace`. |
 | `get_fast_keywords` | One Fast Keywords result: product, keyword roots and the top 10 competitors. Poll it until `status` is `success`. |
 | `get_fast_keywords_keywords` | The keywords of a finished Fast Keywords run: search volume, organic and sponsored rank, highest volume first. Paged (up to 100). |
@@ -107,7 +110,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |
-| `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText` or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
+| `list_rank_radars` | Paginated list of rank radars. Filter by `nicheId`, `searchText`, `spaces`, `labels` (matched through the niche) or `status` (`ACTIVE` by default, plus `PAUSED`, `ARCHIVED`, `ALL`). |
 | `get_rank_radar_data` | Historical keyword rankings for a rank radar within a `startDate`/`endDate` range (max 90 days). Returns every active keyword by default; pass `currentPage`/`pageSize` (up to 100) to read one page at a time. |
 | `get_rank_radar_sqp_data` | Amazon Search Query Performance per Rank Radar keyword: search volume, impressions, clicks, cart adds, purchases — market total vs this ASIN family. Same date range and paging as `get_rank_radar_data`. |
 | `get_rank_radar_ppc_data` | Sponsored Products metrics per Rank Radar keyword: sponsored rank, spend, sales, ACOS, CPC, match types; optional per-campaign breakdown. Same date range and paging as `get_rank_radar_data`. |
@@ -119,6 +122,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_keyword_exclusions` | The keywords a niche hides from its Master Keyword List: exact entries with their search volume, phrase entries with how many keywords and how much search volume they hide. |
 | `add_keyword_exclusions` | Hides keywords from a niche's Master Keyword List — `exact` (one keyword) or `phrase` (every keyword containing it), 1–100 entries per call. Free; undone by `remove_keyword_exclusions`. |
 | `remove_keyword_exclusions` | Removes exact or phrase exclusions so the keywords they hid show again. Free. |
+| `add_niche_spaces` / `remove_niche_spaces` | Puts a niche in, or takes it out of, 1–100 Spaces (`spaceIds` from `list_spaces`). Free, no `confirm`. Organization owner or team admin only; a Space you only have view rights on is refused. One unknown or refused id fails the whole call and nothing changes. |
+| `add_niche_labels` / `remove_niche_labels` | Same for labels (`labelIds` from `list_labels`). Organization owner or team admin only. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
 | `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `pause_rank_radar_search_terms`. |
