@@ -24,6 +24,10 @@ const WRITE_TOOLS = [
   "remove_niche_keywords",
   "add_keyword_exclusions",
   "remove_keyword_exclusions",
+  "add_niche_spaces",
+  "remove_niche_spaces",
+  "add_niche_labels",
+  "remove_niche_labels",
   "create_rank_radar",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
@@ -48,7 +52,7 @@ const WRITE_TOOLS = [
  * refunds on pause/delete, so they are reversible and are NOT gated (RS-11529).
  * add_niche_keywords is gated only on a stale niche, where it re-dives (RS-11860);
  * remove_niche_keywords and the keyword exclusion tools are free and undone by their
- * counterparts, so they are not (RS-11864).
+ * counterparts, so they are not (RS-11864); neither are the niche Space and label tools (RS-12030).
  */
 const CONFIRM_GATED_TOOLS = [
   "create_niche_dive",
@@ -64,6 +68,8 @@ const CONFIRM_GATED_TOOLS = [
 
 const EXPECTED_TOOLS = [
   "list_niches",
+  "list_spaces",
+  "list_labels",
   "get_niche_keywords",
   "list_keyword_exclusions",
   "get_niche_roots",
@@ -88,6 +94,10 @@ const EXPECTED_TOOLS = [
   "remove_niche_keywords",
   "add_keyword_exclusions",
   "remove_keyword_exclusions",
+  "add_niche_spaces",
+  "remove_niche_spaces",
+  "add_niche_labels",
+  "remove_niche_labels",
   "add_rank_radar_search_terms",
   "pause_rank_radar_search_terms",
   "resume_rank_radar_search_terms",

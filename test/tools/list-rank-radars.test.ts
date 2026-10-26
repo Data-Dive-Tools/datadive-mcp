@@ -137,4 +137,13 @@ describe("list_rank_radars tool", () => {
     expect(() => schema.pageSize.parse(LIST_RANK_RADARS_MAX_PAGE_SIZE + 1)).toThrow();
     expect(() => schema.pageSize.parse(100)).toThrow();
   });
+
+  it("sends spaces and labels as repeated query keys", async () => {
+    const fetchMock = mockFetch({ data: [], currentPage: 1, pageSize: 20, total: 0, lastPage: 1, hasNext: false, hasPrev: false });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await call({ spaces: [4, 5], labels: [6] });
+
+    expect(getCallUrl(fetchMock)).toBe("https://api.datadive.tools/v1/niches/rank-radars?spaces=4&spaces=5&labels=6");
+  });
 });

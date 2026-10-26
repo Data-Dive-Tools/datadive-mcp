@@ -72,9 +72,41 @@ export interface NicheItem {
   marketplace: string;
   /** ISO date string when the Niche was last researched. Nullable. */
   latestResearchDate: string | null;
+  /** Ids of the Spaces the niche is in (see `list_spaces`). */
+  spaces: number[];
+  /** Ids of the labels on the niche (see `list_labels`). */
+  labels: number[];
 }
 
 export type NicheList = PaginationResponse<NicheItem>;
+
+// ─── Spaces and labels  (GET /v1/spaces, GET /v1/labels, ExternalTagNodeDto, wrapped) ─
+
+/** Mirrors the API's cap on ids per request and per list filter. */
+export const NICHE_TAG_IDS_MAX_PER_CALL = 100;
+
+export interface TagNode {
+  id: number;
+  name: string;
+  /** The names from the root down to this node, joined with `/`. */
+  path: string;
+  parentId: number | null;
+  children: TagNode[];
+}
+
+// ─── POST /v1/niches/:nicheId/(spaces|labels)[/remove]  (wrapped) ─────────────
+
+export interface AddNicheTagsResult {
+  added: number;
+  /** Already attached; left untouched. */
+  alreadyPresent: number;
+}
+
+export interface RemoveNicheTagsResult {
+  removed: number;
+  /** Not attached; left untouched. */
+  notPresent: number;
+}
 
 // ─── /v1/niches/:nicheId/keywords  (GetMasterKeywordListResult, wrapped) ─────
 
