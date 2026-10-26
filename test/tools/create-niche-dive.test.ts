@@ -69,4 +69,34 @@ describe("create_niche_dive tool", () => {
     expect(createNicheDiveTool.annotations?.readOnlyHint).toBe(false);
     expect(createNicheDiveTool.annotations?.destructiveHint).toBe(true);
   });
+
+  it("sends fastKeywordsRequestId only when given", async () => {
+    const withId = mockFetch({ diveId: "d-3", estimatedCompletionDate: "2026-06-19T00:00:00Z" });
+    globalThis.fetch = withId as unknown as typeof fetch;
+    await createNicheDiveTool.handler(
+      { marketplace: "com", asin: "B08N5WRWNW", numberOfCompetitors: 3, fastKeywordsRequestId: 12011, confirm: true },
+      CTX,
+    );
+    expect(JSON.parse(getCallInit(withId).body as string)).toEqual({
+      marketplace: "com",
+      asin: "B08N5WRWNW",
+      numberOfCompetitors: 3,
+      fastKeywordsRequestId: 12011,
+    });
+
+    const without = mockFetch({ diveId: "d-4", estimatedCompletionDate: "2026-06-19T00:00:00Z" });
+    globalThis.fetch = without as unknown as typeof fetch;
+    await createNicheDiveTool.handler(
+      { marketplace: "com", asin: "B08N5WRWNW", numberOfCompetitors: 3, confirm: true },
+      CTX,
+    );
+    expect(JSON.parse(getCallInit(without).body as string)).not.toHaveProperty("fastKeywordsRequestId");
+  });
+
+  it("accepts only a positive integer fastKeywordsRequestId", () => {
+    const { fastKeywordsRequestId } = createNicheDiveTool.inputSchema;
+    expect(fastKeywordsRequestId.parse(1)).toBe(1);
+    expect(() => fastKeywordsRequestId.parse(0)).toThrow();
+    expect(() => fastKeywordsRequestId.parse(1.5)).toThrow();
+  });
 });

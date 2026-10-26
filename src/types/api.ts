@@ -976,3 +976,94 @@ export type ListingCopyGenerationStatus =
   | { generationId: string; status: "generating" }
   | { generationId: string; status: "complete"; result: ListingCopyResult }
   | { generationId: string; status: "failed"; error: string };
+
+// ─── Fast Keywords  (/v1/fast-keywords, RS-12017 / RS-12018) ─────────────────
+
+/** Mirrors the API's page-size cap on the Fast Keywords lists. */
+export const FAST_KEYWORDS_MAX_PAGE_SIZE = 100;
+
+export type FastKeywordsStatus = "in-progress" | "failed" | "success";
+
+export interface FastKeywordsRoot {
+  root: string;
+  aggregateSearchVolume: number;
+  medianOrganicRank: number | null;
+  keywords: string[];
+}
+
+/** GET /v1/fast-keywords/:fastKeywordsId (wrapped). The keyword rows are a separate route. */
+export interface FastKeywordsResult {
+  fastKeywordsId: number;
+  status: FastKeywordsStatus;
+  asin: string;
+  parentAsin: string | null;
+  marketplace: string;
+  product: { title: string | null; imageUrl: string | null; brand: string | null; price: number | null };
+  variations: Array<{ asin: string; title: string | null; imageUrl: string | null }>;
+  roots: FastKeywordsRoot[];
+  /** The top 10 competitors. */
+  competitors: Array<{ asin: string; title: string | null; imageUrl: string | null; variationCount: number }>;
+  keywordCount: number;
+  lastRefreshedAt: string | null;
+  /** Set when `status` is `failed`. */
+  failureReason?: string;
+  /** Why the run failed, or why a successful run has little to show. Safe to show to a user. */
+  failureMessage?: string;
+  /** `true` when a successful run found too few keywords to be useful. */
+  insufficientKeywordData?: boolean;
+}
+
+export interface FastKeywordsKeyword {
+  keyword: string;
+  searchVolume: number | null;
+  organicRank: number | null;
+  sponsoredRank: number | null;
+}
+
+export type FastKeywordsKeywordList = PaginationResponse<FastKeywordsKeyword>;
+
+export interface FastKeywordsListItem {
+  fastKeywordsId: number;
+  asin: string;
+  parentAsin: string | null;
+  marketplace: string;
+  status: FastKeywordsStatus;
+  title: string | null;
+  brand: string | null;
+  price: number | null;
+  keywordCount: number;
+  totalSearchVolume: number | null;
+  top10OrganicRankCount: number | null;
+  rootCount: number | null;
+  lastRefreshedAt: string | null;
+  /** Latest request by anyone in the organization. */
+  requestedAt: string;
+}
+
+export type FastKeywordsList = PaginationResponse<FastKeywordsListItem>;
+
+/** POST /v1/fast-keywords and /:fastKeywordsId/refresh (wrapped): a real run. */
+export interface FastKeywordsRunResult {
+  /** Poll `get_fast_keywords` with it. */
+  fastKeywordsId: number;
+  /** Id of this request; what `create_niche_dive` takes as `fastKeywordsRequestId`. */
+  requestId: number;
+  /** `success` right away when a fresh result for the same product already exists. */
+  status: FastKeywordsStatus;
+  tokenCost: number;
+  estimatedCompletionDate: string;
+}
+
+/** The same routes with `dryRun: true`: nothing runs and nothing is spent. */
+export interface FastKeywordsRunPreview {
+  tokenCost: number;
+  hasEnoughTokens: boolean;
+}
+
+/** Body of the 409 a refresh answers while a run is going or the cooldown has not passed. */
+export interface FastKeywordsRefreshConflictBody {
+  error: "IN_PROGRESS" | "COOLDOWN";
+  message: string;
+  /** `null` while a run is in progress. */
+  nextEligibleAt: string | null;
+}

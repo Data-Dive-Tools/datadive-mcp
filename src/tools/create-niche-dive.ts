@@ -20,6 +20,15 @@ const inputSchema = {
     .int()
     .min(2)
     .describe("How many competitors to analyze (minimum 2). More competitors = deeper niche but more dive tokens."),
+  fastKeywordsRequestId: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .describe(
+      "Links the dive to a Fast Keywords run for the same product: the `requestId` returned by " +
+        "`run_fast_keywords` or `refresh_fast_keywords`. Leave unset for a dive that follows no Fast Keywords run.",
+    ),
   confirm: z
     .boolean()
     .optional()
@@ -36,7 +45,8 @@ export const createNicheDiveTool: ToolDefinition<typeof inputSchema> = {
     "out, poll `get_dive_status` (or check `list_niches`) instead of re-calling. " +
     "The dive runs asynchronously: this returns immediately with a `diveId` and an `estimatedCompletionDate`. " +
     "Poll `get_dive_status` with that `diveId` until it reports `success` (which carries the new `nicheId` for " +
-    "use with `list_niches`, `get_niche_keywords`, etc.). Requires `marketplace`, `asin`, and `numberOfCompetitors` (min 2).",
+    "use with `list_niches`, `get_niche_keywords`, etc.). Requires `marketplace`, `asin`, and `numberOfCompetitors` (min 2). " +
+    "After a Fast Keywords run for the same product, pass its `requestId` as `fastKeywordsRequestId` to link the dive to it.",
   inputSchema,
   // destructiveHint is technically "additive" here (a dive creates a new niche, it
   // doesn't destroy data), but we flag it destructive so clients prompt before the
@@ -57,6 +67,8 @@ export const createNicheDiveTool: ToolDefinition<typeof inputSchema> = {
         marketplace: args.marketplace,
         asin: args.asin,
         numberOfCompetitors: args.numberOfCompetitors,
+        // JSON.stringify drops it when unset, so a dive without a Fast Keywords run sends the old body.
+        fastKeywordsRequestId: args.fastKeywordsRequestId,
       },
     );
   },

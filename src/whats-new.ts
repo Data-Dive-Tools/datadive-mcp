@@ -25,6 +25,16 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.20.1",
+    released: "2026-10-23",
+    items: [
+       "Run Fast Keywords from just an ASIN and read the result (`run_fast_keywords`, `get_fast_keywords`, " +
+        "`get_fast_keywords_keywords`, `list_fast_keywords`, `refresh_fast_keywords`). A run costs 1 Dive token " +
+        "and asks you to confirm first. A finished run can be refreshed once every 24 hours, and " +
+        "`create_niche_dive` can now link a full niche dive to the Fast Keywords run it follows.",
+    ]
+  },
+  {
     version: "0.20.0",
     released: "2026-10-23",
     items: [

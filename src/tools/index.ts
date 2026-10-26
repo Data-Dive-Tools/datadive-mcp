@@ -5,6 +5,11 @@
  */
 
 import { listNichesTool } from "./list-niches.js";
+import { listFastKeywordsTool } from "./list-fast-keywords.js";
+import { getFastKeywordsTool } from "./get-fast-keywords.js";
+import { getFastKeywordsKeywordsTool } from "./get-fast-keywords-keywords.js";
+import { runFastKeywordsTool } from "./run-fast-keywords.js";
+import { refreshFastKeywordsTool } from "./refresh-fast-keywords.js";
 import { listSpacesTool } from "./list-spaces.js";
 import { listLabelsTool } from "./list-labels.js";
 import { addNicheSpacesTool } from "./add-niche-spaces.js";
@@ -60,6 +65,9 @@ import type { AnyTool } from "./types.js";
 // args against `inputSchema` before calling the handler, so the cast is safe.
 export const allTools: ReadonlyArray<AnyTool> = [
   listNichesTool,
+  listFastKeywordsTool,
+  getFastKeywordsTool,
+  getFastKeywordsKeywordsTool,
   listSpacesTool,
   listLabelsTool,
   getNicheKeywordsTool,
@@ -73,6 +81,8 @@ export const allTools: ReadonlyArray<AnyTool> = [
   getRankRadarPpcDataTool,
   listRankRadarTagsTool,
   createRankRadarTool,
+  runFastKeywordsTool,
+  refreshFastKeywordsTool,
   createNicheDiveTool,
   createNicheDiveFromCompetitorsListTool,
   rediveNicheTool,
