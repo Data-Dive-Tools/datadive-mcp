@@ -1,5 +1,23 @@
 # @datadive-tools/mcp
 
+## 0.20.0
+
+### Minor Changes
+
+- f89e1ea: Add Fast Keywords tools (RS-12020).
+
+  The public API can run, refresh and read Fast Keywords (RS-12017, RS-12018). The MCP had no tool for any of it, so an assistant could not find a product's keywords from just its ASIN.
+  - `run_fast_keywords` and `refresh_fast_keywords` spend 1 Dive token. The first call is a dry run that spends nothing and returns `confirmation_required` with the API's `tokenCost` and `hasEnoughTokens`; the confirmed call runs. A refresh refused with a 409 (cooldown, or a run in progress) fails with a message that says when to try again, or to poll, and nothing is charged.
+  - `get_fast_keywords` is the poll target and returns the roots and top 10 competitors; `get_fast_keywords_keywords` pages through the keywords; `list_fast_keywords` lists the organization's runs.
+  - `create_niche_dive` takes an optional `fastKeywordsRequestId` (the `requestId` of a run) to link the dive to a Fast Keywords run (RS-12019).
+
+- b7237a7: Add Space and label tools, and filters by them (RS-12030).
+
+  The public API can now read Spaces and labels, put a niche in them and filter by them (RS-12028, RS-12029). The MCP had no tool for any of it, so an assistant could not keep one end user's niches apart from another's.
+  - `list_spaces` and `list_labels` return the trees. A connected member sees only the Spaces they have rights on.
+  - `add_niche_spaces`, `remove_niche_spaces`, `add_niche_labels` and `remove_niche_labels` take 1–100 ids per call. They are free and have no confirm gate. They are for the organization owner or a team admin; anyone else is refused with the API's `INSUFFICIENT_ROLE` message. One unknown id, or a Space the member only has view rights on, fails the whole call and nothing changes.
+  - `list_niches` and `list_rank_radars` accept `spaces` and `labels` (OR inside one list, AND between them and with the other filters); Rank Radars match through their niche. Each niche in `list_niches` now carries the ids of its `spaces` and `labels`.
+
 ## 0.19.0
 
 ### Minor Changes
