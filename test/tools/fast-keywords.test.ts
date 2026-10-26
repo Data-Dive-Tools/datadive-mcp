@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { listFastKeywordsTool } from "../../src/tools/list-fast-keywords.js";
-import { getFastKeywordsTool } from "../../src/tools/get-fast-keywords.js";
+import { getFastKeywordsTool, MAX_KEYWORDS_PER_ROOT, MAX_ROOTS } from "../../src/tools/get-fast-keywords.js";
 import { getFastKeywordsKeywordsTool } from "../../src/tools/get-fast-keywords-keywords.js";
 import { runFastKeywordsTool } from "../../src/tools/run-fast-keywords.js";
 import { refreshFastKeywordsTool } from "../../src/tools/refresh-fast-keywords.js";
@@ -51,9 +51,53 @@ describe("fast keywords tools", () => {
       const fetchMock = mockFetch({ data: result });
       globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-      expect(await getFastKeywordsTool.handler({ fastKeywordsId: 8052 }, CTX)).toEqual(result);
+      expect(await getFastKeywordsTool.handler({ fastKeywordsId: 8052 }, CTX)).toEqual({
+        ...result,
+        totalRoots: 0,
+      });
       expect(new URL(getCallUrl(fetchMock)).pathname).toBe("/v1/fast-keywords/8052");
       expect(getFastKeywordsTool.description).toMatch(/poll/i);
+    });
+
+    it("get_fast_keywords keeps the top roots and a sample of their keywords, and says what it cut", async () => {
+      const roots = Array.from({ length: MAX_ROOTS + 5 }, (_, i) => ({
+        root: `root ${i}`,
+        aggregateSearchVolume: 1000 - i,
+        medianOrganicRank: i,
+        keywords: Array.from({ length: MAX_KEYWORDS_PER_ROOT + 3 }, (_, k) => `root ${i} keyword ${k}`),
+      }));
+      globalThis.fetch = mockFetch({
+        data: { fastKeywordsId: 8052, status: "success", roots, competitors: [], keywordCount: 999 },
+      }) as unknown as typeof fetch;
+
+      const result = (await getFastKeywordsTool.handler({ fastKeywordsId: 8052 }, CTX)) as unknown as {
+        roots: Array<{ root: string; keywordCount: number; keywords: string[] }>;
+        totalRoots: number;
+        note?: string;
+        keywordCount: number;
+      };
+
+      expect(result.roots).toHaveLength(MAX_ROOTS);
+      expect(result.roots[0]).toMatchObject({ root: "root 0", keywordCount: MAX_KEYWORDS_PER_ROOT + 3 });
+      expect(result.roots[0]!.keywords).toEqual(roots[0]!.keywords.slice(0, MAX_KEYWORDS_PER_ROOT));
+      expect(result.totalRoots).toBe(MAX_ROOTS + 5);
+      expect(result.keywordCount).toBe(999);
+      expect(result.note).toMatch(/top 25 of 30 roots/);
+      expect(result.note).toMatch(/get_fast_keywords_keywords/);
+    });
+
+    it("get_fast_keywords adds no note when nothing was cut", async () => {
+      const roots = [
+        { root: "dog hat", aggregateSearchVolume: 10, medianOrganicRank: 3, keywords: ["dog hat"] },
+      ];
+      globalThis.fetch = mockFetch({
+        data: { fastKeywordsId: 1, status: "success", roots },
+      }) as unknown as typeof fetch;
+
+      const result = (await getFastKeywordsTool.handler({ fastKeywordsId: 1 }, CTX)) as { roots: unknown[] };
+
+      expect(result).not.toHaveProperty("note");
+      expect(result.roots).toEqual([{ ...roots[0], keywordCount: 1 }]);
     });
 
     it("get_fast_keywords_keywords pages through the keyword rows", async () => {
@@ -86,7 +130,10 @@ describe("fast keywords tools", () => {
     },
   ] as const)("$name", ({ name, tool, args, path, body }) => {
     const run = (extra: Record<string, unknown> = {}, ctx = CTX) =>
-      (tool.handler as (a: Record<string, unknown>, c: typeof CTX) => Promise<unknown>)({ ...args, ...extra }, ctx);
+      (tool.handler as (a: Record<string, unknown>, c: typeof CTX) => Promise<unknown>)(
+        { ...args, ...extra },
+        ctx,
+      );
 
     it("previews with a dry run on the first call and spends nothing", async () => {
       const fetchMock = mockFetch({ data: PREVIEW });
@@ -106,7 +153,9 @@ describe("fast keywords tools", () => {
     });
 
     it("says so when the organization lacks Dive tokens", async () => {
-      globalThis.fetch = mockFetch({ data: { tokenCost: 1, hasEnoughTokens: false } }) as unknown as typeof fetch;
+      globalThis.fetch = mockFetch({
+        data: { tokenCost: 1, hasEnoughTokens: false },
+      }) as unknown as typeof fetch;
 
       const result = (await run()) as { costNote: string; hasEnoughTokens: boolean };
 
@@ -142,7 +191,11 @@ describe("fast keywords tools", () => {
 
     it("keeps dryRun out of the input schema and is not safe to retry", () => {
       expect("dryRun" in tool.inputSchema).toBe(false);
-      expect(tool.annotations).toMatchObject({ readOnlyHint: false, destructiveHint: true, openWorldHint: false });
+      expect(tool.annotations).toMatchObject({
+        readOnlyHint: false,
+        destructiveHint: true,
+        openWorldHint: false,
+      });
       expect(tool.description).toMatch(/not safe to retry/i);
       expect(tool.name).toBe(name);
     });
@@ -168,21 +221,30 @@ describe("fast keywords tools", () => {
 
     it("turns an IN_PROGRESS 409 into a poll instruction", async () => {
       globalThis.fetch = mockFetch(
-        { statusCode: 409, error: "IN_PROGRESS", message: "in progress", success: false, nextEligibleAt: null },
+        {
+          statusCode: 409,
+          error: "IN_PROGRESS",
+          message: "in progress",
+          success: false,
+          nextEligibleAt: null,
+        },
         409,
       ) as unknown as typeof fetch;
 
-      await expect(refreshFastKeywordsTool.handler({ fastKeywordsId: 8052, confirm: true }, CTX)).rejects.toThrow(
-        /already in progress.*poll `get_fast_keywords`/,
-      );
+      await expect(
+        refreshFastKeywordsTool.handler({ fastKeywordsId: 8052, confirm: true }, CTX),
+      ).rejects.toThrow(/already in progress.*poll `get_fast_keywords`/);
     });
 
     it("leaves other 409s as they came", async () => {
-      globalThis.fetch = mockFetch({ statusCode: 409, message: "Something else" }, 409) as unknown as typeof fetch;
+      globalThis.fetch = mockFetch(
+        { statusCode: 409, message: "Something else" },
+        409,
+      ) as unknown as typeof fetch;
 
-      await expect(refreshFastKeywordsTool.handler({ fastKeywordsId: 8052, confirm: true }, CTX)).rejects.toThrow(
-        /Something else/,
-      );
+      await expect(
+        refreshFastKeywordsTool.handler({ fastKeywordsId: 8052, confirm: true }, CTX),
+      ).rejects.toThrow(/Something else/);
     });
   });
 });
