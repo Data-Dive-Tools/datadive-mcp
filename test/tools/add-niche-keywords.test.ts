@@ -8,6 +8,8 @@ const FREE_ADD = {
     takenFromOutliers: ["dog beanie"],
     takenFromResidue: [],
     addedManually: ["knit dog hat"],
+    takenFromExcluded: [],
+    blockedByPhraseExclusion: [],
   },
   tokensUsed: 0,
 };
@@ -50,6 +52,37 @@ describe("add_niche_keywords tool", () => {
     // No dryRun: the 0-token cap is what keeps an unconfirmed call from spending.
     expect(body(fetchMock)).toEqual({ keywords: ["dog hat", "dog beanie", "knit dog hat"], maxTokensUsed: 0 });
     expect(result).toEqual(FREE_ADD);
+  });
+
+  it("passes the keyword-exclusion groups through unchanged", async () => {
+    const withExclusions = {
+      originBreakdown: {
+        alreadyInMkl: ["dog hat"],
+        takenFromOutliers: [],
+        takenFromResidue: [],
+        addedManually: [],
+        takenFromExcluded: ["dog hat"],
+        blockedByPhraseExclusion: [{ keyword: "cheap dog hat", matchedPhrase: "cheap" }],
+      },
+      tokensUsed: 0,
+    };
+    const fetchMock = mockFetch({ success: true, data: withExclusions });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const result = await addNicheKeywordsTool.handler(
+      { nicheId: "n-1", keywords: ["dog hat", "cheap dog hat"] },
+      CTX,
+    );
+
+    expect(result).toEqual(withExclusions);
+  });
+
+  it("tells the assistant how exact and phrase exclusions are handled", () => {
+    const { description } = addNicheKeywordsTool;
+    expect(description).toContain("takenFromExcluded");
+    expect(description).toContain("blockedByPhraseExclusion");
+    expect(description).toContain("remove_keyword_exclusions");
+    expect(description).not.toContain("stays hidden after an add");
   });
 
   it("returns confirmation_required with the API's cost when a stale niche would re-dive", async () => {

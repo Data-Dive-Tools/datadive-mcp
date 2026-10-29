@@ -59,13 +59,17 @@ export const addNicheKeywordsTool: ToolDefinition<typeof inputSchema> = {
     "saves and spends nothing and returns `confirmation_required` with `tokenCost`; after the user approves, " +
     "call again with `confirm: true` and `maxTokensUsed` set to that `tokenCost`. Keywords moved in from " +
     "Outliers or Residue never cost anything. Returns `originBreakdown` (`alreadyInMkl`, `takenFromOutliers`, " +
-    "`takenFromResidue`, `addedManually`) and `tokensUsed`. When `refresh` is present a re-dive is running: " +
-    "poll `get_dive_status` with `refresh.diveId`; the `addedManually` keywords show in the MKL once it " +
-    "succeeds. A confirmed call is not safe to retry: if it errors or times out, poll `get_dive_status` or " +
-    "re-read `get_niche_keywords` instead of re-calling. Limited to 2 calls per minute per niche, so batch " +
-    "keywords into one call. Undo with `remove_niche_keywords`. A keyword hidden by the niche's keyword " +
-    "exclusions stays hidden after an add: check `list_keyword_exclusions` and remove the exclusion with " +
-    "`remove_keyword_exclusions` first.",
+    "`takenFromResidue`, `addedManually`, `takenFromExcluded`, `blockedByPhraseExclusion`) and `tokensUsed`. " +
+    "When `refresh` is present a re-dive is running: poll `get_dive_status` with `refresh.diveId`; the " +
+    "`addedManually` keywords show in the MKL once it succeeds. A confirmed call is not safe to retry: if it " +
+    "errors or times out, poll `get_dive_status` or re-read `get_niche_keywords` instead of re-calling. " +
+    "Limited to 2 calls per minute per niche, so batch keywords into one call. Undo with " +
+    "`remove_niche_keywords`. Keyword exclusions: a keyword matching an exact exclusion is added and that " +
+    "exclusion removed, so it shows again; it is listed in `takenFromExcluded` and also in the group it " +
+    "landed in, so don't count it twice. A keyword matching a phrase exclusion is not added and not charged: " +
+    "it is listed only in `blockedByPhraseExclusion` with the `matchedPhrase`. To add it, remove that phrase " +
+    "with `remove_keyword_exclusions` and add again, but ask the user first, since removing the phrase can " +
+    "unhide other keywords too. Keywords in both lists come back lower-cased and trimmed.",
   inputSchema,
   // Like redive_niche: additive, but it can spend Dive tokens irreversibly, which is what clients
   // need to prompt on. The confirm gate covers the paid path regardless.

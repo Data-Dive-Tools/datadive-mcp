@@ -142,12 +142,19 @@ export const NICHE_KEYWORDS_MAX_PER_CALL = 100;
 export const NICHE_KEYWORD_MAX_LENGTH = 255;
 
 export interface AddNicheKeywordsResult {
-  /** Every submitted keyword, in exactly one group. */
+  /**
+   * Every submitted keyword is in exactly one of the first four groups or in `blockedByPhraseExclusion`.
+   * `takenFromExcluded` overlaps the first four.
+   */
   originBreakdown: {
     alreadyInMkl: string[];
     takenFromOutliers: string[];
     takenFromResidue: string[];
     addedManually: string[];
+    /** Matched an exact keyword exclusion, which the add removed. Also listed in the group it landed in. */
+    takenFromExcluded: string[];
+    /** Matched a phrase exclusion: not added and not charged. The rule is left in place. */
+    blockedByPhraseExclusion: { keyword: string; matchedPhrase: string }[];
   };
   /** Dive tokens spent (or, on a dry run, the most the re-dive can cost). 0 for a fresh niche. */
   tokensUsed: number;
