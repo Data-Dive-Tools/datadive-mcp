@@ -40,8 +40,8 @@ export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
     items: [
       "See your Spaces and labels (`list_spaces`, `list_labels`), put a niche into them or take it out " +
         "(`add_niche_spaces`, `remove_niche_spaces`, `add_niche_labels`, `remove_niche_labels`), and filter " +
-        "`list_niches` and `list_rank_radars` by Space and label. Free. Changing a niche's Spaces and " +
-        "labels is for the organization owner or a team admin; a Space you only have view rights on is refused.",
+        "`list_niches` and `list_rank_radars` by Space and label. Free. You can change a niche's Spaces and " +
+        "labels when you can manage it, as in the web app; a Space you only have view rights on is refused.",
     ],
   },
   {
