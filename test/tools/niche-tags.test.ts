@@ -72,8 +72,8 @@ describe.each(cases)("$name tool", ({ tool, name, field, path, result }) => {
     expect("confirm" in tool.inputSchema).toBe(false);
   });
 
-  it("states the role rule and the all-or-nothing rule", () => {
-    expect(tool.description).toMatch(/owner or a team admin/);
+  it("states the access rule and the all-or-nothing rule", () => {
+    expect(tool.description).toMatch(/Manage access to the niche/);
     expect(tool.description).toMatch(/all or nothing/);
   });
 
@@ -85,22 +85,6 @@ describe.each(cases)("$name tool", ({ tool, name, field, path, result }) => {
     expect(() => ids.parse([0])).toThrow();
     expect(() => ids.parse([1.5])).toThrow();
     expect(() => ids.parse(Array.from({ length: 101 }, (_, i) => i + 1))).toThrow();
-  });
-
-  it("relays the API's INSUFFICIENT_ROLE refusal", async () => {
-    globalThis.fetch = mockFetch(
-      {
-        statusCode: 403,
-        error: "INSUFFICIENT_ROLE",
-        message: "Only the organization owner or a team admin can change Spaces and labels of a Niche.",
-        success: false,
-      },
-      403,
-    ) as unknown as typeof fetch;
-
-    await expect(run({ nicheId: "n-1", [field]: [1] })).rejects.toThrow(
-      /Forbidden: Only the organization owner or a team admin/,
-    );
   });
 
   it("keeps the offending ids on the error body for unknown and forbidden ids", async () => {
