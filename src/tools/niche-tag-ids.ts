@@ -27,8 +27,8 @@ export const tagFilterIdList = (field: string) =>
 
 /** The rules every write tool shares, appended to each description. */
 export const NICHE_TAG_WRITE_RULES =
-  "Only the organization owner or a team admin can change a niche's Spaces and labels; anyone else is " +
-  "refused with a 403 (INSUFFICIENT_ROLE), so tell the user instead of retrying. A change is all or nothing: " +
+  "The same rights as the web app: the user needs Manage access to the niche, and to every Space added or " +
+  "removed. A refusal is a 403, so tell the user instead of retrying. A change is all or nothing: " +
   "if any id is unknown, or a Space is one the user has only view rights on, the whole call fails and " +
   "nothing changes (the error lists the offending ids). Ids already in the wanted state are counted, " +
   "never errors, so a repeat is safe. Costs nothing. Limited to 2 calls per minute per niche, so put " +

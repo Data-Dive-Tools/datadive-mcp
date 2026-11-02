@@ -122,8 +122,8 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `list_keyword_exclusions` | The keywords a niche hides from its Master Keyword List: exact entries with their search volume, phrase entries with how many keywords and how much search volume they hide. |
 | `add_keyword_exclusions` | Hides keywords from a niche's Master Keyword List — `exact` (one keyword) or `phrase` (every keyword containing it), 1–100 entries per call. Free; undone by `remove_keyword_exclusions`. |
 | `remove_keyword_exclusions` | Removes exact or phrase exclusions so the keywords they hid show again. Free. |
-| `add_niche_spaces` / `remove_niche_spaces` | Puts a niche in, or takes it out of, 1–100 Spaces (`spaceIds` from `list_spaces`). Free, no `confirm`. Organization owner or team admin only; a Space you only have view rights on is refused. One unknown or refused id fails the whole call and nothing changes. |
-| `add_niche_labels` / `remove_niche_labels` | Same for labels (`labelIds` from `list_labels`). Organization owner or team admin only. |
+| `add_niche_spaces` / `remove_niche_spaces` | Puts a niche in, or takes it out of, 1–100 Spaces (`spaceIds` from `list_spaces`). Free, no `confirm`. Needs Manage access to the niche, as in the web app; a Space you only have view rights on is refused. One unknown or refused id fails the whole call and nothing changes. |
+| `add_niche_labels` / `remove_niche_labels` | Same for labels (`labelIds` from `list_labels`). Needs Manage access to the niche. |
 | `get_dive_status` | Poll a dive started by `create_niche_dive` or `redive_niche`: `in_progress`, `success` (carries the `nicheId`), or `error`. |
 | `create_rank_radar` | **Spends Search Term tokens.** Starts tracking keyword rankings for an ASIN in a niche. Returns a `rankRadarId`. Requires `confirm: true`. |
 | `add_rank_radar_search_terms` | Starts tracking extra keywords on an existing rank radar. Takes one Daily Tracked Keywords slot per new keyword; reversible with `pause_rank_radar_search_terms`. |
