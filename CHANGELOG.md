@@ -1,5 +1,27 @@
 # @datadive-tools/mcp
 
+## 0.21.0
+
+### Minor Changes
+
+- 61bbccb: Catch up with public API changes the MCP did not describe yet.
+  - Add `get_niche_outlier_keywords` and `get_niche_residue_keywords`, which page through a niche's Outliers and Residue lists (RS-11150). Other tools already pointed users at those lists, but nothing could read them.
+  - `get_niche_keywords` returns each keyword's exact-match `suggestedBid`, which the API has sent since RS-11150; the description and types now include it.
+  - `get_seller_catalog`: `status: "all"` never includes deleted listings, and only listings Amazon reported in the last 30 days are returned (RS-11796).
+  - `redive_niche`: `excludedAsins` are saved on the niche and apply to every later dive, and ASINs already excluded on the niche are always skipped unless locked (RS-11872).
+  - A 429 now tells the assistant to wait up to a minute and not to loop over one niche: keyword, competitor and ranking juice reads allow 60 calls a minute per niche (RS-12035).
+  - `KrtKeyword` no longer declares `adData` / `sqpData`; the API stopped sending them on the keyword rankings endpoint.
+
+### Patch Changes
+
+- ebd3be0: `add_niche_keywords` describes how keyword exclusions are now handled (RS-12026).
+
+  The API has changed how an add treats excluded keywords (backend v9.506.0). A keyword that matches an exact exclusion is now added and the exclusion is removed, where before it was reported as added but stayed hidden. A keyword that matches a phrase exclusion is no longer saved or charged. `originBreakdown` has two new fields that report these cases: `takenFromExcluded`, whose keywords also appear in the group they landed in, and `blockedByPhraseExclusion`, which gives each `keyword` with its `matchedPhrase`. The tool description no longer says that excluded keywords stay hidden. It now explains both fields, and tells the assistant to ask the user before removing a phrase exclusion so a blocked keyword can be added.
+
+- b5458fd: The niche Space and label write tools now describe the same rights as the web app (RS-12151).
+
+  The API no longer limits `add_niche_spaces`, `remove_niche_spaces`, `add_niche_labels` and `remove_niche_labels` to the organization owner or a team admin: a member with Manage access to the niche can change its labels, and its Spaces where they can manage the Space. The tool descriptions, README and what's new now say so, and no longer mention `INSUFFICIENT_ROLE`.
+
 ## 0.20.1
 
 ### Patch Changes
