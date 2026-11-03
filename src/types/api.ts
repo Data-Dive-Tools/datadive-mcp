@@ -120,17 +120,37 @@ export type AsinRanks = Record<string, number | null>;
  */
 export type MklKeywordOrigin = "mkl" | "manual" | "outlier" | "residue";
 
+/** Exact-match suggested bid, in cents of the marketplace currency (101 = $1.01). */
+export interface BidInfo {
+  min: number;
+  max: number;
+  median: number;
+}
+
 export interface MasterKeyword {
   keyword: string;
   searchVolume: number;
   /** "Outlier" or a numeric relevancy score. */
   relevancy: string | number;
   asinRanks: AsinRanks;
+  /** Null when not yet fetched for the latest dive. */
+  suggestedBid: BidInfo | null;
   origin: MklKeywordOrigin;
 }
 
 export interface GetMasterKeywordListResult {
   keywords: MasterKeyword[];
+  /** ISO date string. */
+  latestResearchDate: string;
+}
+
+// ─── /v1/niches/:nicheId/outlier_keywords, /residue_keywords  (KeywordListPage, wrapped) ─
+
+/** Mirrors the API's `KEYWORD_LIST_MAX_PAGE_SIZE`. */
+export const KEYWORD_LIST_MAX_PAGE_SIZE = 100;
+
+/** One page of a niche's Outliers or Residue list (RS-11150). No `origin`: these keywords are not in the MKL. */
+export interface KeywordListPage extends PaginationResponse<Omit<MasterKeyword, "origin">> {
   /** ISO date string. */
   latestResearchDate: string;
 }
@@ -433,10 +453,6 @@ export interface KrtKeyword {
   ranks: KrtAsinRank[];
   /** User tags on this keyword — the same objects `list_rank_radar_tags` returns (RS-11822). */
   highlights: KrtHighlight[];
-  /** PPC data. Still sent by the API but due for removal (RS-11744); kept opaque. */
-  adData?: Record<string, unknown> | null;
-  /** SQP data. Still sent by the API but due for removal (RS-11744); kept opaque. */
-  sqpData?: Record<string, unknown> | null;
 }
 
 /** One page of a Rank Radar's active keywords (paged since RS-11683); paused keywords are not included. */

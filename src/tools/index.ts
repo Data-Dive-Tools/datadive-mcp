@@ -17,6 +17,7 @@ import { removeNicheSpacesTool } from "./remove-niche-spaces.js";
 import { addNicheLabelsTool } from "./add-niche-labels.js";
 import { removeNicheLabelsTool } from "./remove-niche-labels.js";
 import { getNicheKeywordsTool } from "./get-niche-keywords.js";
+import { getNicheOutlierKeywordsTool, getNicheResidueKeywordsTool } from "./get-niche-keyword-lists.js";
 import { listKeywordExclusionsTool } from "./list-keyword-exclusions.js";
 import { getNicheRootsTool } from "./get-niche-roots.js";
 import { getNicheCompetitorsTool } from "./get-niche-competitors.js";
@@ -71,6 +72,8 @@ export const allTools: ReadonlyArray<AnyTool> = [
   listSpacesTool,
   listLabelsTool,
   getNicheKeywordsTool,
+  getNicheOutlierKeywordsTool,
+  getNicheResidueKeywordsTool,
   listKeywordExclusionsTool,
   getNicheRootsTool,
   getNicheCompetitorsTool,
