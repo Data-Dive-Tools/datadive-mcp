@@ -110,7 +110,13 @@ export class ApiError extends Error {
       return new ApiError("not_found", 404, serverMsg ? `Not found: ${serverMsg}` : "Resource not found.", body);
     }
     if (status === 429) {
-      return new ApiError("rate_limit", 429, "Rate limit exceeded. Wait a few seconds and retry.", body);
+      return new ApiError(
+        "rate_limit",
+        429,
+        "Rate limit exceeded. Wait up to a minute and retry. Niche keyword, competitor and ranking juice " +
+          "reads allow 60 calls a minute per niche, so do not loop over the same niche.",
+        body,
+      );
     }
     if (status >= 500) {
       return new ApiError(

@@ -15,7 +15,10 @@ const inputSchema = {
   status: z
     .enum(CATALOG_STATUSES)
     .optional()
-    .describe('Listing status filter. "Active" (default) or "all".'),
+    .describe(
+      'Listing status filter. "Active" (default) or "all", which is every status except "Deleted" ' +
+        "(listings the seller removed from Amazon).",
+    ),
   currentPage: z.number().int().min(1).optional().describe("Page number, 1-indexed. Defaults to 1."),
   pageSize: z
     .number()
@@ -33,7 +36,8 @@ export const getSellerCatalogTool: ToolDefinition<typeof inputSchema> = {
     "Use this when the user wants to browse or search a seller's own Amazon catalog — the products " +
     "they sell on a given marketplace. Requires a `sellerId` + `marketplace` (use `list_seller_profiles` " +
     "to discover them). Filter by `search` (title/brand), `brand`, and `status` (Active by default, or " +
-    "all). Returns a paginated list where each item has asin, title, parentAsin, brand, status, imageUrl, " +
+    "all; deleted listings are never returned). Only listings Amazon reported in the last 30 days are " +
+    "included. Returns a paginated list where each item has asin, title, parentAsin, brand, status, imageUrl, " +
     "and hasVariations, plus pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
   inputSchema,
   annotations: { readOnlyHint: true },

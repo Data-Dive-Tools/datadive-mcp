@@ -106,7 +106,9 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_fast_keywords_keywords` | The keywords of a finished Fast Keywords run: search volume, organic and sponsored rank, highest volume first. Paged (up to 100). |
 | `run_fast_keywords` | **Spends 1 dive token.** Finds a product's keywords from just its ASIN. Async — poll `get_fast_keywords`. Previews the cost first and requires `confirm: true`. |
 | `refresh_fast_keywords` | **Spends 1 dive token.** Re-runs a Fast Keywords result; allowed once every 24 hours. Requires `confirm: true`. |
-| `get_niche_keywords` | Master keyword list for a niche: search volume, relevancy, competitor ASIN ranks. |
+| `get_niche_keywords` | Master keyword list for a niche: search volume, relevancy, competitor ASIN ranks, suggested bid. |
+| `get_niche_outlier_keywords` | A niche's Outliers, paginated: high search volume keywords only a few competitors rank for. |
+| `get_niche_residue_keywords` | A niche's Residue, paginated: keywords in neither the Master Keyword List nor the Outliers. |
 | `get_niche_roots` | Keyword lexical roots for a niche — high-impact words with frequency and broad search volume. |
 | `get_niche_competitors` | Competitor ASINs, titles, BSR, category and niche statistics (sales, revenue, ratings, opportunity score). |
 | `get_ranking_juice` | DataDive proprietary ranking-juice metric per competitor (current vs optimized listing). |

@@ -41,7 +41,11 @@ const inputSchema = {
   excludedAsins: z
     .array(z.string().min(1))
     .optional()
-    .describe("`discover` mode only. ASINs discovery must never select."),
+    .describe(
+      "`discover` mode only. ASINs discovery must never select. They are saved as exclusions on the niche, " +
+        "so every later dive of this niche skips them too. ASINs already excluded on the niche are always " +
+        "skipped; put one in `lockedAsins` to dive it anyway.",
+    ),
   confirm: z
     .boolean()
     .optional()

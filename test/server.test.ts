@@ -83,6 +83,8 @@ const EXPECTED_TOOLS = [
   "list_spaces",
   "list_labels",
   "get_niche_keywords",
+  "get_niche_outlier_keywords",
+  "get_niche_residue_keywords",
   "list_keyword_exclusions",
   "get_niche_roots",
   "get_niche_competitors",

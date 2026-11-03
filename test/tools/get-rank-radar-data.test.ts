@@ -53,8 +53,6 @@ describe("get_rank_radar_data tool", () => {
         searchVolume: 1000,
         relevancy: 0.5,
         ranks: [{ date: "2024-03-26", organicRank: 4, sponsoredRank: 1, impressionRank: null }],
-        adData: null,
-        sqpData: null,
         highlights: [],
       },
     ],

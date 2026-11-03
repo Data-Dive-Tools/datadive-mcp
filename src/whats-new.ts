@@ -25,6 +25,15 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.21.0",
+    released: "2026-11-03",
+    items: [
+      "Read a niche's Outliers and Residue keyword lists, page by page (`get_niche_outlier_keywords`, " +
+        "`get_niche_residue_keywords`), and see each keyword's suggested bid there and in `get_niche_keywords`. " +
+        "Free.",
+    ],
+  },
+  {
     version: "0.20.1",
     released: "2026-10-23",
     items: [
