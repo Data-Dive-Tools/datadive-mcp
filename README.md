@@ -139,7 +139,7 @@ niches, plus pagination metadata. If you don't, see Troubleshooting below.
 | `get_listing_copy_generation_status` | Poll a draft started by `generate_listing_copy`: `generating`, `complete` (carries the generated copy), or `failed`. Free to poll. |
 | `list_seller_profiles` | Paginated list of connected Amazon seller accounts. Discovery step — returns the `sellerId` + `marketplace` the seller-scoped tools below (and the alert tools) need. |
 | `get_seller_catalog` | Paginated catalog of a seller's own ASINs. Filter by `search`, `brand`, and `status` (Active by default). |
-| `get_seller_listing_changes` | Paginated price/content/image changes on a seller's listings. Filter by `types`, `asin`, `brand`, `search`, and a date range; optionally include ranking/conversion `correlation`. |
+| `get_seller_listing_changes` | Paginated price/content/image changes on a seller's listings, including Item Highlights changes (`contentType: "Highlights"`). Filter by `types`, `asin`, `brand`, `search`, and a date range; optionally include ranking/conversion `correlation`. |
 | `list_ppc_campaigns` | Sponsored Products campaigns of a seller account with window totals and a per-placement breakdown. Filter by `asin` / `parentAsin`, `state`, `search`; sort by any metric. Window up to 90 days (default 30). |
 | `get_asin_inventory_distribution` | Inventory metrics for an ASIN (stock, days of stock, low-inventory state, LILF and LTSF fees, aged units) and its per-fulfillment-center sellable inventory. Requires `sellerId` from `list_seller_profiles` or your Connections page. |
 | `list_indexing_issue_alerts` | Paginated list of indexing-issue alerts — ASINs no longer indexed for their tracked keywords. Filter by `sellerId`, `marketplace`, `status`, or `updatedSince`. |

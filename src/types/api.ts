@@ -928,7 +928,7 @@ export interface ListingChangeItem {
   date: string;
   /** "Price" | "Content" | "Image". */
   type: string;
-  /** Sub-type for content changes (e.g. title/bullets/description); null otherwise. */
+  /** Sub-type for content changes: "Title" | "Bullets" | "Description" | "Highlights"; null otherwise. */
   contentType: string | null;
   description: string;
   /** Prior value of the changed field. Shape varies by change type; kept opaque. */
