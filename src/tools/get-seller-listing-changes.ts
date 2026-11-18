@@ -64,11 +64,13 @@ export const getSellerListingChangesTool: ToolDefinition<typeof inputSchema> = {
   name: "get_seller_listing_changes",
   title: "List Listing Changes for a Seller",
   description:
-    "Use this when the user asks what changed on their Amazon listings — price, content (title/bullets/" +
-    "description), or image edits — for a seller account. Requires a `sellerId` + `marketplace` (use " +
+    "Use this when the user asks what changed on their Amazon listings — price, content (title/item highlights/" +
+    "bullets/description), or image edits — for a seller account. Requires a `sellerId` + `marketplace` (use " +
     "`list_seller_profiles` to discover them). Filter by `types`, `asin`/parent ASIN, `brand`, `search`, " +
     "and a `startDate`/`endDate` range; sort with `sortBy`/`sortOrder`. Set `includeCorrelations: true` to " +
-    "attach the ranking/conversion impact per change. Returns a paginated list where each item has asin, " +
+    "attach the ranking/conversion impact per change. Item Highlights changes are Content changes with " +
+    "contentType \"Highlights\" (history starts 2026-11, earlier edits are not available); other content " +
+    "changes are Title, Bullets or Description. Returns a paginated list where each item has asin, " +
     "title, imageUrl, date, type, contentType, description, previousValue, newValue, and (optionally) " +
     "correlation, plus pagination metadata (currentPage, pageSize, total, lastPage, hasNext, hasPrev).",
   inputSchema,

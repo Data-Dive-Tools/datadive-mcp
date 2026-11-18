@@ -21,6 +21,11 @@ describe("get_seller_listing_changes tool", () => {
     globalThis.fetch = originalFetch;
   });
 
+  it("tells the assistant that Item Highlights changes are Content changes", () => {
+    expect(getSellerListingChangesTool.description).toContain("item highlights");
+    expect(getSellerListingChangesTool.description).toContain('contentType "Highlights"');
+  });
+
   it("URL-encodes the sellerId and marketplace path params", async () => {
     const fetchMock = mockFetch(emptyPage);
     globalThis.fetch = fetchMock as unknown as typeof fetch;

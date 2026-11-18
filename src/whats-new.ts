@@ -25,6 +25,15 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: ReadonlyArray<WhatsNewEntry> = [
   {
+    version: "0.22.0",
+    released: "2026-11-16",
+    items: [
+      "`get_seller_listing_changes` now returns Item Highlights changes (Amazon's 125-character line under the " +
+        "title) as Content changes with `contentType` \"Highlights\". History starts when this ships, so earlier " +
+        "edits are not available.",
+    ],
+  },
+  {
     version: "0.21.0",
     released: "2026-11-03",
     items: [
